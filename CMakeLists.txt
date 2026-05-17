@@ -13,3 +13,13 @@ add_executable(
     MemorySea 
     main.cpp
 )
+
+# 添加库所在位置
+include_directories(
+    D:/mingw64/RGFW-1.8.0_win64_mingw-w64/include
+)
+
+# 链接文件
+target_link_libraries(
+    MemorySea
+)
