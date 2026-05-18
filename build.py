@@ -34,11 +34,23 @@ sdldlldst = Path("./build")
 
 try:
     shutil.copy(sdldll, sdldlldst)
-    print("文件复制成功！")
+    print("dll文件复制成功！")
 except FileNotFoundError:
-    print("源文件不存在！")
+    print("dll源文件不存在！")
 except PermissionError:
-    print("没有权限操作该文件或目录！")
+    print("dll没有权限操作该文件或目录！")
+
+#配置文件夹复制
+ini = Path("ini")
+inip = Path("./build/ini")
+
+try:
+    shutil.copytree(ini, inip, dirs_exist_ok=True)
+    print("配置文件复制成功！")
+except FileNotFoundError:
+    print("配置源文件不存在！")
+except PermissionError:
+    print("配置没有权限操作该文件或目录！")
 
 subprocess.run([
     str(run)],

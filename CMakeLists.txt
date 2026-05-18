@@ -17,6 +17,7 @@ add_executable(
 # 添加库所在位置
 include_directories(
     D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include
+    D:/mingw64/inih-r62/inih-r62
 )
 
 # 链接文件

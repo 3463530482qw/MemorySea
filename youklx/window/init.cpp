@@ -14,7 +14,7 @@ namespace youklx {
                 w = mode->w * 0.9;
                 h = w / aspectRatio;
             }
-        } else if (aspectRatio >= 0) {
+        } else if (aspectRatio >= 0 && aspectRatio < 1) {
             if(mode->w > mode->h * aspectRatio) {
                 w = mode->h * 0.9;
                 h = w * aspectRatio;

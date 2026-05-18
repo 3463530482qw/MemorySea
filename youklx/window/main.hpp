@@ -10,7 +10,7 @@ namespace youklx {
         public:
             Window() {};
             void init(float standardAspectRatio);
-            void create();
+            void create(windowcreateinfo &exwindowcreatinfo);
         private:
     };
 }
