@@ -1,22 +1,10 @@
 #include "youklx/iall.hpp"
 
 int main() {
-
+    youklx::init();
     youklx::Window window;
-    youklx::Window& win = window;
-    {
-        youklx::windowcreateinfo creatinfo{};
-        win.create(
-            creatinfo
-            .name("MemorySea")
-            .w(199)
-            .h(199)
-            .noresize(true)
-            .allowdnd(true)
-            .center(true)
-        );
-    }
-    
+    window.init(1.778);
+    window.create();
     
     std::cin.get();
 }

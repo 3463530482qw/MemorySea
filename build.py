@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+import shutil
 
 ## 默认路径
 mopath = Path.cwd()
@@ -25,6 +26,19 @@ subprocess.run([
     "cmake",
     "--build", str(mopath / "build")  # 在 build 目录中执行构建
 ], check=True)
+
+
+#sdl动态链接库位置与目标位置
+sdldll = Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll")
+sdldlldst = Path("./build")
+
+try:
+    shutil.copy(sdldll, sdldlldst)
+    print("文件复制成功！")
+except FileNotFoundError:
+    print("源文件不存在！")
+except PermissionError:
+    print("没有权限操作该文件或目录！")
 
 subprocess.run([
     str(run)],

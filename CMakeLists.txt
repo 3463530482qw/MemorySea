@@ -16,10 +16,11 @@ add_executable(
 
 # 添加库所在位置
 include_directories(
-    D:/mingw64/RGFW-1.8.0_win64_mingw-w64/include
+    D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include
 )
 
 # 链接文件
 target_link_libraries(
     MemorySea
+    D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll
 )

@@ -2,11 +2,17 @@
 namespace youklx {
     class Window {
         public:
-            RGFW_window* id;
+            SDL_Window* id;
+            const SDL_DisplayMode *mode{nullptr};
+            float aspectRatio{0};   //宽高比
+            int w{0};               //窗口宽度
+            int h{0};               //窗口高度
         public:
-            void create(windowcreateinfo& creatinfo);
+            Window() {};
+            void init(float standardAspectRatio);
+            void create();
         private:
     };
 }
-
+#include "init.cpp"
 #include "create.cpp"

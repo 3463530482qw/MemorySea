@@ -1,6 +1,6 @@
 #include<iostream>
 
-#define RGFW_IMPLEMENTATION
-#include "RGFW.h"
+#include "SDL3/SDL.h"
 
 #include "window/main.hpp"
+#include "init.hpp"
