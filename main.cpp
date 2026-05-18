@@ -3,11 +3,15 @@
 int main() {
     youklx::init();
     youklx::Window window;
-    window.init(1.778);
     {
-        youklx::windowcreateinfo wcreatinfo;
-        wcreatinfo.loadini("ini/window/window.ini").load();
-        window.create(wcreatinfo);
+        youklx::windowcreateinfo wc;
+        wc.loadini("ini/window/window.ini").load();
+        window.init(1.778)
+        .create(wc)
+        .positionAdjustment();
+    }
+    while(window.isrun) {
+        window.run();
     }
     
     std::cin.get();

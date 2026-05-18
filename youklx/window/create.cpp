@@ -1,5 +1,5 @@
 namespace youklx {
-    void Window::create(windowcreateinfo &exwindowcreatinfo) {
+    Window& Window::create(windowcreateinfo &exwindowcreatinfo) {
         // 检测用户填写窗口宽高是否合规
         if(
             exwindowcreatinfo.w > 0 && 
@@ -19,5 +19,6 @@ namespace youklx {
         if (!id) {
             throw std::runtime_error(SDL_GetError());  // ← 加这个
         }
+        return *this;
     }
 }

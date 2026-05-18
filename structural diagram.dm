@@ -1,6 +1,6 @@
 graph TD
 A[libc] --> B[iall]
-C[RGFW] --> B
+C[sdl3] --> B
 D[youklx] --> B
 B --> E[main]
 D -.->|模块| F[window] 

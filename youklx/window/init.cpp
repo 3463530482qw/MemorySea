@@ -1,5 +1,5 @@
 namespace youklx {
-    void Window::init(float standardAspectRatio) {
+    Window& Window::init(float standardAspectRatio) {
         //设置宽高比
         aspectRatio = standardAspectRatio;
         //获取桌面大小
@@ -25,5 +25,6 @@ namespace youklx {
         } else {
             throw std::runtime_error("Erro:standardAspectRatio the parameter must be between zero and one hundred");
         }
+        return *this;
     }
 }
