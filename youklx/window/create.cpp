@@ -17,7 +17,7 @@ namespace youklx {
             exwindowcreatinfo.flage
         );
         if (!id) {
-            throw std::runtime_error(SDL_GetError());  // ← 加这个
+            throw std::runtime_error(SDL_GetError());
         }
         return *this;
     }

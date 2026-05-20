@@ -14,5 +14,4 @@ int main() {
         window.run();
     }
     
-    std::cin.get();
 }

@@ -1,6 +1,6 @@
 #include<iostream>
 
-#include "SDL3/SDL.h"
+#include <spine-sdl-cpp.h>
 
 #include "ini.c"
 #include "cpp/INIReader.cpp"

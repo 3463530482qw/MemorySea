@@ -32,7 +32,9 @@ namespace youklx {
         bool not_focusable{false};        // 窗口不应获取焦点
         SDL_WindowFlags flage{0};
     public:
-        windowcreateinfo& ffullscreen(bool exfullscreen) { fullscreen = exfullscreen; return *this; }; 
+        windowcreateinfo& fname(bool exname) { name = exname; return *this; };
+        windowcreateinfo& fw(int exw) { w = exw; return *this; };
+        windowcreateinfo& fh(int exh) { h = exh; return *this; }; 
         windowcreateinfo& fopengl(bool exopengl) { opengl = exopengl; return *this; }
         windowcreateinfo& foccluded(bool exoccluded) { occluded = exoccluded; return *this; }
         windowcreateinfo& fhidden(bool exhidden) { hidden = exhidden; return *this; }
