@@ -52,6 +52,18 @@ except FileNotFoundError:
 except PermissionError:
     print("配置没有权限操作该文件或目录！")
 
+#图片文件夹复制
+ini = Path("image")
+inip = Path("./build/image")
+
+try:
+    shutil.copytree(ini, inip, dirs_exist_ok=True)
+    print("图片文件复制成功！")
+except FileNotFoundError:
+    print("图片源文件不存在！")
+except PermissionError:
+    print("图片没有权限操作该文件或目录！")
+
 subprocess.run([
     str(run)],
     check=True

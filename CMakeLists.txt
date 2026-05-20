@@ -28,6 +28,7 @@ include_directories(
     D:/mingw64/inih-r62/inih-r62
     D:/mingw64/spine-runtimes-4.3/spine-cpp/include
     D:/mingw64/spine-runtimes-4.3/spine-sdl/src
+    D:/mingw64/stb-master/stb-master
 )
 
 # 链接文件（修改这里：用 .dll.a 代替 .dll）
