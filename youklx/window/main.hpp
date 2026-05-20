@@ -16,6 +16,7 @@ namespace youklx {
             Window& create(windowcreateinfo &exwindowcreatinfo);
             Window& positionAdjustment(int px = 0, int py = 0);
             Window& run();
+            Window& icon(Plimage ima);
         private:
     };
 }
@@ -23,3 +24,4 @@ namespace youklx {
 #include "create.cpp"
 #include "positionAdjustment.cpp"
 #include "run.cpp"
+#include "icon.cpp"

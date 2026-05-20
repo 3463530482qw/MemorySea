@@ -2,6 +2,8 @@
 #include<iostream>
 #include<variant>
 #include<vector>
+#include<stdexcept>
+#include<functional>
 
 //图片加载库
 #include "stb_image.h"
