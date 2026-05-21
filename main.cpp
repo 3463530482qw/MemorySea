@@ -5,7 +5,7 @@ int main() {
     youklx::Window window;
     {
         youklx::Image image;
-        image.ilpng("ini/main.ini");
+        image.ilpng("ini/main.ini", "icon");
         youklx::windowcreateinfo wc;
         wc.loadini("ini/main.ini").load();
         window.init(1.778)
@@ -16,5 +16,4 @@ int main() {
     while(window.isrun) {
         window.run();
     }
-    
 }

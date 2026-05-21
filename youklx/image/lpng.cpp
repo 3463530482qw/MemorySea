@@ -1,9 +1,13 @@
 namespace youklx {
+    struct Clilpng {
+        std::vector<std::string> vilpng{};
+        std::string givrtp{};
+    };
 
     static int lilpng(void* ini, const char* ivrtp, const char* itype, const char* value) {
-        std::vector<std::string>* data = static_cast<std::vector<std::string>*>(ini);
-        if (std::string(ivrtp) == "lpng") {
-            data->push_back(itype);
+        Clilpng* data = static_cast<Clilpng*>(ini);
+        if (std::string(ivrtp) == data->givrtp) {
+            data->vilpng.push_back(itype);
         }
         return 1;
     }
@@ -22,16 +26,17 @@ namespace youklx {
         return *this;
     }
 
-    Image& Image::ilpng(std::string ini) {
+    Image& Image::ilpng(std::string ini, std::string ivrtp) {
         ima.push_back(std::vector<Plimage>());
-        std::vector<std::string> vilpng;
+        Clilpng ca;
+        ca.givrtp = ivrtp;
         Plpng imapng;
         INIReader reader(ini);
-        if (ini_parse(ini.c_str(), lilpng, &vilpng) < 0) {
+        if (ini_parse(ini.c_str(), lilpng, &ca) < 0) {
             std::cerr << "Error parsing config file." << std::endl;
         } else {
-            for (auto& ilpng : vilpng) {
-                ilpng = reader.Get("lpng", ilpng, "");
+            for (auto& ilpng : ca.vilpng) {
+                ilpng = reader.Get(ivrtp, ilpng, "");
                 imapng.data = stbi_load(ilpng.c_str(), &imapng.w, &imapng.h, &imapng.channels, imapng.desired_channels);
                 if (imapng.data == nullptr) {
                     std::cerr << "加载图片失败: " << stbi_failure_reason() << std::endl;
