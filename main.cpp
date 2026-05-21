@@ -3,12 +3,11 @@
 int main() {
     youklx::init();
     youklx::Window window;
-    youklx::Image image;
     {
         youklx::Image image;
-        image.lpng("image/icon/icon.png");
+        image.ilpng("ini/main.ini");
         youklx::windowcreateinfo wc;
-        wc.loadini("ini/window/window.ini").load();
+        wc.loadini("ini/main.ini").load();
         window.init(1.778)
         .create(wc)
         .positionAdjustment()

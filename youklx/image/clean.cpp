@@ -1,7 +1,7 @@
 namespace youklx {
     Image& Image::clean() {
         if(ima.empty()) {
-            std::cout << "There's no picture right now, what the hell are you cleaning, you bastard Ծ‸Ծ" << std::endl;
+            std::cout << "The picture is empty, this is terrible, I am crying in panic Ծ‸Ծ" << std::endl;
         } else {
             for (auto& arima : ima) {
                 for (auto& image : arima) {

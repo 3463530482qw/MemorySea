@@ -6,6 +6,7 @@ namespace youklx {
             std::vector<std::vector<Plimage>> ima{};
         public:
             Image& lpng(const char* image);
+            Image& ilpng(std::string ini);
             Image& clean();
             ~Image() { clean(); };
     };

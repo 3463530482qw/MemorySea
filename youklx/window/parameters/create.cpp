@@ -66,9 +66,9 @@ namespace youklx {
             if (reader.ParseError() != 0) {
                 std::cerr << "Configuration load failed, using default configuration" << std::endl;
             }
-            name = reader.Get("windowcreate", "name", "a window");
-            w = reader.GetInteger("windowcreate", "w", 0);
-            h = reader.GetInteger("windowcreate", "h", 0);
+            name                = reader.Get("windowcreate", "name", "a window");
+            w                   = reader.GetInteger("windowcreate", "w", 0);
+            h                   = reader.GetInteger("windowcreate", "h", 0);
             fullscreen          = reader.GetBoolean("windowcreate", "fullscreen", false);
             opengl              = reader.GetBoolean("windowcreate", "opengl", false);
             occluded            = reader.GetBoolean("windowcreate", "occluded", false);
