@@ -61,40 +61,40 @@ namespace youklx {
         windowcreateinfo& ftransparent(bool extransparent) { transparent = extransparent; return *this; }
         windowcreateinfo& fnot_focusable(bool exnot_focusable) { not_focusable = exnot_focusable; return *this; }
         
-        windowcreateinfo& loadini(std::string ini) {
+        windowcreateinfo& loadini(std::string ini, std::string ivrtp) {
             INIReader reader(ini);
             if (reader.ParseError() != 0) {
                 std::cerr << "Configuration load failed, using default configuration" << std::endl;
             }
-            name                = reader.Get("windowcreate", "name", "a window");
-            w                   = reader.GetInteger("windowcreate", "w", 0);
-            h                   = reader.GetInteger("windowcreate", "h", 0);
-            fullscreen          = reader.GetBoolean("windowcreate", "fullscreen", false);
-            opengl              = reader.GetBoolean("windowcreate", "opengl", false);
-            occluded            = reader.GetBoolean("windowcreate", "occluded", false);
-            hidden              = reader.GetBoolean("windowcreate", "hidden", false);
-            borderless          = reader.GetBoolean("windowcreate", "borderless", false);
-            resizable           = reader.GetBoolean("windowcreate", "resizable", false);
-            minimized           = reader.GetBoolean("windowcreate", "minimized", false);
-            maximized           = reader.GetBoolean("windowcreate", "maximized", false);
-            mouse_grabbed       = reader.GetBoolean("windowcreate", "mouse_grabbed", false);
-            input_focus         = reader.GetBoolean("windowcreate", "input_focus", false);
-            mouse_focus         = reader.GetBoolean("windowcreate", "mouse_focus", false);
-            external            = reader.GetBoolean("windowcreate", "external", false);
-            modal               = reader.GetBoolean("windowcreate", "modal", false);
-            high_pixel_density  = reader.GetBoolean("windowcreate", "high_pixel_density", false);
-            mouse_capture       = reader.GetBoolean("windowcreate", "mouse_capture", false);
-            mouse_relative_mode = reader.GetBoolean("windowcreate", "mouse_relative_mode", false);
-            always_on_top       = reader.GetBoolean("windowcreate", "always_on_top", false);
-            utility             = reader.GetBoolean("windowcreate", "utility", false);
-            tooltip             = reader.GetBoolean("windowcreate", "tooltip", false);
-            popup_menu          = reader.GetBoolean("windowcreate", "popup_menu", false);
-            keyboard_grabbed    = reader.GetBoolean("windowcreate", "keyboard_grabbed", false);
-            fill_document       = reader.GetBoolean("windowcreate", "fill_document", false);
-            vulkan              = reader.GetBoolean("windowcreate", "vulkan", false);
-            metal               = reader.GetBoolean("windowcreate", "metal", false);
-            transparent         = reader.GetBoolean("windowcreate", "transparent", false);
-            not_focusable       = reader.GetBoolean("windowcreate", "not_focusable", false);
+            name                = reader.Get(ivrtp, "name", "a window");
+            w                   = reader.GetInteger(ivrtp, "w", 0);
+            h                   = reader.GetInteger(ivrtp, "h", 0);
+            fullscreen          = reader.GetBoolean(ivrtp, "fullscreen", false);
+            opengl              = reader.GetBoolean(ivrtp, "opengl", false);
+            occluded            = reader.GetBoolean(ivrtp, "occluded", false);
+            hidden              = reader.GetBoolean(ivrtp, "hidden", false);
+            borderless          = reader.GetBoolean(ivrtp, "borderless", false);
+            resizable           = reader.GetBoolean(ivrtp, "resizable", false);
+            minimized           = reader.GetBoolean(ivrtp, "minimized", false);
+            maximized           = reader.GetBoolean(ivrtp, "maximized", false);
+            mouse_grabbed       = reader.GetBoolean(ivrtp, "mouse_grabbed", false);
+            input_focus         = reader.GetBoolean(ivrtp, "input_focus", false);
+            mouse_focus         = reader.GetBoolean(ivrtp, "mouse_focus", false);
+            external            = reader.GetBoolean(ivrtp, "external", false);
+            modal               = reader.GetBoolean(ivrtp, "modal", false);
+            high_pixel_density  = reader.GetBoolean(ivrtp, "high_pixel_density", false);
+            mouse_capture       = reader.GetBoolean(ivrtp, "mouse_capture", false);
+            mouse_relative_mode = reader.GetBoolean(ivrtp, "mouse_relative_mode", false);
+            always_on_top       = reader.GetBoolean(ivrtp, "always_on_top", false);
+            utility             = reader.GetBoolean(ivrtp, "utility", false);
+            tooltip             = reader.GetBoolean(ivrtp, "tooltip", false);
+            popup_menu          = reader.GetBoolean(ivrtp, "popup_menu", false);
+            keyboard_grabbed    = reader.GetBoolean(ivrtp, "keyboard_grabbed", false);
+            fill_document       = reader.GetBoolean(ivrtp, "fill_document", false);
+            vulkan              = reader.GetBoolean(ivrtp, "vulkan", false);
+            metal               = reader.GetBoolean(ivrtp, "metal", false);
+            transparent         = reader.GetBoolean(ivrtp, "transparent", false);
+            not_focusable       = reader.GetBoolean(ivrtp, "not_focusable", false);
             return *this;
         }
         void load() {

@@ -7,7 +7,7 @@ int main() {
         youklx::Image image;
         image.ilpng("ini/main.ini", "icon");
         youklx::windowcreateinfo wc;
-        wc.loadini("ini/main.ini").load();
+        wc.loadini("ini/main.ini","windowcreate").load();
         window.init(1.778)
         .create(wc)
         .positionAdjustment()
