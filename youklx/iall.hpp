@@ -3,6 +3,7 @@
 #include<variant>
 #include<vector>
 #include<string>
+#include<any>
 #include<unordered_map>
 #include<stdexcept>
 #include<functional>
@@ -34,3 +35,4 @@
 #include "window/main.hpp"
 #include "sence/main.hpp"
 #include "init.hpp"
+#include "var.cpp"

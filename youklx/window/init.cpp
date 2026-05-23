@@ -27,4 +27,12 @@ namespace youklx {
         }
         return *this;
     }
+    Window& Window::iinit(std::string ini, std::string ivrtp, std::string itp) {
+        INIReader reader(ini);
+        if (reader.ParseError() != 0) {
+            std::cerr << "Configuration load failed, using default configuration" << std::endl;
+        }
+        init(reader.GetReal(ivrtp, itp, 1.778));
+        return *this;
+    }
 }

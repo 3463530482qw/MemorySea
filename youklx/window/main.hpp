@@ -13,6 +13,7 @@ namespace youklx {
         public:
             Window() {};
             Window& init(float standardAspectRatio);
+            Window& iinit(std::string ini, std::string ivrtp, std::string itp);
             Window& create(windowcreateinfo &exwindowcreatinfo);
             Window& positionAdjustment(int px = 0, int py = 0);
             Window& run();
