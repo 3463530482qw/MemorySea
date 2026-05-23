@@ -12,12 +12,12 @@ int main() {
         .positionAdjustment()   //设置窗口位置，默认居中
         .icon(image.ima[0][0]); //加载窗口图标
     }
-    sence.ldll("dll/mainMenu/mainMenu.dll","mainMenu");
-    sence.ptr = "mainMenu";
+    Scene.ldlli("ini/scene/main.ini","scene");
+    Scene.ptr = "mainMenu";
 
     while(window.isrun) {
         window.run();
-        if (auto it = sence.dict.find(sence.ptr); it != sence.dict.end()) {
+        if (auto it = Scene.dict.find(Scene.ptr); it != Scene.dict.end()) {
             it->second();
         } 
     }

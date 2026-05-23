@@ -33,6 +33,6 @@
 //自定义封装库
 #include "image/main.hpp"
 #include "window/main.hpp"
-#include "sence/main.hpp"
+#include "scene/main.hpp"
 #include "init.hpp"
 #include "var.cpp"
