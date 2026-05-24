@@ -1,4 +1,5 @@
 #include "parameters/create.cpp"
+#include "parameters/time.cpp"
 namespace youklx {
     class Window {
         public:
@@ -9,7 +10,7 @@ namespace youklx {
             int h{0};               //窗口高度
             SDL_Event pe{};         //事件
             bool isrun{true};       //是否运行
-
+            Time time;              //时间相关
         public:
             Window() {};
             Window& init(float standardAspectRatio);    //初始化窗口所需数据
@@ -18,6 +19,9 @@ namespace youklx {
             Window& positionAdjustment(int px = 0, int py = 0); //设置窗口位置
             Window& run();  //运行窗口 事件处理
             Window& icon(Plimage ima);  //设置窗口图标
+            Window& fps(int sfps);
+            Window& ifps(std::string ini, std::string ivrtp, std::string itp);
+
         private:
     };
 }
@@ -26,3 +30,4 @@ namespace youklx {
 #include "positionAdjustment.cpp"
 #include "run.cpp"
 #include "icon.cpp"
+#include "fps.cpp"

@@ -12,6 +12,7 @@ namespace youklx {
                     break;
             }
         }
+        time.update();
         return *this;
     }
 }
