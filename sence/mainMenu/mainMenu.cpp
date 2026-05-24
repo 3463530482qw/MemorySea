@@ -1,4 +1,9 @@
-#include "youklx/iall.hpp"
+#include "vmode.cpp"
+
+
 extern "C" EXPORT void mainMenu() {
-    Scene.ptr = "d2";
+    while (window.isrun) {
+        window.run();
+    }
+    std::cout << Scene.ptr << std::endl;
 }

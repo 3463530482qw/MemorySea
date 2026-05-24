@@ -1,4 +1,4 @@
-#include "youklx/iall.hpp"
+#include "vmain.cpp"
 
 int main() {
     youklx::init(); //初始化库
@@ -16,7 +16,6 @@ int main() {
     Scene.ptr = "mainMenu";
 
     while(window.isrun) {
-        window.run();
         if (auto it = Scene.dict.find(Scene.ptr); it != Scene.dict.end()) {
             it->second();
         } 

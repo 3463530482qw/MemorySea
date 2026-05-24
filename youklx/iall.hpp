@@ -35,4 +35,3 @@
 #include "window/main.hpp"
 #include "scene/main.hpp"
 #include "init.hpp"
-#include "var.cpp"
