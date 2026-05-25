@@ -19,6 +19,7 @@ include_directories(
     D:/mingw64/spine-runtimes-4.3/spine-sdl/src
     D:/mingw64/stb-master/stb-master
     D:/MemorySea
+    C:/vulkan/Include
 )
 # 链接静态文件
 target_link_libraries(MemorySea

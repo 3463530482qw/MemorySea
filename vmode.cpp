@@ -4,3 +4,5 @@
 
 extern API youklx::Window window;
 extern API youklx::Scene  Scene;
+extern API youklx::Image image;
+extern API youklx::Vulkan vulkan;

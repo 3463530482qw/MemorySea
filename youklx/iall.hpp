@@ -11,6 +11,9 @@
 #include<ctime>
 #include<thread>
 
+#include <algorithm>
+#include <queue>
+
 #ifdef _WIN32
     #include <windows.h>
     #define ildll(name) LoadLibraryA(name)
@@ -23,6 +26,9 @@
     #define icdll(handle) dlclose(handle)
 #endif
 
+//媒体库
+#include "SDL_vulkan.h"
+
 //图片加载库
 #include "stb_image.h"
 
@@ -33,8 +39,12 @@
 #include "ini.c"
 #include "cpp/INIReader.cpp"
 
+//图形库
+#include <vulkan/vulkan_raii.hpp>
+
 //自定义封装库
 #include "image/main.hpp"
 #include "window/main.hpp"
 #include "scene/main.hpp"
+#include "vulkan/main.hpp"
 #include "init.hpp"

@@ -2,5 +2,7 @@
 
 #define API __declspec(dllexport)
 
-youklx::Window window;
-youklx::Scene Scene;
+API youklx::Window window;
+API youklx::Scene Scene;
+API youklx::Image image;
+API youklx::Vulkan vulkan;

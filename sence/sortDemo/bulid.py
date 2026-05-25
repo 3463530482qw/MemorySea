@@ -28,7 +28,6 @@ cmd = [
     "-I", "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
     "-I", "D:/mingw64/inih-r62/inih-r62",
     "-I", "D:/mingw64/stb-master/stb-master",
-    "-I", "C:/vulkan/Include",
     "-I", str(memorySea), 
     str(main_import_lib),
     "-L", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib",
