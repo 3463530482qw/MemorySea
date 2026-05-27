@@ -13,6 +13,7 @@ int main() {
         .icon(vimage.ima[0][0]) //加载窗口图标
         .ifps("ini/main.ini","windowcreate","fps"); //从windowcreate加载fps取出目标帧率
     }
+    draw.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.init(window); //初始化vulkan
     

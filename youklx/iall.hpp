@@ -46,5 +46,6 @@
 #include "image/main.hpp"
 #include "window/main.hpp"
 #include "scene/main.hpp"
+#include "draw/main.hpp"
 #include "vulkan/main.hpp"
 #include "init.hpp"

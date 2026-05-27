@@ -5,4 +5,5 @@
 API youklx::Window window;
 API youklx::Scene Scene;
 API youklx::Image image;
+API youklx::Draw draw;
 API youklx::Vulkan vulkan;
