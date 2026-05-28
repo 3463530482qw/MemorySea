@@ -1,6 +1,5 @@
 namespace youklx {
-    Vulkan& Vulkan::drawFrame() {
-        // 等待上一帧完成
+    Vulkan& Vulkan::drawFrame(Draw& draw) {
         (void) (*this->device).waitForFences(
             {*this->inFlightFences[this->currentFrame]}, VK_TRUE, UINT64_MAX);
 
@@ -11,7 +10,6 @@ namespace youklx {
                 *this->imageAvailableSemaphores[this->currentFrame],
                 nullptr
             );
-            // result 是 ResultValue<uint32_t>，必须取 .value
             imageIndex = result.value;
         } catch (const vk::OutOfDateKHRError& e) {
             this->recreateSwapChain();
@@ -24,13 +22,10 @@ namespace youklx {
             return *this;
         }
 
-        // 重置围栏
         (*this->device).resetFences({*this->inFlightFences[this->currentFrame]});
 
-        // 记录命令
-        this->recordCommandBuffer(imageIndex);
+        this->recordCommandBuffer(imageIndex, draw);
 
-        // 提交
         vk::PipelineStageFlags waitStages[] = {
             vk::PipelineStageFlagBits::eColorAttachmentOutput
         };
@@ -45,7 +40,6 @@ namespace youklx {
         };
         this->graphicsQueue->submit(submitInfo, *this->inFlightFences[this->currentFrame]);
 
-        // 呈现
         vk::PresentInfoKHR presentInfo{
             1,
             &*this->renderFinishedSemaphores[imageIndex],
@@ -59,7 +53,6 @@ namespace youklx {
             this->recreateSwapChain();
         }
 
-        // 切换到下一帧
         this->currentFrame = (this->currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         return *this;
     }

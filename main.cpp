@@ -2,6 +2,7 @@
 
 int main() {
     youklx::init(); //初始化库
+    image.ilpng("ini/main.ini", "icon");
     {
         youklx::Image vimage; //建立图像对象
         vimage.ilpng("ini/main.ini", "icon"); //从iocn标签下加载png图片

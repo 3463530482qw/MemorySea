@@ -1,6 +1,7 @@
 #include "vmode.cpp"
 extern "C" EXPORT void mainMenu() {
     float x = 0.0f;
+    
     while (window.isrun) {
         if(x > 1.0f) {
             x = 0.0f;
@@ -11,13 +12,22 @@ extern "C" EXPORT void mainMenu() {
 
         // 每帧清空并重新设置绘制命令
         draw.clear();
+        draw.image(image.ima[0][0], 0, 0, 400, 400,
+              0.0f, 0.0f, 0.0f,
+              {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f},
+              {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f});
         draw.line(0, 0, 1600, 100,
-              25.0f, 0, 0, 0,
-              {255, 0}, {0, 255}, {0, 255}, {1.0f, 0});
+              15.0f, 0, 0, 0,
+              {255, 0}, {0, 255}, {0, 255}, {1.0f, 1.0f});
+              draw.image(image.ima[0][0], 0, 0, 200, 200,
+              0.0f, 0.0f, 0.0f,
+              {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f},
+              {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f});
 
-        // Draw → Vulkan 桥接：生成顶点并上传
+        // Draw → Vulkan 桥接
         draw.vupdate();
+        vulkan.updateTexture(image.ima[0][0]);
         vulkan.updateVertexBuffer(draw.vertex);
-        vulkan.drawFrame();
+        vulkan.drawFrame(draw);
     }
 }

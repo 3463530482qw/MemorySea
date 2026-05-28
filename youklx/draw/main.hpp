@@ -1,4 +1,5 @@
 #include "parameters/linecmd.cpp"
+#include "parameters/imagecmd.cpp"
 #include "parameters/drawcmd.cpp"
 namespace youklx {
     class Draw {
@@ -28,6 +29,14 @@ namespace youklx {
                 std::array<int,2> r, std::array<int,2> g,
                 std::array<int,2> b, std::array<float,2> a
             ); // 绘制直线
+            Draw& image(
+                Plimage img,
+                float x, float y,
+                float w, float h,
+                float rotate, float rox, float roy,
+                std::array<float,4> c1, std::array<float,4> c2,
+                std::array<float,4> c3, std::array<float,4> c4
+            ); // 绘制图片
             Draw& clear();   // 清空绘制命令
             Draw& vupdate(); // 更新顶点数据
             
@@ -37,5 +46,7 @@ namespace youklx {
 #include "draw.cpp"
 #include "lstsize.cpp"
 #include "line.cpp"
+#include "image.cpp"
 #include "calculate/line.cpp"
+#include "calculate/image.cpp"
 #include "vupdate.cpp"
