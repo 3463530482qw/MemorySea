@@ -24,7 +24,7 @@ extern "C" EXPORT void mainMenu() {
               0.0f, 0.0f, 0.0f,
               {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f},
               {1.0f,1.0f,1.0f,1.0f}, {1.0f,1.0f,1.0f,1.0f});
-
+        draw.font(&Font, "Hello World你好", 400, 400, 48.0f, 0, 0, 0, {0,1,1,1});
         // Draw → Vulkan 桥接
         draw.vupdate();
         vulkan.updateTexture(image.ima[0][0]);

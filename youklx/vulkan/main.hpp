@@ -1,3 +1,4 @@
+#include "../font/main.hpp"
 namespace youklx {
     class Vulkan {
     public:
@@ -30,13 +31,21 @@ namespace youklx {
         std::optional<vk::raii::PipelineLayout> pipelineLayout;       // 管线布局
         std::optional<vk::raii::Pipeline> graphicsPipeline;            // 线条管线
         std::optional<vk::raii::Pipeline> graphicsPipelineImage;       // 图片管线
+        std::optional<vk::raii::Pipeline> graphicsPipelineFont;        // 字体管线
         std::optional<vk::raii::DescriptorSetLayout> descSetLayout;   // 描述符布局
         std::optional<vk::raii::DescriptorPool> descPool;             // 描述符池
         std::optional<vk::raii::Image> dummyImage;                    // 默认 1x1 纹理
         std::optional<vk::raii::DeviceMemory> dummyImageMemory;       // 默认纹理内存
         std::optional<vk::raii::ImageView> dummyImageView;            // 默认纹理视图
         std::optional<vk::raii::Sampler> dummySampler;                // 默认采样器
-        std::optional<vk::raii::DescriptorSet> descSet;               // 描述符集
+        std::optional<vk::raii::DescriptorSet> descSet;               // 描述符集（图片）
+
+        // 字体纹理资源
+        std::optional<vk::raii::Image> fontImage;                     // 字体图集图像
+        std::optional<vk::raii::DeviceMemory> fontImageMemory;        // 字体图集内存
+        std::optional<vk::raii::ImageView> fontImageView;             // 字体图集视图
+        std::optional<vk::raii::Sampler> fontSampler;                 // 字体图集采样器
+        std::optional<vk::raii::DescriptorSet> fontDescSet;           // 字体描述符集
 
         // 顶点缓冲
         std::optional<vk::raii::Buffer> vertexBuffer;      // 顶点缓冲
@@ -70,6 +79,7 @@ namespace youklx {
         Vulkan& recordCommandBuffer(uint32_t imageIndex, Draw& draw); // 记录命令缓冲
         Vulkan& updateVertexBuffer(const std::vector<float>& vertices); // 更新顶点缓冲
         Vulkan& updateTexture(const Plimage& img);         // 更新纹理
+        Vulkan& updateFontTexture(Font* font);              // 更新字体图集纹理
         uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
     public:
         Vulkan& lstsize(int w, int h);
@@ -96,3 +106,4 @@ namespace youklx {
 #include "vi/lstsize.cpp"
 #include "vi/updateVertexBuffer.cpp"
 #include "vi/updateTexture.cpp"
+#include "vi/updateFontTexture.cpp"

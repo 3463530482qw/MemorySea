@@ -81,7 +81,22 @@ Vulkan& Vulkan::createPipeline() {
     vk::PipelineColorBlendStateCreateInfo imageBlending{
         {}, VK_FALSE, vk::LogicOp::eCopy, 1, &imageBlend};
 
-    // 描述符布局（图片管线使用）
+    // 字体混合状态：Alpha混合（保留透明度）
+    vk::PipelineColorBlendAttachmentState fontBlend{};
+    fontBlend.blendEnable = VK_TRUE;
+    fontBlend.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+    fontBlend.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    fontBlend.colorBlendOp = vk::BlendOp::eAdd;
+    fontBlend.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+    fontBlend.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    fontBlend.alphaBlendOp = vk::BlendOp::eAdd;
+    fontBlend.colorWriteMask =
+        vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
+        vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
+    vk::PipelineColorBlendStateCreateInfo fontBlending{
+        {}, VK_FALSE, vk::LogicOp::eCopy, 1, &fontBlend};
+
+    // 描述符布局
     vk::DescriptorSetLayoutBinding samplerBinding{
         0, vk::DescriptorType::eCombinedImageSampler, 1,
         vk::ShaderStageFlagBits::eFragment, nullptr};
@@ -126,6 +141,26 @@ Vulkan& Vulkan::createPipeline() {
             &viewportState, &rasterizer, &multisampling, nullptr,
             &imageBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
         this->graphicsPipelineImage.emplace(*this->device, nullptr, pi);
+    }
+
+    // ===== 字体管线 (font.vert.spv + font.frag.spv) =====
+    // 字体使用 TriangleList 避免字符间退化三角形连接
+    {
+        vk::PipelineInputAssemblyStateCreateInfo fontInputAssembly{
+            {}, vk::PrimitiveTopology::eTriangleList, VK_FALSE};
+        auto fv = readSpv("font.vert.spv");
+        auto ff = readSpv("font.frag.spv");
+        vk::raii::ShaderModule vm{*this->device,
+            vk::ShaderModuleCreateInfo{{}, fv.size() * sizeof(uint32_t), fv.data()}};
+        vk::raii::ShaderModule fm{*this->device,
+            vk::ShaderModuleCreateInfo{{}, ff.size() * sizeof(uint32_t), ff.data()}};
+        vk::PipelineShaderStageCreateInfo vs{{}, vk::ShaderStageFlagBits::eVertex, *vm, "main"};
+        vk::PipelineShaderStageCreateInfo fs{{}, vk::ShaderStageFlagBits::eFragment, *fm, "main"};
+        vk::PipelineShaderStageCreateInfo ss[] = {vs, fs};
+        vk::GraphicsPipelineCreateInfo pi{{}, 2, ss, &vertexInput, &fontInputAssembly, nullptr,
+            &viewportState, &rasterizer, &multisampling, nullptr,
+            &fontBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
+        this->graphicsPipelineFont.emplace(*this->device, nullptr, pi);
     }
 
     // ===== 默认 1×1 白色纹理 =====
@@ -178,17 +213,28 @@ Vulkan& Vulkan::createPipeline() {
         vk::SamplerCreateInfo{{}, vk::Filter::eLinear, vk::Filter::eLinear, vk::SamplerMipmapMode::eLinear,
             vk::SamplerAddressMode::eRepeat, vk::SamplerAddressMode::eRepeat, vk::SamplerAddressMode::eRepeat});
 
-    vk::DescriptorPoolSize poolSize{vk::DescriptorType::eCombinedImageSampler, 1};
+    // 描述符池：分配 2 个 CombinedImageSampler（图片管线 + 字体管线）
+    vk::DescriptorPoolSize poolSize{vk::DescriptorType::eCombinedImageSampler, 2};
     this->descPool.emplace(*this->device,
-        vk::DescriptorPoolCreateInfo{vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 1, 1, &poolSize});
+        vk::DescriptorPoolCreateInfo{vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 2, 1, &poolSize});
+
+    // 描述符集 0：图片管线
     {
         auto descSets = this->device->allocateDescriptorSets(
             vk::DescriptorSetAllocateInfo{*this->descPool, 1, &**this->descSetLayout});
         this->descSet.emplace(std::move(descSets.front()));
-    }
-    {
         vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
         vk::WriteDescriptorSet writeDesc{**this->descSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
+        this->device->updateDescriptorSets(writeDesc, nullptr);
+    }
+
+    // 描述符集 1：字体管线
+    {
+        auto descSets = this->device->allocateDescriptorSets(
+            vk::DescriptorSetAllocateInfo{*this->descPool, 1, &**this->descSetLayout});
+        this->fontDescSet.emplace(std::move(descSets.front()));
+        vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
+        vk::WriteDescriptorSet writeDesc{**this->fontDescSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
         this->device->updateDescriptorSets(writeDesc, nullptr);
     }
 

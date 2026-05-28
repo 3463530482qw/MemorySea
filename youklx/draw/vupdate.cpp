@@ -38,6 +38,10 @@ namespace youklx {
                                 auto verts = imageVertices(cmd);
                                 threadResults[stth].vertices.insert(threadResults[stth].vertices.end(), verts.begin(), verts.end());
                             },
+                            [&threadResults,stth](Fontcmd& cmd) {
+                                auto verts = fontVertices(cmd);
+                                threadResults[stth].vertices.insert(threadResults[stth].vertices.end(), verts.begin(), verts.end());
+                            },
                         }, commands[n]);
                     }
                 });
@@ -63,6 +67,10 @@ namespace youklx {
                     },
                     [this](Imagecmd& cmd) {
                         auto verts = imageVertices(cmd);
+                        vertex.insert(vertex.end(), verts.begin(), verts.end());
+                    },
+                    [this](Fontcmd& cmd) {
+                        auto verts = fontVertices(cmd);
                         vertex.insert(vertex.end(), verts.begin(), verts.end());
                     },
                 }, commands[i]);

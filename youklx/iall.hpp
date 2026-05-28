@@ -47,6 +47,7 @@
 #include <vulkan/vulkan_raii.hpp>
 
 //自定义封装库
+#include "font/main.hpp"
 #include "image/main.hpp"
 #include "window/main.hpp"
 #include "scene/main.hpp"

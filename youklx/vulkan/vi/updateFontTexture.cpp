@@ -1,0 +1,84 @@
+namespace youklx {
+
+Vulkan& Vulkan::updateFontTexture(Font* font) {
+    if (!font || !font->loaded || font->atlasRGBA.empty()) return *this;
+
+    int tw = font->atlasW;
+    int th = font->atlasH;
+    unsigned char* pixelData = font->atlasRGBA.data();
+    vk::DeviceSize imgSize = static_cast<vk::DeviceSize>(tw) * th * 4;
+
+    // 上传 RGBA 像素到 GPU
+    vk::BufferCreateInfo stagingInfo{{}, imgSize, vk::BufferUsageFlagBits::eTransferSrc};
+    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
+    auto stagingReqs = stagingBuf.getMemoryRequirements();
+    vk::raii::DeviceMemory stagingMem{*this->device,
+        vk::MemoryAllocateInfo{stagingReqs.size,
+            findMemoryType(stagingReqs.memoryTypeBits,
+                vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)}};
+    stagingBuf.bindMemory(*stagingMem, 0);
+    void* ptr = stagingMem.mapMemory(0, imgSize);
+    memcpy(ptr, pixelData, static_cast<size_t>(imgSize));
+    stagingMem.unmapMemory();
+
+    this->device->waitIdle();
+
+    // 释放旧的字体纹理资源
+    this->fontImage.reset();
+    this->fontImageMemory.reset();
+    this->fontImageView.reset();
+    this->fontSampler.reset();
+
+    // 创建新的字体图集图像
+    vk::ImageCreateInfo imgInfo{{}, vk::ImageType::e2D, vk::Format::eR8G8B8A8Srgb,
+        {static_cast<uint32_t>(tw), static_cast<uint32_t>(th), 1}, 1, 1,
+        vk::SampleCountFlagBits::e1, vk::ImageTiling::eOptimal,
+        vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled};
+    this->fontImage.emplace(*this->device, imgInfo);
+    auto memReqs = this->fontImage->getMemoryRequirements();
+    this->fontImageMemory.emplace(*this->device,
+        vk::MemoryAllocateInfo{memReqs.size, findMemoryType(memReqs.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal)});
+    this->fontImage->bindMemory(*this->fontImageMemory, 0);
+
+    vk::raii::CommandBuffer copyCmd = std::move(
+        this->device->allocateCommandBuffers(vk::CommandBufferAllocateInfo{*this->commandPool, vk::CommandBufferLevel::ePrimary, 1}).front());
+    copyCmd.begin(vk::CommandBufferBeginInfo{vk::CommandBufferUsageFlagBits::eOneTimeSubmit});
+
+    vk::ImageMemoryBarrier barrier{vk::AccessFlagBits::eNone, vk::AccessFlagBits::eTransferWrite,
+        vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal,
+        VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED, *this->fontImage,
+        {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}};
+    copyCmd.pipelineBarrier(vk::PipelineStageFlagBits::eTopOfPipe, vk::PipelineStageFlagBits::eTransfer, {}, nullptr, nullptr, barrier);
+
+    vk::BufferImageCopy copyRegion{0, 0, 0, {vk::ImageAspectFlagBits::eColor, 0, 0, 1}, {0, 0, 0}, {static_cast<uint32_t>(tw), static_cast<uint32_t>(th), 1}};
+    copyCmd.copyBufferToImage(*stagingBuf, *this->fontImage, vk::ImageLayout::eTransferDstOptimal, copyRegion);
+
+    vk::ImageMemoryBarrier barrier2{vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead,
+        vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal,
+        VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED, *this->fontImage,
+        {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}};
+    copyCmd.pipelineBarrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader, {}, nullptr, nullptr, barrier2);
+    copyCmd.end();
+    this->graphicsQueue->submit(vk::SubmitInfo{0, nullptr, nullptr, 1, &*copyCmd});
+    this->graphicsQueue->waitIdle();
+
+    this->fontImageView.emplace(*this->device,
+        vk::ImageViewCreateInfo{{}, *this->fontImage, vk::ImageViewType::e2D, vk::Format::eR8G8B8A8Srgb,
+            {}, {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}});
+
+    // 采样器：字体图集用最近邻过滤避免模糊
+    this->fontSampler.emplace(*this->device,
+        vk::SamplerCreateInfo{{}, vk::Filter::eNearest, vk::Filter::eNearest, vk::SamplerMipmapMode::eNearest,
+            vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge});
+
+    // 更新字体描述符集指向新的图集
+    {
+        vk::DescriptorImageInfo imageInfo{*this->fontSampler, *this->fontImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
+        vk::WriteDescriptorSet writeDesc{**this->fontDescSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
+        this->device->updateDescriptorSets(writeDesc, nullptr);
+    }
+
+    return *this;
+}
+
+}

@@ -1,5 +1,7 @@
+#include "../font/main.hpp"
 #include "parameters/linecmd.cpp"
 #include "parameters/imagecmd.cpp"
+#include "parameters/fontcmd.cpp"
 #include "parameters/drawcmd.cpp"
 namespace youklx {
     class Draw {
@@ -39,6 +41,14 @@ namespace youklx {
                 std::array<float,4> c3 = {1.0f,1.0f,1.0f,1.0f}, 
                 std::array<float,4> c4 = {1.0f,1.0f,1.0f,1.0f}
             ); // 绘制图片
+            Draw& font(
+                Font* font,
+                std::string text,
+                float x, float y,
+                float fontSize,
+                float rotate = 0.0f, float rox = 0.0f, float roy = 0.0f,
+                std::array<float,4> rgba = {1.0f,1.0f,1.0f,1.0f}
+            ); // 绘制文字
             Draw& clear();   // 清空绘制命令
             Draw& vupdate(); // 更新顶点数据
             
@@ -49,6 +59,8 @@ namespace youklx {
 #include "lstsize.cpp"
 #include "line.cpp"
 #include "image.cpp"
+#include "font.cpp"
 #include "calculate/line.cpp"
 #include "calculate/image.cpp"
+#include "calculate/font.cpp"
 #include "vupdate.cpp"

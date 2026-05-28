@@ -61,6 +61,15 @@ namespace youklx {
                     this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
                     this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
                 },
+                [this, firstVertex, vertexCount](Fontcmd&) {
+                    this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineFont);
+                    if (this->fontDescSet) {
+                        this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->fontDescSet}, nullptr);
+                    }
+                    vk::DeviceSize vbOffsets{0};
+                    this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
+                    this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
+                },
             }, draw.commands[i]);
         }
 

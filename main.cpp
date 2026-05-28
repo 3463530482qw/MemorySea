@@ -17,6 +17,8 @@ int main() {
     draw.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.init(window); //初始化vulkan
+    Font.load("C:/Windows/Fonts/simhei.ttf", 48.0f);
+    vulkan.updateFontTexture(&Font);
     
     Scene.ldlli("ini/scene/main.ini","scene");
     Scene.ptr = "mainMenu";

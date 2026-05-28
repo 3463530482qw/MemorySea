@@ -39,6 +39,10 @@ def main():
     success &= compile_shader(SHADER_DIR/"image.vert", OUTPUT_DIR/"image.vert.spv", "image顶点")
     success &= compile_shader(SHADER_DIR/"image.frag", OUTPUT_DIR/"image.frag.spv", "image片段")
 
+    # font.vert + font.frag
+    success &= compile_shader(SHADER_DIR/"font.vert", OUTPUT_DIR/"font.vert.spv", "font顶点")
+    success &= compile_shader(SHADER_DIR/"font.frag", OUTPUT_DIR/"font.frag.spv", "font片段")
+
     print()
     if success:
         print("=== 所有着色器编译完成 ===")
