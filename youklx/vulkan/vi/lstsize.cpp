@@ -12,7 +12,7 @@ namespace youklx {
             std::cerr << "Configuration load failed, using default configuration" << std::endl;
         }
         //调用初始化
-        lstsize(reader.GetReal(ivrtp, witp, 1600), reader.GetReal(ivrtp, witp, 900));
+        lstsize(reader.GetReal(ivrtp, witp, 1600), reader.GetReal(ivrtp, hitp, 900));
         return *this;
     }
 }

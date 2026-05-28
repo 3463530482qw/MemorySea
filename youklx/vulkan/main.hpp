@@ -29,6 +29,11 @@ namespace youklx {
 
         std::optional<vk::raii::PipelineLayout> pipelineLayout; // 管线布局
         std::optional<vk::raii::Pipeline> graphicsPipeline;      // 图形管线
+
+        // 顶点缓冲
+        std::optional<vk::raii::Buffer> vertexBuffer;      // 顶点缓冲
+        std::optional<vk::raii::DeviceMemory> vertexBufferMemory; // 顶点缓冲内存
+        uint32_t vertexCount{0};                            // 当前顶点数量
     public:
         int stsizew{}; // 交换链逻辑大小宽度
         int stsizeh{}; // 交换链逻辑大小高度
@@ -55,6 +60,8 @@ namespace youklx {
             const vk::raii::PhysicalDevice& device
         );
         Vulkan& recordCommandBuffer(uint32_t imageIndex); // 记录命令缓冲
+        Vulkan& updateVertexBuffer(const std::vector<float>& vertices); // 更新顶点缓冲
+        uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
     public:
         Vulkan& lstsize(int w, int h);
         Vulkan& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
@@ -78,3 +85,4 @@ namespace youklx {
 #include "vl/createPipeline.cpp"
 #include "vl/recreateSwapChain.cpp"
 #include "vi/lstsize.cpp"
+#include "vi/updateVertexBuffer.cpp"

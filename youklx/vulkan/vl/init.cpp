@@ -44,6 +44,10 @@ namespace youklx {
         this->createSyncObjects();
         std::cout << "11. createSyncObjects 结束" << std::endl;
 
+        std::cout << "12. createPipeline 开始" << std::endl;
+        this->createPipeline();
+        std::cout << "12. createPipeline 结束" << std::endl;
+
         return *this;
     }
 }

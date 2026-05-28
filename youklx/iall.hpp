@@ -13,6 +13,10 @@
 
 #include <algorithm>
 #include <queue>
+#include <fstream>
+#include <cstring>
+#include <array>
+#include <cmath>
 
 #ifdef _WIN32
     #include <windows.h>

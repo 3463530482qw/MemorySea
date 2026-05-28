@@ -1,70 +1,101 @@
 namespace youklx {
 
-// 最小顶点着色器（SPIR-V）：直接输出一个顶点，但不产生任何三角形
-static const uint32_t vertSpv[] = {
-    0x07230203,0x00010000,0x00080001,0x0000000c,
-    0x00000000,0x00020011,0x00000001,0x0006000b,
-    0x00000001,0x4c534c47,0x6474732e,0x3035342e,
-    0x00000000,0x0003000e,0x00000000,0x00000001,
-    0x0007000f,0x00000000,0x00000004,0x6e69616d,
-    0x00000000
+// 顶点结构：2D位置 + RGBA颜色
+struct Vertex {
+    float x, y;
+    float r, g, b, a;
+
+    static vk::VertexInputBindingDescription getBindingDescription() {
+        return {0, sizeof(Vertex), vk::VertexInputRate::eVertex};
+    }
+
+    static std::array<vk::VertexInputAttributeDescription, 2> getAttributeDescriptions() {
+        return {{
+            {0, 0, vk::Format::eR32G32Sfloat, offsetof(Vertex, x)},
+            {1, 0, vk::Format::eR32G32B32A32Sfloat, offsetof(Vertex, r)}
+        }};
+    }
 };
 
-// 最小片段着色器（SPIR-V）：不输出任何颜色，依赖清屏颜色
-static const uint32_t fragSpv[] = {
-    0x07230203,0x00010000,0x00080001,0x0000000e,
-    0x00000000,0x00020011,0x00000001,0x0006000b,
-    0x00000001,0x4c534c47,0x6474732e,0x3035342e,
-    0x00000000,0x0003000e,0x00000000,0x00000001,
-    0x0007000f,0x00000004,0x00000004,0x6e69616d,
-    0x00000000,0x00030010,0x00000004,0x00000007
-};
+// 从文件读取 SPIR-V 字节码（尝试多个搜索路径）
+static std::vector<uint32_t> readSpv(const std::string& filename) {
+    const std::vector<std::string> searchPaths = {
+        "build/shaders/" + filename,
+        "shaders/" + filename,
+        "../build/shaders/" + filename,
+    };
+    for (const auto& path : searchPaths) {
+        std::ifstream file(path, std::ios::ate | std::ios::binary);
+        if (file.is_open()) {
+            size_t fileSize = static_cast<size_t>(file.tellg());
+            file.seekg(0);
+            std::vector<uint32_t> buffer(fileSize / sizeof(uint32_t));
+            file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+            file.close();
+            return buffer;
+        }
+    }
+    throw std::runtime_error("无法打开着色器文件: " + filename);
+}
 
 Vulkan& Vulkan::createPipeline() {
-    // 1. 从内嵌数组创建着色器模块
-    vk::raii::ShaderModule vertModule(*this->device,
-        vk::ShaderModuleCreateInfo{{}, sizeof(vertSpv), vertSpv});
-    vk::raii::ShaderModule fragModule(*this->device,
-        vk::ShaderModuleCreateInfo{{}, sizeof(fragSpv), fragSpv});
+    auto vertCode = readSpv("shader.vert.spv");
+    auto fragCode = readSpv("shader.frag.spv");
 
-    // 2. 着色器阶段
+    vk::raii::ShaderModule vertModule(*this->device,
+        vk::ShaderModuleCreateInfo{{}, vertCode.size() * sizeof(uint32_t), vertCode.data()});
+    vk::raii::ShaderModule fragModule(*this->device,
+        vk::ShaderModuleCreateInfo{{}, fragCode.size() * sizeof(uint32_t), fragCode.data()});
+
     vk::PipelineShaderStageCreateInfo vertStage{
         {}, vk::ShaderStageFlagBits::eVertex, *vertModule, "main"};
     vk::PipelineShaderStageCreateInfo fragStage{
         {}, vk::ShaderStageFlagBits::eFragment, *fragModule, "main"};
     vk::PipelineShaderStageCreateInfo stages[] = {vertStage, fragStage};
 
-    // 3. 顶点输入、输入装配
-    vk::PipelineVertexInputStateCreateInfo vertexInput{};
-    vk::PipelineInputAssemblyStateCreateInfo inputAssembly{
-        {}, vk::PrimitiveTopology::eTriangleList, VK_FALSE};
+    auto bindingDesc = Vertex::getBindingDescription();
+    auto attrDescs = Vertex::getAttributeDescriptions();
+    vk::PipelineVertexInputStateCreateInfo vertexInput{
+        {}, 1, &bindingDesc,
+        static_cast<uint32_t>(attrDescs.size()), attrDescs.data()
+    };
 
-    // 4. 动态状态
+    vk::PipelineInputAssemblyStateCreateInfo inputAssembly{
+        {}, vk::PrimitiveTopology::eTriangleStrip, VK_FALSE};
+
     std::vector<vk::DynamicState> dynamics = {
         vk::DynamicState::eViewport, vk::DynamicState::eScissor};
     vk::PipelineDynamicStateCreateInfo dynamicState{{}, dynamics};
 
-    // 5. 视口、光栅化、多重采样
     vk::PipelineViewportStateCreateInfo viewportState{{}, 1, nullptr, 1, nullptr};
+
+    // rasterizer：无剔除（2D 线条无需背面剔除）
     vk::PipelineRasterizationStateCreateInfo rasterizer{
         {}, VK_FALSE, VK_FALSE, vk::PolygonMode::eFill,
-        vk::CullModeFlagBits::eBack, vk::FrontFace::eClockwise,
+        vk::CullModeFlagBits::eNone, vk::FrontFace::eCounterClockwise,
         VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f};
+
     vk::PipelineMultisampleStateCreateInfo multisampling{};
 
-    // 6. 颜色混合
     vk::PipelineColorBlendAttachmentState blendAttachment{};
-    blendAttachment.colorWriteMask = 
+    blendAttachment.blendEnable = VK_TRUE;
+    blendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+    blendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    blendAttachment.colorBlendOp = vk::BlendOp::eAdd;
+    blendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+    blendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eZero;
+    blendAttachment.alphaBlendOp = vk::BlendOp::eAdd;
+    blendAttachment.colorWriteMask =
         vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
         vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
     vk::PipelineColorBlendStateCreateInfo colorBlending{
         {}, VK_FALSE, vk::LogicOp::eCopy, 1, &blendAttachment};
 
-    // 7. 管线布局
-    vk::PipelineLayoutCreateInfo layoutInfo{};
+    vk::PushConstantRange pushRange{
+        vk::ShaderStageFlagBits::eVertex, 0, sizeof(float) * 16};
+    vk::PipelineLayoutCreateInfo layoutInfo{{}, 0, nullptr, 1, &pushRange};
     this->pipelineLayout.emplace(*this->device, layoutInfo);
 
-    // 8. 创建管线
     vk::GraphicsPipelineCreateInfo pipelineInfo{
         {}, 2, stages, &vertexInput, &inputAssembly, nullptr,
         &viewportState, &rasterizer, &multisampling, nullptr,

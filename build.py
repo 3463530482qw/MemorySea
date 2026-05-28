@@ -15,6 +15,16 @@ run = Path("build/MemorySea.exe")
 #创建构建文件夹
 Path("./build").mkdir(exist_ok=True)
 
+# 编译着色器
+print("=== 编译着色器 ===")
+subprocess.run([
+    "python", str(mopath / "shaders" / "compile.py")
+], check=True)
+
+# 复制着色器到 build 目录
+shaders_build = Path("./build/shaders")
+shaders_build.mkdir(parents=True, exist_ok=True)
+
 subprocess.run([
     "cmake",
     "-G", "MinGW Makefiles",     # 指定使用 MinGW 生成器

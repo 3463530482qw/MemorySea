@@ -6,4 +6,10 @@ namespace youklx {
             nuth -= 4;
         }
     }
+
+    Draw& Draw::clear() {
+        commands.clear();
+        cptr = 0;
+        return *this;
+    }
 }

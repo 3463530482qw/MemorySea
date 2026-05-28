@@ -20,6 +20,11 @@ namespace youklx {
             renderPassInfo, vk::SubpassContents::eInline
         );
 
+        // 绑定图形管线
+        this->commandBuffers[this->currentFrame].bindPipeline(
+            vk::PipelineBindPoint::eGraphics, *this->graphicsPipeline
+        );
+
         // 交换链实际尺寸
         uint32_t chainW = this->swapChainExtent.width;
         uint32_t chainH = this->swapChainExtent.height;
@@ -36,11 +41,9 @@ namespace youklx {
         uint32_t vpW = chainW;
         uint32_t vpH = chainH;
         if (chainRatio > targetRatio) {
-            // 交换链更宽，以高度为基准
             vpH = chainH;
             vpW = static_cast<uint32_t>(chainH * targetRatio);
         } else {
-            // 交换链更高或等比例，以宽度为基准
             vpW = chainW;
             vpH = static_cast<uint32_t>(chainW / targetRatio);
         }
@@ -63,6 +66,37 @@ namespace youklx {
             {vpW, vpH}
         };
         this->commandBuffers[this->currentFrame].setScissor(0, scissor);
+
+        // 构建 MVP 矩阵：逻辑画布归一化 -> NDC
+        // 将逻辑坐标 [0, logW] x [0, logH] 映射到 NDC [-1, 1]
+        float mvp[16] = {
+            2.0f / logW, 0.0f, 0.0f, 0.0f,
+            0.0f, 2.0f / logH, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f, 1.0f
+        };
+
+        // 通过 push constant 传入 MVP 矩阵
+        this->commandBuffers[this->currentFrame].pushConstants<float>(
+            *this->pipelineLayout,
+            vk::ShaderStageFlagBits::eVertex,
+            0,
+            {mvp[0], mvp[1], mvp[2], mvp[3],
+             mvp[4], mvp[5], mvp[6], mvp[7],
+             mvp[8], mvp[9], mvp[10], mvp[11],
+             mvp[12], mvp[13], mvp[14], mvp[15]}
+        );
+
+        // 绑定顶点缓冲并绘制
+        if (this->vertexBuffer && this->vertexCount > 0) {
+            vk::DeviceSize offsets{0};
+            this->commandBuffers[this->currentFrame].bindVertexBuffers(
+                0, {**this->vertexBuffer}, offsets
+            );
+            this->commandBuffers[this->currentFrame].draw(
+                this->vertexCount, 1, 0, 0
+            );
+        }
 
         this->commandBuffers[this->currentFrame].endRenderPass();
         this->commandBuffers[this->currentFrame].end();

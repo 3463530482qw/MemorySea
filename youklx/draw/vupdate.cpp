@@ -2,6 +2,10 @@ namespace youklx {
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
     Draw& Draw::vupdate() {
+        vertex.clear();
+        vertexptr.clear();
+
+        sth.clear();
         // 开启关闭多线程计算
         if(cptr >= 50) {
             //分配命令
@@ -24,14 +28,25 @@ namespace youklx {
                     //调度命令
                     for(;ntth <= stth; ++ntth) {
                         std::visit(overloaded{
-                            [](Linecmd& commands) { /* 处理 line */ },
+                            [this](Linecmd& cmd) {
+                                auto verts = lineVertices(cmd);
+                                vertex.insert(vertex.end(), verts.begin(), verts.end());
+                            },
                         }, commands[ntth]);
                     }
                 });
             }
             
         } else {
-
+            for (int i{0}; i < cptr; ++i) {
+                vertexptr.push_back(static_cast<int>(vertex.size() / 6));
+                std::visit(overloaded{
+                    [this](Linecmd& cmd) {
+                        auto verts = lineVertices(cmd);
+                        vertex.insert(vertex.end(), verts.begin(), verts.end());
+                    },
+                }, commands[i]);
+            }
         }
         for (auto& t : sth) {
             if (t.joinable()) t.join();
