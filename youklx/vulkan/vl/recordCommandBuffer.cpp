@@ -27,23 +27,39 @@ namespace youklx {
 
         // 遍历绘制命令，按类型绑定不同管线
         for (int i = 0; i < draw.cptr; ++i) {
+            // 获取当前命令的起始顶点索引（由 vupdate 填充）
+            uint32_t firstVertex = (i < static_cast<int>(draw.vertexptr.size()))
+                ? static_cast<uint32_t>(draw.vertexptr[i]) : 0u;
+            // 计算实际顶点数：如果不是最后一条命令，取差值；否则取剩余全部
+            uint32_t vertexCount = 0;
+            if (i < static_cast<int>(draw.vertexptr.size())) {
+                uint32_t nextOffset = (i + 1 < draw.cptr && (i + 1) < static_cast<int>(draw.vertexptr.size()))
+                    ? static_cast<uint32_t>(draw.vertexptr[i + 1])
+                    : static_cast<uint32_t>(draw.vertex.size() / 8);
+                if (nextOffset > firstVertex) {
+                    vertexCount = nextOffset - firstVertex;
+                }
+            }
+            if (vertexCount == 0) continue; // 跳过退化命令
+
             std::visit(overloaded{
-                [this, &draw, i](Linecmd&) {
-                    // 线条命令：绑定线条管线（无纹理采样器）
-                    this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipeline);
-                    vk::DeviceSize vbOffsets{0};
-                    this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
-                    this->commandBuffers[this->currentFrame].draw(4, 1, i * 4, 0);
-                },
-                [this, &draw, i](Imagecmd&) {
-                    // 图片命令：绑定图片管线（带纹理采样器）
+                    [this, firstVertex, vertexCount](Linecmd&) {
+                        this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipeline);
+                        if (this->descSet) {
+                            this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->descSet}, nullptr);
+                        }
+                        vk::DeviceSize vbOffsets{0};
+                        this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
+                        this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
+                    },
+                [this, firstVertex, vertexCount](Imagecmd&) {
                     this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineImage);
                     if (this->descSet) {
                         this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->descSet}, nullptr);
                     }
                     vk::DeviceSize vbOffsets{0};
                     this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
-                    this->commandBuffers[this->currentFrame].draw(4, 1, i * 4, 0);
+                    this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
                 },
             }, draw.commands[i]);
         }

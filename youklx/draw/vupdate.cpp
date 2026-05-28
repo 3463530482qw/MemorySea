@@ -8,29 +8,50 @@ namespace youklx {
         sth.clear();
         if(cptr >= 50) {
             mod = static_cast<float>(cptr) / static_cast<float>(nuth);
-            emod = cptr - (mod * nuth);
+            emod = cptr - static_cast<int>(mod * nuth);
+            // 每个线程使用独立的局部缓冲区和局部偏移表，避免数据竞争
+            struct ThreadResult {
+                std::vector<float> vertices;
+                std::vector<int> offsets; // 每条命令的起始顶点索引（局部，以 8 浮点数为单位）
+            };
+            std::vector<ThreadResult> threadResults(nuth + 1);
             for (int st{0}; st <= nuth; ++st) {
                 auto stth = st;
-                auto ntth = nt;
                 auto modth = mod;
                 auto emodth = emod;
-                sth.emplace_back([this,stth,ntth,modth,emodth] () mutable {
-                    ntth = stth * modth;
-                    if (stth == ntth) { stth = ntth + emodth; }
-                    else { stth = ntth + modth; }
-                    for(;ntth <= stth; ++ntth) {
+                sth.emplace_back([this,stth,modth,emodth,&threadResults] () {
+                    int start = stth * static_cast<int>(modth);
+                    if (stth < emodth) start += stth;
+                    else start += emodth;
+                    int end = (stth + 1) * static_cast<int>(modth);
+                    if ((stth + 1) < emodth) end += (stth + 1);
+                    else end += emodth;
+                    if (end > cptr) end = cptr;
+                    for (int n = start; n < end; ++n) {
+                        threadResults[stth].offsets.push_back(static_cast<int>(threadResults[stth].vertices.size() / 8));
                         std::visit(overloaded{
-                            [this](Linecmd& cmd) {
+                            [&threadResults,stth](Linecmd& cmd) {
                                 auto verts = lineVertices(cmd);
-                                vertex.insert(vertex.end(), verts.begin(), verts.end());
+                                threadResults[stth].vertices.insert(threadResults[stth].vertices.end(), verts.begin(), verts.end());
                             },
-                            [this](Imagecmd& cmd) {
+                            [&threadResults,stth](Imagecmd& cmd) {
                                 auto verts = imageVertices(cmd);
-                                vertex.insert(vertex.end(), verts.begin(), verts.end());
+                                threadResults[stth].vertices.insert(threadResults[stth].vertices.end(), verts.begin(), verts.end());
                             },
-                        }, commands[ntth]);
+                        }, commands[n]);
                     }
                 });
+            }
+            for (auto& t : sth) { if (t.joinable()) t.join(); }
+            // 按命令顺序合并：每个线程处理的命令是连续的，依次拼接
+            for (int st{0}; st <= nuth; ++st) {
+                int globalBase = static_cast<int>(vertex.size() / 8);
+                for (size_t ci = 0; ci < threadResults[st].offsets.size(); ++ci) {
+                    vertexptr.push_back(globalBase + threadResults[st].offsets[ci]);
+                }
+                vertex.insert(vertex.end(),
+                    threadResults[st].vertices.begin(),
+                    threadResults[st].vertices.end());
             }
         } else {
             for (int i{0}; i < cptr; ++i) {
@@ -47,7 +68,6 @@ namespace youklx {
                 }, commands[i]);
             }
         }
-        for (auto& t : sth) { if (t.joinable()) t.join(); }
         return *this;
     }
 }

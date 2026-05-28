@@ -57,19 +57,29 @@ Vulkan& Vulkan::createPipeline() {
 
     vk::PipelineMultisampleStateCreateInfo multisampling{};
 
-    vk::PipelineColorBlendAttachmentState blendAttachment{};
-    blendAttachment.blendEnable = VK_TRUE;
-    blendAttachment.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
-    blendAttachment.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
-    blendAttachment.colorBlendOp = vk::BlendOp::eAdd;
-    blendAttachment.srcAlphaBlendFactor = vk::BlendFactor::eOne;
-    blendAttachment.dstAlphaBlendFactor = vk::BlendFactor::eZero;
-    blendAttachment.alphaBlendOp = vk::BlendOp::eAdd;
-    blendAttachment.colorWriteMask =
+    // 线条混合状态：Alpha混合
+    vk::PipelineColorBlendAttachmentState lineBlend{};
+    lineBlend.blendEnable = VK_TRUE;
+    lineBlend.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+    lineBlend.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    lineBlend.colorBlendOp = vk::BlendOp::eAdd;
+    lineBlend.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+    lineBlend.dstAlphaBlendFactor = vk::BlendFactor::eZero;
+    lineBlend.alphaBlendOp = vk::BlendOp::eAdd;
+    lineBlend.colorWriteMask =
         vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
         vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
-    vk::PipelineColorBlendStateCreateInfo colorBlending{
-        {}, VK_FALSE, vk::LogicOp::eCopy, 1, &blendAttachment};
+    vk::PipelineColorBlendStateCreateInfo lineBlending{
+        {}, VK_FALSE, vk::LogicOp::eCopy, 1, &lineBlend};
+
+    // 图片混合状态：覆盖模式（直接覆盖，不混合）
+    vk::PipelineColorBlendAttachmentState imageBlend{};
+    imageBlend.blendEnable = VK_FALSE;
+    imageBlend.colorWriteMask =
+        vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
+        vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
+    vk::PipelineColorBlendStateCreateInfo imageBlending{
+        {}, VK_FALSE, vk::LogicOp::eCopy, 1, &imageBlend};
 
     // 描述符布局（图片管线使用）
     vk::DescriptorSetLayoutBinding samplerBinding{
@@ -97,7 +107,7 @@ Vulkan& Vulkan::createPipeline() {
         vk::PipelineShaderStageCreateInfo ss[] = {vs, fs};
         vk::GraphicsPipelineCreateInfo pi{{}, 2, ss, &vertexInput, &inputAssembly, nullptr,
             &viewportState, &rasterizer, &multisampling, nullptr,
-            &colorBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
+            &lineBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
         this->graphicsPipeline.emplace(*this->device, nullptr, pi);
     }
 
@@ -114,7 +124,7 @@ Vulkan& Vulkan::createPipeline() {
         vk::PipelineShaderStageCreateInfo ss[] = {vs, fs};
         vk::GraphicsPipelineCreateInfo pi{{}, 2, ss, &vertexInput, &inputAssembly, nullptr,
             &viewportState, &rasterizer, &multisampling, nullptr,
-            &colorBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
+            &imageBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
         this->graphicsPipelineImage.emplace(*this->device, nullptr, pi);
     }
 

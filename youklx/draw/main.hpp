@@ -33,9 +33,11 @@ namespace youklx {
                 Plimage img,
                 float x, float y,
                 float w, float h,
-                float rotate, float rox, float roy,
-                std::array<float,4> c1, std::array<float,4> c2,
-                std::array<float,4> c3, std::array<float,4> c4
+                float rotate = 0.0f, float rox = 0.0f, float roy = 0.0f,
+                std::array<float,4> c1 = {1.0f,1.0f,1.0f,1.0f}, 
+                std::array<float,4> c2 = {1.0f,1.0f,1.0f,1.0f},
+                std::array<float,4> c3 = {1.0f,1.0f,1.0f,1.0f}, 
+                std::array<float,4> c4 = {1.0f,1.0f,1.0f,1.0f}
             ); // 绘制图片
             Draw& clear();   // 清空绘制命令
             Draw& vupdate(); // 更新顶点数据
