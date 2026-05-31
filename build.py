@@ -39,16 +39,21 @@ subprocess.run([
 
 
 #sdl动态链接库位置与目标位置
-sdldll = Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll")
+sdldll = [ 
+    Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll"),
+    Path("D:/mingw64/bin/libunwind.dll"),
+    Path("D:/mingw64/bin/libc++.dll")
+]
 sdldlldst = Path("./build")
-
-try:
-    shutil.copy(sdldll, sdldlldst)
-    print("dll文件复制成功！")
-except FileNotFoundError:
-    print("dll源文件不存在！")
-except PermissionError:
-    print("dll没有权限操作该文件或目录！")
+for dst in sdldll:
+    try:
+        shutil.copy(dst, sdldlldst)
+        print(f"dll文件复制成功！目标位置: {dst}")
+    except FileNotFoundError:
+        print("dll源文件不存在！")
+        break # 源文件不存在，后续循环也没意义，直接退出
+    except PermissionError:
+        print(f"没有权限操作该文件或目录: {dst}")
 
 #配置文件夹复制
 ini = Path("ini")
@@ -73,6 +78,18 @@ except FileNotFoundError:
     print("图片源文件不存在！")
 except PermissionError:
     print("图片没有权限操作该文件或目录！")
+
+#字体文件复制
+ini = Path("font")
+inip = Path("./build/font")
+
+try:
+    shutil.copytree(ini, inip, dirs_exist_ok=True)
+    print("字体文件复制成功！")
+except FileNotFoundError:
+    print("字体源文件不存在！")
+except PermissionError:
+    print("字体没有权限操作该文件或目录！")
 
 subprocess.run([
     str(run)],

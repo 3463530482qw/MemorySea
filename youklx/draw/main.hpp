@@ -1,4 +1,3 @@
-#include "../font/main.hpp"
 #include "parameters/linecmd.cpp"
 #include "parameters/imagecmd.cpp"
 #include "parameters/fontcmd.cpp"
@@ -25,21 +24,24 @@ namespace youklx {
             Draw& lstsize(int w, int h); // 设置逻辑大小
             Draw& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
             Draw& line(
-                int x1, int y1, int x2, int y2,
-                float thickness,
-                int rotate, int rox, int roy,
-                std::array<int,2> r, std::array<int,2> g,
-                std::array<int,2> b, std::array<float,2> a
+                int x1 = 0, int y1 = 0, 
+                int x2 = 10, int y2 = 10,
+                float thickness = 1,
+                int rotate = 0, int rox = 0, int roy = 0,
+                std::array<int,2> r = {255,255},
+                std::array<int,2> g = {255,255},
+                std::array<int,2> b = {255,255}, 
+                std::array<float,2> a = {255,255}
             ); // 绘制直线
             Draw& image(
                 Plimage img,
                 float x, float y,
                 float w, float h,
                 float rotate = 0.0f, float rox = 0.0f, float roy = 0.0f,
-                std::array<float,4> c1 = {1.0f,1.0f,1.0f,1.0f}, 
-                std::array<float,4> c2 = {1.0f,1.0f,1.0f,1.0f},
-                std::array<float,4> c3 = {1.0f,1.0f,1.0f,1.0f}, 
-                std::array<float,4> c4 = {1.0f,1.0f,1.0f,1.0f}
+                std::array<float,4> c1 = {255.0f,255.0f,255.0f,1.0f}, 
+                std::array<float,4> c2 = {255.0f,255.0f,255.0f,1.0f},
+                std::array<float,4> c3 = {255.0f,255.0f,255.0f,1.0f}, 
+                std::array<float,4> c4 = {255.0f,255.0f,255.0f,1.0f}
             ); // 绘制图片
             Draw& font(
                 Font* font,

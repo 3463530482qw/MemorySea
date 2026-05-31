@@ -1,18 +1,14 @@
 namespace youklx {
 
-Vulkan& Vulkan::updateTexture(const Plimage& img) {
-    struct Getter {
-        int w = 0, h = 0;
-        unsigned char* data = nullptr;
-        void operator()(const Plpng& png) {
-            w = png.w; h = png.h; data = png.data;
-        }
-    } getter;
-    std::visit(getter, img);
-    if (!getter.data || getter.w == 0 || getter.h == 0) return *this;
+Vulkan& Vulkan::updateTexture(Image& img) {
+    // 纹理未变化时跳过重建（图片是静态数据，只需构建一次）
+    if (textureBuilt) return *this;
 
-    int texW = getter.w, texH = getter.h;
-    unsigned char* pixelData = getter.data;
+    img.buildAtlas();  // 确保图集已构建
+
+    if (img.atlasData.empty() || img.atlasW == 0 || img.atlasH == 0) return *this;
+
+    int texW = img.atlasW, texH = img.atlasH;
     vk::DeviceSize imgSize = static_cast<vk::DeviceSize>(texW) * texH * 4;
 
     vk::BufferCreateInfo stagingInfo{{}, imgSize, vk::BufferUsageFlagBits::eTransferSrc};
@@ -24,7 +20,7 @@ Vulkan& Vulkan::updateTexture(const Plimage& img) {
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)}};
     stagingBuf.bindMemory(*stagingMem, 0);
     void* ptr = stagingMem.mapMemory(0, imgSize);
-    memcpy(ptr, pixelData, static_cast<size_t>(imgSize));
+    memcpy(ptr, img.atlasData.data(), static_cast<size_t>(imgSize));
     stagingMem.unmapMemory();
 
     this->device->waitIdle();
@@ -65,11 +61,20 @@ Vulkan& Vulkan::updateTexture(const Plimage& img) {
         vk::ImageViewCreateInfo{{}, *this->dummyImage, vk::ImageViewType::e2D, vk::Format::eR8G8B8A8Srgb,
             {}, {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}});
 
-    vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
-    vk::WriteDescriptorSet writeDesc{**this->descSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
-    this->device->updateDescriptorSets(writeDesc, nullptr);
+    {
+        vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
+        vk::WriteDescriptorSet writeDesc{**this->descSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
+        this->device->updateDescriptorSets(writeDesc, nullptr);
+    }
+    // 确保字体描述符集指向重建后的 ImageView
+    if (this->fontDescSet) {
+        vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
+        vk::WriteDescriptorSet writeDesc{**this->fontDescSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
+        this->device->updateDescriptorSets(writeDesc, nullptr);
+    }
 
+    textureBuilt = true;
     return *this;
 }
 
-}
+} // namespace youklx

@@ -1,3 +1,9 @@
+// 强制源文件和执行字符集为 UTF-8（MinGW 兼容）
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#endif
+#pragma execution_character_set("utf-8")
+
 //cpp标准库
 #include<iostream>
 #include<variant>
@@ -5,6 +11,7 @@
 #include<string>
 #include<any>
 #include<unordered_map>
+#include<unordered_set>
 #include<stdexcept>
 #include<functional>
 #include<chrono>
@@ -35,6 +42,10 @@
 
 //图片加载库
 #include "stb_image.h"
+
+//字体加载库
+#define STB_TRUETYPE_IMPLEMENTATION
+#include "stb_truetype.h"
 
 //动画库
 #include <spine-sdl-cpp.h>

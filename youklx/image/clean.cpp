@@ -12,6 +12,9 @@ namespace youklx {
             }
             ima.clear();
         }
+        atlasData.clear();
+        atlasW = 0;
+        atlasH = 0;
         return *this;
     }
 }

@@ -19,6 +19,7 @@ main_import_lib = memorySea / "build" / "libMemorySea.dll.a" #获取主程序导
 
 cmd = [
     "g++", "-shared", "-std=c++23", "-Os", "-s",
+    "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
     "-DEXPORT=__declspec(dllexport)",
     "-o", str(build_dir / f"{proj_name}.dll"),
     *sources,
@@ -32,7 +33,8 @@ cmd = [
     "-I", str(memorySea), 
     str(main_import_lib),
     "-L", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib",
-    "-lSDL3"
+    "-lSDL3",
+    "-lwinmm"
 ]
 
 subprocess.run(cmd, check=True)

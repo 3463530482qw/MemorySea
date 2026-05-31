@@ -2,7 +2,7 @@
 
 int main() {
     youklx::init(); //初始化库
-    image.ilpng("ini/main.ini", "icon");
+    image.ilpng("ini/main.ini", "mainMenu");
     {
         youklx::Image vimage; //建立图像对象
         vimage.ilpng("ini/main.ini", "icon"); //从iocn标签下加载png图片
@@ -14,16 +14,17 @@ int main() {
         .icon(vimage.ima[0][0]) //加载窗口图标
         .ifps("ini/main.ini","windowcreate","fps"); //从windowcreate加载fps取出目标帧率
     }
+    window.ilstsize("ini/main.ini","windowcreate","sw","sh");
     draw.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.ilstsize("ini/main.ini","windowcreate","sw","sh");
     vulkan.init(window); //初始化vulkan
-    Font.load("C:/Windows/Fonts/simhei.ttf", 48.0f);
-    vulkan.updateFontTexture(&Font);
+    font.px(100.0f).load("font/LXGWWenKaiLite-Light.ttf");
+    vulkan.updateFontTexture(&font);
     
-    Scene.ldlli("ini/scene/main.ini","scene");
-    Scene.ptr = "mainMenu";
+    scene.ldlli("ini/scene/main.ini","scene");
+    scene.ptr = "mainMenu";
     while(window.isrun) {
-        if (auto it = Scene.dict.find(Scene.ptr); it != Scene.dict.end()) {
+        if (auto it = scene.dict.find(scene.ptr); it != scene.dict.end()) {
             it->second();
         } 
     }

@@ -72,9 +72,15 @@ Vulkan& Vulkan::createPipeline() {
     vk::PipelineColorBlendStateCreateInfo lineBlending{
         {}, VK_FALSE, vk::LogicOp::eCopy, 1, &lineBlend};
 
-    // 图片混合状态：覆盖模式（直接覆盖，不混合）
+    // 图片混合状态：启用 Alpha 混合以支持 PNG 透明度
     vk::PipelineColorBlendAttachmentState imageBlend{};
-    imageBlend.blendEnable = VK_FALSE;
+    imageBlend.blendEnable = VK_TRUE;
+    imageBlend.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+    imageBlend.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    imageBlend.colorBlendOp = vk::BlendOp::eAdd;
+    imageBlend.srcAlphaBlendFactor = vk::BlendFactor::eOne;
+    imageBlend.dstAlphaBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
+    imageBlend.alphaBlendOp = vk::BlendOp::eAdd;
     imageBlend.colorWriteMask =
         vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
         vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA;
@@ -211,7 +217,7 @@ Vulkan& Vulkan::createPipeline() {
             {}, {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}});
     this->dummySampler.emplace(*this->device,
         vk::SamplerCreateInfo{{}, vk::Filter::eLinear, vk::Filter::eLinear, vk::SamplerMipmapMode::eLinear,
-            vk::SamplerAddressMode::eRepeat, vk::SamplerAddressMode::eRepeat, vk::SamplerAddressMode::eRepeat});
+            vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge});
 
     // 描述符池：分配 2 个 CombinedImageSampler（图片管线 + 字体管线）
     vk::DescriptorPoolSize poolSize{vk::DescriptorType::eCombinedImageSampler, 2};

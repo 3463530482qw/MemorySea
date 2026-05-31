@@ -3,8 +3,8 @@
 #define API __declspec(dllexport)
 
 API youklx::Window window;
-API youklx::Scene Scene;
+API youklx::Scene scene;
 API youklx::Image image;
-API youklx::Font Font;
+API youklx::Font font;
 API youklx::Draw draw;
 API youklx::Vulkan vulkan;

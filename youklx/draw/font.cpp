@@ -1,21 +1,55 @@
 namespace youklx {
-    Draw& Draw::font(
-        Font* font,
-        std::string text,
-        float x, float y,
-        float fontSize,
-        float rotate, float rox, float roy,
-        std::array<float,4> rgba
-    ) {
-        Fontcmd cmd;
-        cmd.font = font;
-        cmd.text = text;
-        cmd.x = x; cmd.y = y;
-        cmd.fontSize = fontSize;
-        cmd.rotate = rotate; cmd.rox = rox; cmd.roy = roy;
-        cmd.rgba = rgba;
-        commands.emplace_back(cmd);
-        cptr += 1;
-        return *this;
+
+#ifdef _WIN32
+// 智能编码转换：自动检测输入是 UTF-8 还是 GBK，统一转为 UTF-8
+static std::string toUTF8(const std::string& input) {
+    if (input.empty()) return input;
+
+    // 先尝试以 UTF-8 解释，检测是否有无效序列
+    int wlen = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                                   input.c_str(), (int)input.size(), nullptr, 0);
+    if (wlen > 0) {
+        // 有效的 UTF-8，无需转换
+        return input;
     }
+
+    // UTF-8 解析失败 → 按系统 ANSI (GBK) 转 UTF-8
+    wlen = MultiByteToWideChar(CP_ACP, 0, input.c_str(), (int)input.size(), nullptr, 0);
+    if (wlen <= 0) return input;
+
+    std::wstring wstr(wlen, L'\0');
+    MultiByteToWideChar(CP_ACP, 0, input.c_str(), (int)input.size(), &wstr[0], wlen);
+    int ulen = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(),
+                                   nullptr, 0, nullptr, nullptr);
+    if (ulen <= 0) return input;
+    std::string result(ulen, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(),
+                        &result[0], ulen, nullptr, nullptr);
+    return result;
+}
+#else
+static std::string toUTF8(const std::string& input) { return input; }
+#endif
+
+Draw& Draw::font(
+    Font* font,
+    std::string text,
+    float x, float y,
+    float fontSize,
+    float rotate, float rox, float roy,
+    std::array<float,4> rgba
+) {
+    font->ensure(text);  // 按需加载字形到图集
+
+    Fontcmd cmd;
+    cmd.font = font;
+    cmd.text = toUTF8(text);  // 自动检测编码并转为 UTF-8
+    cmd.x = x; cmd.y = y;
+    cmd.fontSize = fontSize;
+    cmd.rotate = rotate; cmd.rox = rox; cmd.roy = roy;
+    cmd.rgba = rgba;
+    commands.emplace_back(cmd);
+    cptr += 1;
+    return *this;
+}
 }

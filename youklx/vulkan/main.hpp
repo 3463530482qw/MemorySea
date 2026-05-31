@@ -1,4 +1,3 @@
-#include "../font/main.hpp"
 namespace youklx {
     class Vulkan {
     public:
@@ -39,6 +38,7 @@ namespace youklx {
         std::optional<vk::raii::ImageView> dummyImageView;            // 默认纹理视图
         std::optional<vk::raii::Sampler> dummySampler;                // 默认采样器
         std::optional<vk::raii::DescriptorSet> descSet;               // 描述符集（图片）
+        bool textureBuilt{false};                                      // 纹理是否已构建（避免每帧重建）
 
         // 字体纹理资源
         std::optional<vk::raii::Image> fontImage;                     // 字体图集图像
@@ -78,7 +78,7 @@ namespace youklx {
         );
         Vulkan& recordCommandBuffer(uint32_t imageIndex, Draw& draw); // 记录命令缓冲
         Vulkan& updateVertexBuffer(const std::vector<float>& vertices); // 更新顶点缓冲
-        Vulkan& updateTexture(const Plimage& img);         // 更新纹理
+        Vulkan& updateTexture(Image& img);                  // 更新纹理图集
         Vulkan& updateFontTexture(Font* font);              // 更新字体图集纹理
         uint32_t findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags properties);
     public:
