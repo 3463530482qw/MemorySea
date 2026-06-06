@@ -1,22 +1,43 @@
 namespace youklx {
     Vulkan& Vulkan::pickPhysicalDevice() {
         // 1. 获取所有可用的物理设备（GPU）
-        auto physicalDevices = this->instance->enumeratePhysicalDevices();
+        auto physicalDevices = instance->enumeratePhysicalDevices();
 
-        uint32_t bestScore = 0;   // 最高评分
-        size_t bestIndex = 0;     // 最高评分对应的设备索引
+        if (physicalDevices.empty()) {
+            throw std::runtime_error("未找到任何支持 Vulkan 的物理设备(GPU)");
+        }
 
-        // 2. 遍历所有设备，逐一评分
+        uint32_t bestScore = 0;
+        size_t bestIndex = 0;
+        bool foundSuitable = false;
+
+        // 2. 遍历所有设备，逐一评分（仅考虑支持 swapchain 的设备）
         for (size_t i = 0; i < physicalDevices.size(); i++) {
-            uint32_t score = this->ratePhysicalDevice(physicalDevices[i]);
-            if (score > bestScore) {
+            // 检查设备是否支持 swapchain 扩展（窗口渲染必需）
+            auto deviceExtensions = physicalDevices[i].enumerateDeviceExtensionProperties();
+            bool hasSwapchain = false;
+            for (const auto& ext : deviceExtensions) {
+                if (strcmp(ext.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+                    hasSwapchain = true;
+                    break;
+                }
+            }
+            if (!hasSwapchain) continue;  // 不支持 swapchain，跳过
+
+            uint32_t score = ratePhysicalDevice(physicalDevices[i]);
+            if (score > bestScore || !foundSuitable) {
                 bestScore = score;
                 bestIndex = i;
+                foundSuitable = true;
             }
         }
 
+        if (!foundSuitable) {
+            throw std::runtime_error("未找到支持 VK_KHR_swapchain 扩展的物理设备，请更新显卡驱动");
+        }
+
         // 3. 选用评分最高的物理设备
-        this->physicalDevice.emplace(std::move(physicalDevices[bestIndex]));
+        physicalDevice.emplace(std::move(physicalDevices[bestIndex]));
 
         return *this;
     }

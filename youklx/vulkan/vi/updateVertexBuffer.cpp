@@ -49,6 +49,14 @@ Vulkan& Vulkan::updateVertexBuffer(const std::vector<float>& vertices) {
         this->vertexBuffer->bindMemory(*this->vertexBufferMemory, 0);
     }
 
+    // 等待上一帧提交的 GPU 工作完成，防止覆盖 GPU 正在读取的顶点数据
+    // drawFrame 结束后 currentFrame 已推进，上一帧索引 = (currentFrame + MAX-1) % MAX
+    if (!this->inFlightFences.empty()) {
+        uint32_t prevFrame = (this->currentFrame == 0) ? (MAX_FRAMES_IN_FLIGHT - 1) : (this->currentFrame - 1);
+        (void) (*this->device).waitForFences(
+            {*this->inFlightFences[prevFrame]}, VK_TRUE, UINT64_MAX);
+    }
+
     void* data = this->vertexBufferMemory->mapMemory(0, bufferSize);
     memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
     this->vertexBufferMemory->unmapMemory();

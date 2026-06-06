@@ -15,6 +15,10 @@ namespace youklx {
     Scene& Scene::ldll(std::string pdll, std::string nfun) {
         // 加载动态链接库，获取句柄
         auto handle = ildll(pdll.c_str());
+        if (!handle) {
+            std::cerr << "Failed to load DLL: " << pdll << std::endl;
+            return *this;
+        }
         
         // 获取库中指定名称的函数指针
         void (*func)() = (void(*)())igfunc(handle, nfun.c_str());
@@ -23,6 +27,9 @@ namespace youklx {
         if (func) {
             dict[nfun] = func;       // 记录函数名与函数指针的映射
             handles.insert(handle);  // 保存句柄用于后续释放
+        } else {
+            std::cerr << "Function " << nfun << " not found in " << pdll << std::endl;
+            icdll(handle);  // 函数未找到，释放已加载的 DLL
         }
         
         return *this;
@@ -39,11 +46,19 @@ namespace youklx {
             for (auto& ildll : ca.vildll) {
                 auto ildlltp = ildll;
                 ildll = reader.Get(ivrtp, ildll, "");
+                if (ildll.empty()) continue;
                 auto handle = ildll(ildll.c_str());
+                if (!handle) {
+                    std::cerr << "Failed to load DLL: " << ildll << std::endl;
+                    continue;
+                }
                 void (*func)() = (void(*)())igfunc(handle, ildlltp.c_str());
                 if (func) {
                     dict[ildlltp] = func;
-                    handles.insert(handle);  
+                    handles.insert(handle);
+                } else {
+                    std::cerr << "Function " << ildlltp << " not found in " << ildll << std::endl;
+                    icdll(handle);
                 }
             }
         }

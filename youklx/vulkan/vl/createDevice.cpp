@@ -30,11 +30,11 @@ namespace youklx {
         };
 
         // 5. 创建逻辑设备
-        this->device.emplace(*this->physicalDevice, createInfo);
+        device.emplace(*physicalDevice, createInfo);
 
         // 6. 获取图形队列
-        this->graphicsQueue.emplace(
-            (*this->device).getQueue(this->graphicsFamilyIndex, 0)
+        graphicsQueue.emplace(
+            (*device).getQueue(graphicsFamilyIndex, 0)
         );
 
         return *this;

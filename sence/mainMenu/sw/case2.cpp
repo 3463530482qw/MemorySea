@@ -68,8 +68,8 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
         dl = 0;
         fwh = false;
     } else if (fw > 100 || fh > 110) {
-        fw = fw + (100 - fw) * window.time.different * 3;
-        fh = fh + (110 - fh) * window.time.different * 3;
+        fw = fw + (100 - fw) * window.time.different * 2.7;
+        fh = fh + (110 - fh) * window.time.different * 2.3;
         if (fw2 < 1250 ) {} else { fw2 = fw2 + (1250 - fw2) * 6 * window.time.different; }
         if (fw3 < 1250 ) {} else { fw3 = fw3 + (1250 - fw3) * 4.5 * window.time.different; }
         if (fw4 < 1250 ) {} else { fw4 = fw4 + (1250 - fw4)  * 3 * window.time.different; }
@@ -77,8 +77,8 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
         dl =  161 - static_cast<int>((static_cast<float>(440 - fw) / 340.0f) * 161);
         i1x = 1600 - i1w;
         i1y = 900 - i1h;
-        i1w = i1w + 1 + i1x * 0.1f;
-        i1h = i1h + 1 + i1y * 0.1f;
+        i1w = i1w + 1 + i1x * 0.03f;
+        i1h = i1h + 1 + i1y * 0.03f;
     }
 
     
@@ -86,13 +86,17 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     draw.image(image.ima[0][0], 0, 0, 1600, 900);
     draw.image(image.ima[0][1], i1x, i1y, i1w, i1h);
 
+    static youklx::Linecmd curve{
+        .thickness = 5,
+        .r = {229, 229},
+        .g = {229, 229},
+        .b = {229, 229},
+        .a = {0.05f, 0.05f}
+    };
     for (int i = 160; i > dl; i--) {
-        draw.line(
-            lx[i], ly[i], lx[i - 1], ly[i - 1], 
-            5,0,0,0,
-            {229,229},{229,229},
-            {229,229},{0.05f, 0.05f}
-        );
+        curve.sp1(lx[i], ly[i])
+             .sp2(lx[i - 1], ly[i - 1]);
+        draw.line(curve);
     }
 
     draw.font(&font, "图形化界面展示", fw, fh, 120.0f,0,0,0,{0.898f,0.898f,0.898f,1.0f});

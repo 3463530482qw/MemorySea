@@ -20,13 +20,11 @@ std::vector<float> imageVertices(const Imagecmd& cmd) {
         rot(x1,y1); rot(x2,y2); rot(x3,y3); rot(x4,y4);
     }
     
-    // UV 坐标微缩：避免采样到纹理边缘的半透明像素，防止缩放时出现白色描边
-    // 收缩量约为 0.5 像素（假设纹理尺寸为 1024）
-    constexpr float uvClamp = 0.0005f;
-    float u0 = cmd.u0 + uvClamp;
-    float v0 = cmd.v0 + uvClamp;
-    float u1 = cmd.u1 - uvClamp;
-    float v1 = cmd.v1 - uvClamp;
+    // 图集中图片间有 2px 透明 padding，无需 UV 收缩（uvClamp 已移除）
+    float u0 = cmd.u0;
+    float v0 = cmd.v0;
+    float u1 = cmd.u1;
+    float v1 = cmd.v1;
     
     return {
         x1,y1, u0,v0, c(cmd.c1,0),c(cmd.c1,1),c(cmd.c1,2),c(cmd.c1,3),

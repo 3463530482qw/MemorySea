@@ -32,7 +32,7 @@ namespace youklx {
         bool not_focusable{false};        // 窗口不应获取焦点
         SDL_WindowFlags flage{0};
     public:
-        windowcreateinfo& fname(bool exname) { name = exname; return *this; };
+        windowcreateinfo& fname(std::string exname) { name = exname; return *this; };
         windowcreateinfo& fw(int exw) { w = exw; return *this; };
         windowcreateinfo& fh(int exh) { h = exh; return *this; }; 
         windowcreateinfo& fopengl(bool exopengl) { opengl = exopengl; return *this; }

@@ -6,9 +6,11 @@ Image& Image::buildAtlas() {
     atlasH = 0;
     if (ima.empty()) return *this;
 
-    // 计算所有图片总高度（水平拼接：所有图片放在一行）
+    // 计算所有图片总宽度 + padding（水平拼接，图片间留透明间隔防采样 bleeding）
+    constexpr int PADDING = 2;
     int totalW = 0;
     int maxH = 0;
+    int imgCount = 0;
     for (auto& group : ima) {
         for (auto& imgvar : group) {
             Plpng* png = nullptr;
@@ -18,15 +20,18 @@ Image& Image::buildAtlas() {
             if (!png || !png->data || png->w <= 0 || png->h <= 0) continue;
             totalW += png->w;
             if (png->h > maxH) maxH = png->h;
+            imgCount++;
         }
     }
     if (totalW == 0 || maxH == 0) return *this;
+    // 加上所有图片间的 padding（每张图片后 +PADDING，最后一张不加）
+    totalW += PADDING * imgCount;
 
     atlasW = totalW;
     atlasH = maxH;
     atlasData.resize(atlasW * atlasH * 4, 0);
 
-    int curX = 0;
+    int curX = PADDING;  // 左侧留 padding，防止线性采样 bleeding
     for (auto& group : ima) {
         for (auto& imgvar : group) {
             Plpng* png = nullptr;
@@ -35,7 +40,7 @@ Image& Image::buildAtlas() {
             }
             if (!png || !png->data || png->w <= 0 || png->h <= 0) continue;
 
-            // 设置图集 UV
+            // 设置图集 UV（指向实际图片数据，不含 padding）
             png->u0 = (float)curX / (float)atlasW;
             png->v0 = 0.0f;
             png->u1 = (float)(curX + png->w) / (float)atlasW;
@@ -47,7 +52,7 @@ Image& Image::buildAtlas() {
                 int dstOff = (row * atlasW + curX) * 4;
                 memcpy(atlasData.data() + dstOff, png->data + srcOff, png->w * 4);
             }
-            curX += png->w;
+            curX += png->w + PADDING;
         }
     }
 

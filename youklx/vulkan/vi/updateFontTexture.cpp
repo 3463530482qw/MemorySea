@@ -3,6 +3,7 @@ namespace youklx {
 Vulkan& Vulkan::updateFontTexture(Font* font) {
     if (!font || !font->loaded) return *this;
     if (font->numPages == 0 || font->atlasPages.empty()) return *this;
+    if (!font->atlasDirty) return *this;  // 图集未变化，跳过重建
 
     font->atlasDirty = false;
 
@@ -22,12 +23,12 @@ Vulkan& Vulkan::updateFontTexture(Font* font) {
 
     // 上传到 GPU
     vk::BufferCreateInfo stagingInfo{{}, imgSize, vk::BufferUsageFlagBits::eTransferSrc};
-    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
-    auto stagingReqs = stagingBuf.getMemoryRequirements();
+    auto stagingReqs = vk::raii::Buffer{*this->device, stagingInfo}.getMemoryRequirements();
     vk::raii::DeviceMemory stagingMem{*this->device,
         vk::MemoryAllocateInfo{stagingReqs.size,
             findMemoryType(stagingReqs.memoryTypeBits,
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)}};
+    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
     stagingBuf.bindMemory(*stagingMem, 0);
     void* ptr = stagingMem.mapMemory(0, imgSize);
     memcpy(ptr, stacked.data(), static_cast<size_t>(imgSize));

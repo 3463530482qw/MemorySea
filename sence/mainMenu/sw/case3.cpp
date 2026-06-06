@@ -1,7 +1,7 @@
 void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 161> &ly) {
     static int pptt = 0;
     static int pptth = 0;
-    static int ppttm = 0;
+    static float ppttm = 0;
     static int ldrg = 0;
     static int lda = 0;
     static int ldm = 160;
@@ -20,10 +20,10 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
                     window.mouse.y >= 700 && window.mouse.y <= 820);
     static float rma1 = 270.0f;
     static float rma2 = 0.0f;
+    static youklx::Linecmd curve{
+        .thickness = 5
+    };
     if(pts) {
-        
-
-
         if (window.mouse.x >= 1250 && window.mouse.x <= 1450 && window.mouse.y >= 400 && window.mouse.y <= 520)
 
             pptt = 0;
@@ -36,7 +36,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         rpt += window.time.different * 100;
         if (rpt > 360) rpt -= 360;
 
-        ppttm = ppttm + (pptth - ppttm) * 5 * window.time.different;
+        ppttm = ppttm + (pptth - ppttm) * 5.0f * window.time.different;
 
         lda += window.time.different * 200;
         ldrg = 30;
@@ -68,12 +68,13 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
             int rgb = 25 + static_cast<int>(204.0f * glowIntensity);
             float a = 0.5f + 0.5f * glowIntensity;
 
-            draw.line(
-                lx[i], ly[i], lx[i - 1], ly[i - 1],
-                5, 0, 0, 0,
-                {rgb, rgb}, {rgb, rgb},
-                {rgb, rgb}, {a, a}
-            );
+            curve.sp1(lx[i], ly[i]) 
+                 .sp2(lx[i - 1], ly[i - 1])
+                 .sr({rgb,rgb})
+                 .sg({rgb,rgb})
+                 .sb({rgb,rgb})
+                 .sa({a, a});
+            draw.line(curve);
         }
 
         // --- 后续UI绘制 ---
@@ -82,11 +83,11 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         draw.font(&font, "设置", 1250, 550, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
         draw.font(&font, "结束", 1250, 700, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
     
-        draw.image(image.ima[0][2], 1200, 380 + ppttm, 300, 120,0,0,0,
+        draw.image(image.ima[0][2], 1200, 380.0f + ppttm, 300, 120,0,0,0,
             {255,255,255,pptta},{255,255,255,pptta},
             {255,255,255,pptta},{255,255,255,pptta}
         );
-        draw.image(image.ima[0][3], 1465, 425 + ppttm, 30, 30, rpt, 15, 15,
+        draw.image(image.ima[0][3], 1465, 425.0f + ppttm, 30, 30, rpt, 15, 15,
             {255,255,255,pptta},{255,255,255,pptta},
             {255,255,255,pptta},{255,255,255,pptta}
         );
@@ -107,13 +108,13 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
             // 灰度发光，RGB三通道相等，只算一次
             int rgb = 25 + static_cast<int>(204.0f * glowIntensity);
             float a = 0.5f + 0.5f * glowIntensity;
-
-            draw.line(
-                lx[i], ly[i], lx[i - 1], ly[i - 1],
-                5, 0, 0, 0,
-                {rgb, rgb}, {rgb, rgb},
-                {rgb, rgb}, {a, a}
-            );
+            curve.sp1(lx[i], ly[i]) 
+                 .sp2(lx[i - 1], ly[i - 1])
+                 .sr({rgb,rgb})
+                 .sg({rgb,rgb})
+                 .sb({rgb,rgb})
+                 .sa({a, a});
+            draw.line(curve);
         }
 
         draw.font(&font, "图形化界面展示", 100, 110, 120.0f, 0,0,0, {0.898f,0.898f,0.898f,1.0f});
@@ -121,22 +122,22 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         draw.font(&font, "设置", 1250, 550, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
         draw.font(&font, "结束", 1250, 700, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
     
-        draw.image(image.ima[0][2], 1200, 380 + ppttm, 300, 120,0,0,0,
+        draw.image(image.ima[0][2], 1200, 380.0f + ppttm, 300, 120,0,0,0,
             {255,255,255,pptta},{255,255,255,pptta},
             {255,255,255,pptta},{255,255,255,pptta}
         );
-        draw.image(image.ima[0][3], 1465, 425 + ppttm, 30, 30, rpt, 15, 15,
+        draw.image(image.ima[0][3], 1465, 425.0f + ppttm, 30, 30, rpt, 15, 15,
             {255,255,255,pptta},{255,255,255,pptta},
             {255,255,255,pptta},{255,255,255,pptta}
         );
         draw.image(image.ima[0][0], 0, 0, 1900, 900,rma1,0,900);
         draw.image(image.ima[0][0], 0, 900, 1900, 900,rma2);
-        rma1 += window.time.different * 60;
-        rma2 -= window.time.different * 30;
+        rma1 += window.time.different * 200;
+        rma2 -= window.time.different * 100;
         if(rma1 >= 335) scene.ptr = "mselect";
     }
 
-    if (window.mouse.leftPressed()) {
+    if (window.mouse.leftPressed()&&pts == true) {
         if (isHoverStart) {
             pts = false;
         }

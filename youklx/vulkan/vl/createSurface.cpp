@@ -3,7 +3,7 @@ namespace youklx {
         VkSurfaceKHR rawSurface;
         if (!SDL_Vulkan_CreateSurface(
                 window,
-                static_cast<VkInstance>(**this->instance),
+                static_cast<VkInstance>(**instance),
                 nullptr,
                 &rawSurface
             )) {
@@ -15,8 +15,8 @@ namespace youklx {
             throw std::runtime_error("SDL_Vulkan_CreateSurface 返回了 VK_NULL_HANDLE");
         }
 
-        this->surface.emplace(
-            *this->instance,
+        surface.emplace(
+            *instance,
             static_cast<vk::SurfaceKHR>(rawSurface)
         );
 

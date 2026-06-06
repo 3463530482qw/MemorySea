@@ -1,13 +1,30 @@
 graph TD
-A[libc] --> B[iall]
-C[sdl3] --> H
-D[youklx] --> B
-B --> E[main]
-D -.->|模块| F[window] 
-A -.->|被依赖| D
-G[inih] --> B
-G -.->|被依赖| D
-H[spine] --> B
-I[stb] --> H
-H -.->|被依赖| D
-D -.->|模块| I[image] 
+    A[libc] --> B[iall]
+    C[sdl3] --> D[youklx/window]
+    D --> B
+    E[main] --> B
+    E -->|ldll| F[sence]
+    F -->|模块| G[mainMenu]
+    F -->|模块| H[mselect]
+    F -->|模块| I[snake]
+    F -->|模块| J[sudoku]
+    F -->|模块| K[tetris]
+    B --> L[youklx/draw]
+    B --> M[youklx/font]
+    B --> N[youklx/image]
+    B --> O[youklx/scene]
+    B --> P[youklx/vulkan]
+    B --> Q[youklx/window]
+    L --> Q
+    M --> Q
+    N --> Q
+    P --> Q
+    O --> Q
+    R[inih] --> B
+    R -.->|被依赖| O
+    S[spine] --> B
+    T[stb] --> S
+    T --> M
+    T --> N
+    U[vulkan SDK] --> P
+    C --> P

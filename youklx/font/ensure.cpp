@@ -3,6 +3,11 @@ namespace youklx {
 void Font::ensure(const std::string& text) {
     if (!loaded || ttfData.empty()) return;
 
+    // 一次性初始化字体信息，避免每个字符重复解析字体表
+    stbtt_fontinfo info;
+    if (!stbtt_InitFont(&info, ttfData.data(), 0)) return;
+    float scale = stbtt_ScaleForPixelHeight(&info, fontSize);
+
     const char* p = text.c_str(), *e = p + text.size();
     while (p < e) {
         uint32_t cp = decodeUTF8(p, e);
@@ -11,11 +16,6 @@ void Font::ensure(const std::string& text) {
         // 光栅化单个字形
         int w = atlasW, h = atlasH;
         int pcnt = w * h;
-
-        stbtt_fontinfo info;
-        if (!stbtt_InitFont(&info, ttfData.data(), 0)) return;
-
-        float scale = stbtt_ScaleForPixelHeight(&info, fontSize);
         int ix0, iy0, ix1, iy1;
         stbtt_GetCodepointBitmapBox(&info, cp, scale, scale, &ix0, &iy0, &ix1, &iy1);
         int gw = ix1 - ix0, gh = iy1 - iy0;

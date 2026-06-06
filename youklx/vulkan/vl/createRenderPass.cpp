@@ -3,7 +3,7 @@ namespace youklx {
         // 1. 颜色附件描述
         vk::AttachmentDescription colorAttachment{
             {},                                           // flags
-            this->swapChainImageFormat,                   // 格式与交换链一致
+            swapChainImageFormat,                   // 格式与交换链一致
             vk::SampleCountFlagBits::e1,                  // 采样数
             vk::AttachmentLoadOp::eClear,                 // 加载时清屏
             vk::AttachmentStoreOp::eStore,                // 存储时保留结果
@@ -56,7 +56,7 @@ namespace youklx {
         };
 
         // 6. 创建渲染通道
-        this->renderPass.emplace(*this->device, createInfo);
+        renderPass.emplace(*device, createInfo);
 
         return *this;
     }

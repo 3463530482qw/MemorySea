@@ -10,6 +10,7 @@
 #include<vector>
 #include<string>
 #include<any>
+#include<set>
 #include<unordered_map>
 #include<unordered_set>
 #include<stdexcept>
@@ -33,7 +34,7 @@
 #else
     #include <dlfcn.h>
     #define ildll(name) dlopen(name, RTLD_LAZY)
-    #define gifunc(handle, name) dlsym(handle, name)
+    #define igfunc(handle, name) dlsym(handle, name)
     #define icdll(handle) dlclose(handle)
 #endif
 

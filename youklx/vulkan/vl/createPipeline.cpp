@@ -72,10 +72,10 @@ Vulkan& Vulkan::createPipeline() {
     vk::PipelineColorBlendStateCreateInfo lineBlending{
         {}, VK_FALSE, vk::LogicOp::eCopy, 1, &lineBlend};
 
-    // 图片混合状态：启用 Alpha 混合以支持 PNG 透明度
+    // 图片混合状态：预乘 alpha 混合（着色器已输出 premultiplied alpha）
     vk::PipelineColorBlendAttachmentState imageBlend{};
     imageBlend.blendEnable = VK_TRUE;
-    imageBlend.srcColorBlendFactor = vk::BlendFactor::eSrcAlpha;
+    imageBlend.srcColorBlendFactor = vk::BlendFactor::eOne;
     imageBlend.dstColorBlendFactor = vk::BlendFactor::eOneMinusSrcAlpha;
     imageBlend.colorBlendOp = vk::BlendOp::eAdd;
     imageBlend.srcAlphaBlendFactor = vk::BlendFactor::eOne;
@@ -173,12 +173,13 @@ Vulkan& Vulkan::createPipeline() {
     uint8_t white[4] = {255, 255, 255, 255};
     vk::DeviceSize imgSize = 4;
     vk::BufferCreateInfo stagingInfo{{}, imgSize, vk::BufferUsageFlagBits::eTransferSrc};
-    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
-    auto stagingReqs = stagingBuf.getMemoryRequirements();
+    // 先查询内存需求，再声明 stagingMem（在 stagingBuf 之前，确保 stagingBuf 先销毁）
+    auto stagingReqs = vk::raii::Buffer{*this->device, stagingInfo}.getMemoryRequirements();
     vk::raii::DeviceMemory stagingMem{*this->device,
         vk::MemoryAllocateInfo{stagingReqs.size,
             findMemoryType(stagingReqs.memoryTypeBits,
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)}};
+    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
     stagingBuf.bindMemory(*stagingMem, 0);
     void* ptr = stagingMem.mapMemory(0, imgSize);
     memcpy(ptr, white, imgSize);

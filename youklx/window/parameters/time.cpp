@@ -19,10 +19,10 @@ namespace youklx {
             void update() {
                 if(vstart) {
                     start = std::chrono::steady_clock::now();
-#ifdef _WIN32
+                #ifdef _WIN32
                     // 将 Windows 定时器分辨率提升至 1ms，大幅改善 sleep_until 精度
                     timeBeginPeriod(1);
-#endif
+                #endif
                     vstart = false;
                 }
                 if (current > 100) {

@@ -24,14 +24,7 @@ namespace youklx {
             Draw& lstsize(int w, int h); // 设置逻辑大小
             Draw& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
             Draw& line(
-                int x1 = 0, int y1 = 0, 
-                int x2 = 10, int y2 = 10,
-                float thickness = 1,
-                int rotate = 0, int rox = 0, int roy = 0,
-                std::array<int,2> r = {255,255},
-                std::array<int,2> g = {255,255},
-                std::array<int,2> b = {255,255}, 
-                std::array<float,2> a = {255,255}
+                Linecmd &cmd
             ); // 绘制直线
             Draw& image(
                 Plimage img,

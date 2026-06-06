@@ -1,7 +1,13 @@
 namespace youklx {
     class Vulkan {
     public:
-        vk::raii::Context context;                        // Vulkan 上下文，管理加载器
+        ~Vulkan() {
+            if (this->device) {
+                this->device->waitIdle();
+            }
+        }
+    public:
+    vk::raii::Context context;
         std::optional<vk::raii::Instance> instance;       // Vulkan 实例，连接驱动
         std::optional<vk::raii::PhysicalDevice> physicalDevice; // 物理设备，代表GPU
 
@@ -22,10 +28,10 @@ namespace youklx {
         std::vector<vk::raii::CommandBuffer> commandBuffers; // 命令缓冲，每帧一个
         static constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 2; // 最大并行帧数
 
-        std::vector<vk::raii::Semaphore> imageAvailableSemaphores;  // 信号量：图像获取完成
-        std::vector<vk::raii::Semaphore> renderFinishedSemaphores;  // 信号量：渲染完成
-        std::vector<vk::raii::Fence> inFlightFences;                // 围栏：CPU等待GPU
-        uint32_t currentFrame = 0;                        // 当前帧索引
+        std::vector<vk::raii::Semaphore> imageAvailableSemaphores;  // 信号量：图像获取完成 (MAX_FRAMES_IN_FLIGHT)
+        std::vector<vk::raii::Semaphore> renderFinishedSemaphores;  // 信号量：渲染完成 (per swapchain image)
+        std::vector<vk::raii::Fence> inFlightFences;                // 围栏：CPU等待GPU (MAX_FRAMES_IN_FLIGHT)
+        uint32_t currentFrame = 0;                        // 当前帧索引 (0..MAX_FRAMES_IN_FLIGHT-1)
 
         std::optional<vk::raii::PipelineLayout> pipelineLayout;       // 管线布局
         std::optional<vk::raii::Pipeline> graphicsPipeline;            // 线条管线

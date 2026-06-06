@@ -1,5 +1,13 @@
 namespace youklx {
     Vulkan& Vulkan::recordCommandBuffer(uint32_t imageIndex, Draw& draw) {
+        // 防御：核心资源缺失时安全跳过本帧
+        // vertexBuffer 可为空（空帧时合法），draw 循环中 vertexCount==0 会跳过 bind
+        if (!this->renderPass || !this->pipelineLayout ||
+            imageIndex >= this->swapChainFramebuffers.size() ||
+            this->commandBuffers.empty()) {
+            return *this;
+        }
+
         this->commandBuffers[this->currentFrame].reset();
         vk::CommandBufferBeginInfo beginInfo{};
         this->commandBuffers[this->currentFrame].begin(beginInfo);
@@ -9,8 +17,8 @@ namespace youklx {
 
         uint32_t chainW = this->swapChainExtent.width;
         uint32_t chainH = this->swapChainExtent.height;
-        uint32_t logW = static_cast<uint32_t>(this->stsizew);
-        uint32_t logH = static_cast<uint32_t>(this->stsizeh);
+        uint32_t logW = static_cast<uint32_t>(std::max(1, this->stsizew));
+        uint32_t logH = static_cast<uint32_t>(std::max(1, this->stsizeh));
         float targetRatio = static_cast<float>(logW)/static_cast<float>(logH);
         float chainRatio = static_cast<float>(chainW)/static_cast<float>(chainH);
         uint32_t vpW = chainW, vpH = chainH;
@@ -26,11 +34,12 @@ namespace youklx {
         this->commandBuffers[this->currentFrame].pushConstants<float>(*this->pipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, {mvp[0],mvp[1],mvp[2],mvp[3],mvp[4],mvp[5],mvp[6],mvp[7],mvp[8],mvp[9],mvp[10],mvp[11],mvp[12],mvp[13],mvp[14],mvp[15]});
 
         // 遍历绘制命令，按类型绑定不同管线
-        for (int i = 0; i < draw.cptr; ++i) {
-            // 获取当前命令的起始顶点索引（由 vupdate 填充）
+        // 记录上次绑定的类型，避免连续同类型命令的冗余管线/描述符绑定
+        int lastCmdType = -1;  // 0=Linecmd, 1=Imagecmd, 2=Fontcmd
+        int cmdCount = std::min(draw.cptr, static_cast<int>(draw.commands.size()));
+        for (int i = 0; i < cmdCount; ++i) {
             uint32_t firstVertex = (i < static_cast<int>(draw.vertexptr.size()))
                 ? static_cast<uint32_t>(draw.vertexptr[i]) : 0u;
-            // 计算实际顶点数：如果不是最后一条命令，取差值；否则取剩余全部
             uint32_t vertexCount = 0;
             if (i < static_cast<int>(draw.vertexptr.size())) {
                 uint32_t nextOffset = (i + 1 < draw.cptr && (i + 1) < static_cast<int>(draw.vertexptr.size()))
@@ -40,31 +49,34 @@ namespace youklx {
                     vertexCount = nextOffset - firstVertex;
                 }
             }
-            if (vertexCount == 0) continue; // 跳过退化命令
+            if (vertexCount == 0 || !this->vertexBuffer) continue;
 
             std::visit(overloaded{
-                    [this, firstVertex, vertexCount](Linecmd&) {
-                        this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipeline);
-                        if (this->descSet) {
+                    [this, firstVertex, vertexCount, &lastCmdType](Linecmd&) {
+                        if (lastCmdType != 0) {
+                            this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipeline);
                             this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->descSet}, nullptr);
+                            lastCmdType = 0;
                         }
                         vk::DeviceSize vbOffsets{0};
                         this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
                         this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
                     },
-                [this, firstVertex, vertexCount](Imagecmd&) {
-                    this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineImage);
-                    if (this->descSet) {
+                [this, firstVertex, vertexCount, &lastCmdType](Imagecmd&) {
+                    if (lastCmdType != 1) {
+                        this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineImage);
                         this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->descSet}, nullptr);
+                        lastCmdType = 1;
                     }
                     vk::DeviceSize vbOffsets{0};
                     this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
                     this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
                 },
-                [this, firstVertex, vertexCount](Fontcmd&) {
-                    this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineFont);
-                    if (this->fontDescSet) {
+                [this, firstVertex, vertexCount, &lastCmdType](Fontcmd&) {
+                    if (lastCmdType != 2) {
+                        this->commandBuffers[this->currentFrame].bindPipeline(vk::PipelineBindPoint::eGraphics, *this->graphicsPipelineFont);
                         this->commandBuffers[this->currentFrame].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, *this->pipelineLayout, 0, {**this->fontDescSet}, nullptr);
+                        lastCmdType = 2;
                     }
                     vk::DeviceSize vbOffsets{0};
                     this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);

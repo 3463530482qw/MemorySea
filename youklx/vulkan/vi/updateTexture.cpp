@@ -12,12 +12,12 @@ Vulkan& Vulkan::updateTexture(Image& img) {
     vk::DeviceSize imgSize = static_cast<vk::DeviceSize>(texW) * texH * 4;
 
     vk::BufferCreateInfo stagingInfo{{}, imgSize, vk::BufferUsageFlagBits::eTransferSrc};
-    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
-    auto stagingReqs = stagingBuf.getMemoryRequirements();
+    auto stagingReqs = vk::raii::Buffer{*this->device, stagingInfo}.getMemoryRequirements();
     vk::raii::DeviceMemory stagingMem{*this->device,
         vk::MemoryAllocateInfo{stagingReqs.size,
             findMemoryType(stagingReqs.memoryTypeBits,
                 vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent)}};
+    vk::raii::Buffer stagingBuf{*this->device, stagingInfo};
     stagingBuf.bindMemory(*stagingMem, 0);
     void* ptr = stagingMem.mapMemory(0, imgSize);
     memcpy(ptr, img.atlasData.data(), static_cast<size_t>(imgSize));
@@ -67,7 +67,7 @@ Vulkan& Vulkan::updateTexture(Image& img) {
         this->device->updateDescriptorSets(writeDesc, nullptr);
     }
     // 确保字体描述符集指向重建后的 ImageView
-    if (this->fontDescSet) {
+    {
         vk::DescriptorImageInfo imageInfo{*this->dummySampler, *this->dummyImageView, vk::ImageLayout::eShaderReadOnlyOptimal};
         vk::WriteDescriptorSet writeDesc{**this->fontDescSet, 0, 0, 1, vk::DescriptorType::eCombinedImageSampler, &imageInfo, nullptr, nullptr};
         this->device->updateDescriptorSets(writeDesc, nullptr);

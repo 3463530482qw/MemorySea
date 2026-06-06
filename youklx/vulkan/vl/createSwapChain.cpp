@@ -1,21 +1,21 @@
 namespace youklx {
     Vulkan& Vulkan::createSwapChain() {
-        if (!this->surface ||
-            static_cast<VkSurfaceKHR>(**this->surface) == VK_NULL_HANDLE) {
+        if (!surface ||
+            static_cast<VkSurfaceKHR>(**surface) == VK_NULL_HANDLE) {
             throw std::runtime_error("createSwapChain: surface 无效");
         }
 
-        auto capabilities = this->physicalDevice->getSurfaceCapabilitiesKHR(*this->surface);
-        auto formats = this->physicalDevice->getSurfaceFormatsKHR(*this->surface);
-        auto presentModes = this->physicalDevice->getSurfacePresentModesKHR(*this->surface);
+        auto capabilities = physicalDevice->getSurfaceCapabilitiesKHR(*surface);
+        auto formats = physicalDevice->getSurfaceFormatsKHR(*surface);
+        auto presentModes = physicalDevice->getSurfacePresentModesKHR(*surface);
 
         // 选择表面格式
-        this->swapChainImageFormat = vk::Format::eB8G8R8A8Srgb;
+        swapChainImageFormat = vk::Format::eB8G8R8A8Srgb;
         vk::ColorSpaceKHR colorSpace = vk::ColorSpaceKHR::eSrgbNonlinear;
         for (const auto& f : formats) {
             if (f.format == vk::Format::eB8G8R8A8Srgb &&
                 f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
-                this->swapChainImageFormat = f.format;
+                swapChainImageFormat = f.format;
                 colorSpace = f.colorSpace;
                 break;
             }
@@ -31,8 +31,8 @@ namespace youklx {
         }
 
         // 直接使用 stsizew 与 stsizeh 作为交换链尺寸
-        uint32_t extentW = static_cast<uint32_t>(this->stsizew);
-        uint32_t extentH = static_cast<uint32_t>(this->stsizeh);
+        uint32_t extentW = static_cast<uint32_t>(stsizew);
+        uint32_t extentH = static_cast<uint32_t>(stsizeh);
 
         // 钳位到表面能力允许的范围
         extentW = std::clamp(extentW,

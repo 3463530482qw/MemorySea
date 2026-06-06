@@ -4,9 +4,13 @@ namespace youklx {
     Draw& Draw::vupdate() {
         vertex.clear();
         vertexptr.clear();
+        // 预分配容量，避免 clear + insert 期间触发 heap realloc 造成间歇卡顿
+        vertex.reserve(cptr * 48);     // 每条命令最多 6 顶点 × 8 浮点 = 48 float
+        vertexptr.reserve(cptr);
 
         sth.clear();
-        if(cptr >= 50) {
+        // 多线程仅在命令数足够大时才有收益（每帧创建线程开销约 0.5ms+）
+        if(cptr >= 1000) {
             mod = static_cast<float>(cptr) / static_cast<float>(nuth);
             emod = cptr - static_cast<int>(mod * nuth);
             // 每个线程使用独立的局部缓冲区和局部偏移表，避免数据竞争
