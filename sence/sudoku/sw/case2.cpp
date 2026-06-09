@@ -41,7 +41,11 @@ void splashScreenAnimation2(int &pt) {
         solved = false;
         inited = true;
     }
+    // ---- 合法性检测：行/列/宫格是否无重复（两个线程共用） ----
+    static bool conflict[N][N]{};
+    const int bw = N * CELL, bh = N * CELL;
 
+    thread.wth_update([&]() {
     float dt = window.time.different;
     if (dt > 0.5f || dt <= 0.0f) dt = 0.016f;
 
@@ -72,9 +76,6 @@ void splashScreenAnimation2(int &pt) {
     }
 
     if (window.keyboard.isPressed(SDLK_ESCAPE)) { inited = false; pt = 3; return; }
-
-    // ---- 合法性检测：行/列/宫格是否无重复 ----
-    static bool conflict[N][N]{};
 
     auto validate = [&]() -> bool {
         bool ok = true;
@@ -132,7 +133,10 @@ void splashScreenAnimation2(int &pt) {
     }
 
     // ---- 绘制 ----
-    draw.image(image.ima[0][0], 0, 0, 1600, 900);
+    });
+
+    thread.wth_draw([&]() {
+    draw.image(youklx::Imagecmd{image.ima[0][0], 0.0f, 0.0f, 1600.0f, 900.0f});
 
     int bw = N * CELL, bh = N * CELL;
 
@@ -158,9 +162,9 @@ void splashScreenAnimation2(int &pt) {
     if (selR >= 0 && selC >= 0) {
         int sx = OFFX + selC * CELL;
         int sy = OFFY + selR * CELL;
-        draw.image(image.ima[0][7], sx, sy, (float)CELL, (float)CELL, 0,0,0,
-                  {55.0f,55.0f,55.0f,0.1f},{55.0f,55.0f,55.0f,0.1f},
-                  {55.0f,55.0f,55.0f,0.1f},{55.0f,55.0f,55.0f,0.1f});
+        draw.image(youklx::Imagecmd{image.ima[0][7], (float)sx, (float)sy, (float)CELL, (float)CELL, 0.0f, 0.0f, 0.0f,
+                  {55.0f,55.0f,55.0f,0.1f}, {55.0f,55.0f,55.0f,0.1f},
+                  {55.0f,55.0f,55.0f,0.1f}, {55.0f,55.0f,55.0f,0.1f}});
     }
 
     // 数字
@@ -190,10 +194,11 @@ void splashScreenAnimation2(int &pt) {
     draw.font(&font, "点击格子选中 | 1-9填入 | 0/Backspace清除",
               50, 805.0f, 24.0f, 0,0,0,
               {1.0f,1.0f,1.0f,0.5f});
+    });
 
     if (solved) {
-        draw.image(image.ima[0][0], OFFX, OFFY, bw, bh, 0,0,0,
-                  {0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f});
+        draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
+                  {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
         draw.font(&font, "完成!",
                   OFFX + 240.0f, OFFY + 285.0f, 72.0f, 0,0,0,
                   {0.2f,1.0f,0.3f,1.0f});

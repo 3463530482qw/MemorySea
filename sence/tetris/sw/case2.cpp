@@ -115,7 +115,22 @@ void splashScreenAnimation2(int &pt) {
     static youklx::Linecmd next{
         .thickness = 22,
     };
+    // ---- 碰撞检测（两个线程共用） ----
+    auto checkCollision = [&](int px, int py, int piece, int rot) -> bool {
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                if (PIECES[piece][rot][r][c]) {
+                    int bx = px + c;
+                    int by = py + r;
+                    if (bx < 0 || bx >= BW || by >= BH) return true;
+                    if (by >= 0 && board[by][bx] != 0) return true;
+                }
+            }
+        }
+        return false;
+    };
 
+    thread.wth_update([&]() {
     if (!inited) {
         // 初始化棋盘
         for (int r = 0; r < BH; r++)
@@ -138,21 +153,6 @@ void splashScreenAnimation2(int &pt) {
 
     float dt = window.time.different;
     if (dt > 0.5f || dt <= 0.0f) dt = 0.016f;
-
-    // ---- 碰撞检测 ----
-    auto checkCollision = [&](int px, int py, int piece, int rot) -> bool {
-        for (int r = 0; r < 4; r++) {
-            for (int c = 0; c < 4; c++) {
-                if (PIECES[piece][rot][r][c]) {
-                    int bx = px + c;
-                    int by = py + r;
-                    if (bx < 0 || bx >= BW || by >= BH) return true;
-                    if (by >= 0 && board[by][bx] != 0) return true;
-                }
-            }
-        }
-        return false;
-    };
 
     // ---- 放置方块 ----
     auto placePiece = [&]() {
@@ -283,7 +283,10 @@ void splashScreenAnimation2(int &pt) {
     if (window.keyboard.isPressed(SDLK_ESCAPE)) { inited = false; pt = 3; return; }
 
     // ======== 绘制 ========
-    draw.image(image.ima[0][0], 0, 0, 1600, 900);
+    });
+
+    thread.wth_draw([&]() {
+    draw.image(youklx::Imagecmd{image.ima[0][0], 0.0f, 0.0f, 1600.0f, 900.0f});
 
     // ---- 网格线 ----
     for (int r = 0; r <= BH; r++) {
@@ -411,11 +414,11 @@ void splashScreenAnimation2(int &pt) {
     draw.font(&font, "ESC 返回",
               (float)(OFFX + bw + 30), (float)(OFFY + 340), 18.0f, 0,0,0,
               {1.0f, 1.0f, 1.0f, 0.35f});
-
+    });
     // ---- 游戏结束遮罩 ----
     if (gameOver) {
-        draw.image(image.ima[0][0], OFFX, OFFY, bw, bh, 0,0,0,
-                  {0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f});
+        draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
+                  {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
         draw.font(&font, "游戏结束",
                   (float)(OFFX + bw/2 - 85), (float)(OFFY + bh/2 - 40), 48.0f, 0,0,0,
                   {1.0f, 0.3f, 0.3f, 1.0f});

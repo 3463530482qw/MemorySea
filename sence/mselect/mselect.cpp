@@ -4,18 +4,12 @@
 extern "C" EXPORT void mselect() {  
     int pt = 1;
     while (window.isrun) {
-        window.run();
-        draw.clear();
         if(scene.ptr != "mselect") return;
+        window.run();
 
         switch (pt) {
             case 1: splashScreenAnimation1(pt); break;
             default: break;
         }
-        draw.vupdate();
-        vulkan.updateTexture(image);
-        vulkan.updateFontTexture(&font);
-        vulkan.updateVertexBuffer(draw.vertex);
-        vulkan.drawFrame(draw);
     }
 }

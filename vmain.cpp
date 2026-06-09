@@ -8,3 +8,4 @@ API youklx::Image image;
 API youklx::Font font;
 API youklx::Draw draw;
 API youklx::Vulkan vulkan;
+API youklx::Thread thread;

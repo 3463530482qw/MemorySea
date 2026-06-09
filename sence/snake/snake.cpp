@@ -6,9 +6,8 @@
 extern "C" EXPORT void snake() {
     int pt = 1;
     while (window.isrun) {
-        window.run();
-        draw.clear();
         if(scene.ptr != "snake") return;
+        window.run();
 
         switch (pt) {
             case 1: splashScreenAnimation1(pt); break;
@@ -16,10 +15,5 @@ extern "C" EXPORT void snake() {
             case 3: splashScreenAnimation3(pt); break;
             default: break;
         }
-        draw.vupdate();
-        vulkan.updateTexture(image);
-        vulkan.updateFontTexture(&font);
-        vulkan.updateVertexBuffer(draw.vertex);
-        vulkan.drawFrame(draw);
     }
 }

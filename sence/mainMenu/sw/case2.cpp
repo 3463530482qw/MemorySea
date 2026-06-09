@@ -14,7 +14,24 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     static int fw4 = 1600;
     static int fh4 = 700;
     static bool fwh = true;
-
+    static youklx::Imagecmd bk = {
+        .img = image.ima[0][0],
+        .x = 0,
+        .y = 0,
+        .w = 1600,
+        .h = 900
+    };
+    static youklx::Imagecmd abk = {
+        .img = image.ima[0][1],
+    };
+    static youklx::Linecmd curve{
+        .thickness = 5,
+        .r = {229, 229},
+        .g = {229, 229},
+        .b = {229, 229},
+        .a = {0.05f, 0.05f}
+    };
+    thread.wth_update([&]() {
     if (curveReady) {
         // 必经点（按 x 升序排列，共6个）
         const int n = 6;
@@ -80,19 +97,12 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
         i1w = i1w + 1 + i1x * 0.03f;
         i1h = i1h + 1 + i1y * 0.03f;
     }
+    abk.sp(i1x, i1y).ss(i1w, i1h);
+    });
+    thread.wth_draw([&]() {
+    draw.image(bk);
+    draw.image(abk);
 
-    
-
-    draw.image(image.ima[0][0], 0, 0, 1600, 900);
-    draw.image(image.ima[0][1], i1x, i1y, i1w, i1h);
-
-    static youklx::Linecmd curve{
-        .thickness = 5,
-        .r = {229, 229},
-        .g = {229, 229},
-        .b = {229, 229},
-        .a = {0.05f, 0.05f}
-    };
     for (int i = 160; i > dl; i--) {
         curve.sp1(lx[i], ly[i])
              .sp2(lx[i - 1], ly[i - 1]);
@@ -103,6 +113,6 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     draw.font(&font, "开始", fw2, fh2, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
     draw.font(&font, "设置", fw3, fh3, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
     draw.font(&font, "结束", fw4, fh4, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
-
+    });
     if(fwh == false && curveReady == false) pt = 3;
 }

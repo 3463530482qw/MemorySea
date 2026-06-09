@@ -31,7 +31,7 @@ void splashScreenAnimation2(int &pt) {
         .r = {0, 0},
         .b = {50, 50},
     };
-
+    thread.wth_update([&]() {
     if (!inited) {
         snake.clear();
         snake.push_back({COLS / 2, ROWS / 2});
@@ -93,9 +93,11 @@ void splashScreenAnimation2(int &pt) {
     }
 
     if (window.keyboard.isPressed(SDLK_ESCAPE)) { inited = false; pt = 3; return; }
+    });
 
+    thread.wth_draw([&]() {
     // ---- 绘制 ----
-    draw.image(image.ima[0][0], 0, 0, 1600, 900);
+    draw.image(youklx::Imagecmd{image.ima[0][0], 0, 0, 1600, 900});
 
     int bw = COLS * CELL, bh = ROWS * CELL;
 
@@ -145,10 +147,10 @@ void splashScreenAnimation2(int &pt) {
               60, 740.0f, 26.0f, 0,0,0, {1.0f,1.0f,1.0f,0.6f});
     draw.font(&font, "ESC 返回",
               60, 780.0f, 24.0f, 0,0,0, {1.0f,1.0f,1.0f,0.4f});
-
+    });
     if (dead) {
-        draw.image(image.ima[0][0], OFFX, OFFY, bw, bh, 0,0,0,
-                  {0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f},{0,0,0,0.6f});
+        draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
+                  {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
         draw.font(&font, "游戏结束",
                   OFFX + 300.0f, OFFY + 250.0f, 56.0f, 0,0,0,
                   {1.0f,0.3f,0.3f,1.0f});

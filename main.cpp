@@ -30,6 +30,7 @@ int main() {
 
         scene.ldlli("ini/scene/main.ini","scene");
         scene.ptr = "mainMenu";
+        thread.init(window,vulkan,draw,image,font);
 
         while(window.isrun) {
             if (auto it = scene.dict.find(scene.ptr); it != scene.dict.end()) {

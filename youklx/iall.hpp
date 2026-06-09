@@ -25,6 +25,9 @@
 #include <cstring>
 #include <array>
 #include <cmath>
+#include <mutex>
+#include <condition_variable>
+#include <future>
 
 #ifdef _WIN32
     #include <windows.h>
@@ -65,4 +68,5 @@
 #include "scene/main.hpp"
 #include "draw/main.hpp"
 #include "vulkan/main.hpp"
+#include "thread/main.hpp"
 #include "init.hpp"

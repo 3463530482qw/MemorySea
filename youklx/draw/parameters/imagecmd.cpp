@@ -17,7 +17,7 @@ namespace youklx {
             Imagecmd& si(Plimage image) { img=image;return *this; }
             Imagecmd& sp(float sx, float sy) { x=sx;y=sy;return *this; }
             Imagecmd& ss(float sw, float sh) { w=sw;h=sh;return *this; }
-            Imagecmd& srot(int ro,int rx,int ry) { rotate=ro;rox=rx;roy=ry;return *this; }
+            Imagecmd& srot(float ro,float rx,float ry) { rotate=ro;rox=rx;roy=ry;return *this; }
             Imagecmd& rgba1(std::array<float, 4> sc1) { c1=sc1;return *this; }
             Imagecmd& rgba2(std::array<float, 4> sc2) { c2=sc2;return *this; }
             Imagecmd& rgba3(std::array<float, 4> sc3) { c3=sc3;return *this; }

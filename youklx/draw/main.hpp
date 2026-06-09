@@ -27,14 +27,7 @@ namespace youklx {
                 Linecmd &cmd
             ); // 绘制直线
             Draw& image(
-                Plimage img,
-                float x, float y,
-                float w, float h,
-                float rotate = 0.0f, float rox = 0.0f, float roy = 0.0f,
-                std::array<float,4> c1 = {255.0f,255.0f,255.0f,1.0f}, 
-                std::array<float,4> c2 = {255.0f,255.0f,255.0f,1.0f},
-                std::array<float,4> c3 = {255.0f,255.0f,255.0f,1.0f}, 
-                std::array<float,4> c4 = {255.0f,255.0f,255.0f,1.0f}
+                const Imagecmd &cmd
             ); // 绘制图片
             Draw& font(
                 Font* font,
