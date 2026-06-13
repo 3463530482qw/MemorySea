@@ -3,8 +3,8 @@ void splashScreenAnimation2(int &pt) {
     static constexpr int COLS = 30;
     static constexpr int ROWS = 22;
     static constexpr int CELL = 30;
-    static constexpr int OFFX = (1600 - COLS * CELL) / 2;  // 350
-    static constexpr int OFFY = (900 - ROWS * CELL) / 2;   // 120
+    static constexpr int OFFX = 350;
+    static constexpr int OFFY = 120;
 
     struct Pos { int x, y; };
 
@@ -141,25 +141,26 @@ void splashScreenAnimation2(int &pt) {
     // UI
     char buf[64];
     std::snprintf(buf, sizeof(buf), "分数 %d", score);
-    draw.font(&font, buf, 60, 50, 52.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f});
+    draw.font(youklx::Fontcmd{&font, buf, 60, 50, 52.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f}});
 
-    draw.font(&font, "← → ↑ ↓ 方向",
-              60, 740.0f, 26.0f, 0,0,0, {1.0f,1.0f,1.0f,0.6f});
-    draw.font(&font, "ESC 返回",
-              60, 780.0f, 24.0f, 0,0,0, {1.0f,1.0f,1.0f,0.4f});
-    });
+    draw.font(youklx::Fontcmd{&font, "← → ↑ ↓ 方向",
+              60, 740.0f, 26.0f, 0,0,0, {1.0f,1.0f,1.0f,0.6f}});
+    draw.font(youklx::Fontcmd{&font, "ESC 返回",
+              60, 780.0f, 24.0f, 0,0,0, {1.0f,1.0f,1.0f,0.4f}});
+
     if (dead) {
         draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
                   {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
-        draw.font(&font, "游戏结束",
+        draw.font(youklx::Fontcmd{&font, "游戏结束",
                   OFFX + 300.0f, OFFY + 250.0f, 56.0f, 0,0,0,
-                  {1.0f,0.3f,0.3f,1.0f});
+                  {1.0f,0.3f,0.3f,1.0f}});
         std::snprintf(buf, sizeof(buf), "得分 %d", score);
-        draw.font(&font, buf,
+        draw.font(youklx::Fontcmd{&font, buf,
                   OFFX + 310.0f, OFFY + 330.0f, 40.0f, 0,0,0,
-                  {1.0f,1.0f,1.0f,0.9f});
-        draw.font(&font, "ESC 返回",
+                  {1.0f,1.0f,1.0f,0.9f}});
+        draw.font(youklx::Fontcmd{&font, "ESC 返回",
                   OFFX + 330.0f, OFFY + 400.0f, 32.0f, 0,0,0,
-                  {1.0f,1.0f,1.0f,0.8f});
+                  {1.0f,1.0f,1.0f,0.8f}});
     }
+    });
 }

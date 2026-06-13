@@ -9,12 +9,18 @@ namespace youklx {
                         if (stopw) return;
                     }
 
+                    wi->time.update();
                     update_work();
                     dr->vupdate();
                     vk->updateTexture(*img);
                     vk->updateFontTexture(ft);
                     vk->updateVertexBuffer(dr->vertex);
                     vk->drawFrame(*dr);
+                    // 将 viewport 参数同步到 Window，供 run() 中鼠标坐标转换使用
+                    wi->viewportX = vk->viewportX;
+                    wi->viewportY = vk->viewportY;
+                    wi->viewportW = vk->viewportW;
+                    wi->viewportH = vk->viewportH;
                     dr->clear();
 
                     {

@@ -8,17 +8,10 @@ namespace youklx {
             int stsizew{0}; // 逻辑大小宽度
             int stsizeh{0}; // 逻辑大小高度
 
-            unsigned int nuth{0}; //线程数
-            std::vector<std::thread> sth; //线程
-
             std::vector<Drawcmd> commands; // 绘制命令
             int cptr{0}; // 命令指针
             std::vector<float> vertex; // 顶点数据
             std::vector<int> vertexptr; // 顶点指针
-
-            int nt;      //模块指针
-            int mod;     //模块大小
-            int emod;    //结尾模块大小
         public:
             Draw();
             Draw& lstsize(int w, int h); // 设置逻辑大小
@@ -29,14 +22,7 @@ namespace youklx {
             Draw& image(
                 const Imagecmd &cmd
             ); // 绘制图片
-            Draw& font(
-                Font* font,
-                std::string text,
-                float x, float y,
-                float fontSize,
-                float rotate = 0.0f, float rox = 0.0f, float roy = 0.0f,
-                std::array<float,4> rgba = {1.0f,1.0f,1.0f,1.0f}
-            ); // 绘制文字
+            Draw& font(Fontcmd cmd); // 绘制文字
             Draw& clear();   // 清空绘制命令
             Draw& vupdate(); // 更新顶点数据
             

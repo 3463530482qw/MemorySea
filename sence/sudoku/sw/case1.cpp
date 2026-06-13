@@ -13,13 +13,13 @@ void splashScreenAnimation1(int &pt) {
         float a = timer * 1.2f;
         if (a > 1.0f) a = 1.0f;
 
-        draw.font(&font, "数独",
+        draw.font(youklx::Fontcmd{&font, "数独",
                   710.0f, 300.0f, 90.0f, 0.0f, 0.0f, 0.0f,
-                  {0.4f, 0.6f, 1.0f, a});
+                  {0.4f, 0.6f, 1.0f, a}});
 
-        draw.font(&font, "点击格子选中  |  1-9 填入数字  |  ESC 返回",
+        draw.font(youklx::Fontcmd{&font, "点击格子选中  |  1-9 填入数字  |  ESC 返回",
                   530.0f, 450.0f, 28.0f, 0.0f, 0.0f, 0.0f,
-                  {1.0f, 1.0f, 1.0f, a * 0.8f});
+                  {1.0f, 1.0f, 1.0f, a * 0.8f}});
     });
 
     if (timer > 2.0f) {

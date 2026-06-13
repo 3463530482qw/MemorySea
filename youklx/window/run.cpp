@@ -21,12 +21,25 @@ namespace youklx {
                     break;
 
                 // ---- 鼠标移动 ----
-                case SDL_EVENT_MOUSE_MOTION:
-                    // 将 SDL 物理像素坐标转换为逻辑视图坐标
-                    if (w > 0 && h > 0 && stsizew > 0 && stsizeh > 0) {
+                case SDL_EVENT_MOUSE_MOTION: {
+                    // 三步映射：窗口坐标 → 交换链坐标 → viewport 内坐标 → 逻辑画布坐标
+                    int cw = 0, ch = 0;
+                    SDL_GetWindowSize(id, &cw, &ch);
+                    if (cw > 0 && ch > 0 && viewportW > 0 && viewportH > 0
+                        && stsizew > 0 && stsizeh > 0) {
+                        // 交换链完整尺寸 = viewport + 两侧 letterbox（viewport 居中）
+                        int chainW = viewportW + viewportX * 2;
+                        int chainH = viewportH + viewportY * 2;
+                        // 1. 窗口 → 交换链
+                        float sx = static_cast<float>(pe.motion.x) * chainW / cw;
+                        float sy = static_cast<float>(pe.motion.y) * chainH / ch;
+                        // 2. 交换链 → viewport（减去 letterbox 偏移）
+                        float vx = sx - viewportX;
+                        float vy = sy - viewportY;
+                        // 3. viewport → 逻辑画布
                         mouse.setPos(
-                            static_cast<float>(pe.motion.x) * stsizew / w,
-                            static_cast<float>(pe.motion.y) * stsizeh / h
+                            vx * stsizew / viewportW,
+                            vy * stsizeh / viewportH
                         );
                     } else {
                         mouse.setPos(
@@ -35,6 +48,7 @@ namespace youklx {
                         );
                     }
                     break;
+                }
 
                 // ---- 鼠标按键 ----
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -56,7 +70,6 @@ namespace youklx {
 
         mouse.endFrame();
 
-        time.update();
         return *this;
     }
 }

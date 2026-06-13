@@ -84,25 +84,29 @@ void splashScreenAnimation1(int &pt) {
             }
 
             // 左侧绘制编号
-            draw.font(&font, std::to_string(i + 1),
+            draw.font(youklx::Fontcmd{&font, std::to_string(i + 1),
                       NX - 100.0f, dy + 25.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f});
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
             if (i == 0) {
-                draw.font(&font, "俄罗斯方块",
+                draw.font(youklx::Fontcmd{&font, "俄罗斯方块",
                       NX + 450.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f});
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
             } else if (i == 1) {
-                draw.font(&font, "贪吃蛇",
+                draw.font(youklx::Fontcmd{&font, "贪吃蛇",
                       NX + 550.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f});
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
             } else if (i == 2) {
-                draw.font(&font, "数独",
+                draw.font(youklx::Fontcmd{&font, "数独",
                       NX + 600.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f});
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
+            } else if (i == 3) {
+                draw.font(youklx::Fontcmd{&font, "平台跳跃",
+                      NX + 500.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
             } else {
-                draw.font(&font, "待完成",
+                draw.font(youklx::Fontcmd{&font, "待完成",
                       NX + 550.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f});
+                      {1.0f, 1.0f, 1.0f, 1.0f}});
             }
         }
 
@@ -119,6 +123,9 @@ void splashScreenAnimation1(int &pt) {
         }
         if(focus == 2){
             scene.ptr = "sudoku";
+        }
+        if(focus == 3){
+            scene.ptr = "jump";
         }
     }
 }

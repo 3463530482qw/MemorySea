@@ -27,6 +27,13 @@ namespace youklx {
         int32_t offsetX = static_cast<int32_t>((chainW - vpW)/2);
         int32_t offsetY = static_cast<int32_t>((chainH - vpH)/2);
         vk::Viewport viewport{static_cast<float>(offsetX),static_cast<float>(offsetY),static_cast<float>(vpW),static_cast<float>(vpH),0.0f,1.0f};
+
+        // 存储 viewport 参数，供 Window::run() 做鼠标坐标转换
+        this->viewportX = offsetX;
+        this->viewportY = offsetY;
+        this->viewportW = static_cast<int>(vpW);
+        this->viewportH = static_cast<int>(vpH);
+
         this->commandBuffers[this->currentFrame].setViewport(0, viewport);
         vk::Rect2D scissor{{offsetX,offsetY},{vpW,vpH}};
         this->commandBuffers[this->currentFrame].setScissor(0, scissor);

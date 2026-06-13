@@ -41,7 +41,7 @@ subprocess.run([
 
 #sdl动态链接库位置与目标位置
 sdldll = [ 
-    Path("C:/vulkan/Lib/vulkan-1.lib"),
+    #Path("C:/vulkan/Lib/vulkan-1.lib"),
     Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll"),
     Path("D:/mingw64/bin/libunwind.dll"),
     Path("D:/mingw64/bin/libc++.dll")
@@ -52,8 +52,8 @@ for dst in sdldll:
         shutil.copy(dst, sdldlldst)
         print(f"dll文件复制成功！目标位置: {dst}")
     except FileNotFoundError:
-        print("dll源文件不存在！")
-        break # 源文件不存在，后续循环也没意义，直接退出
+        print(f"dll源文件不存在: {dst}")
+        continue
     except PermissionError:
         print(f"没有权限操作该文件或目录: {dst}")
 

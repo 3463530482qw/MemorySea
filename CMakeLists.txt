@@ -24,6 +24,7 @@ include_directories(
 # 链接静态文件
 target_link_libraries(MemorySea
     D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib/libSDL3.dll.a
+    C:/vulkan/Lib/vulkan-1.lib 
     winmm
 )
 
@@ -31,4 +32,7 @@ target_link_libraries(MemorySea
 target_link_options(MemorySea PRIVATE -Wl,--export-all-symbols,--out-implib,libMemorySea.dll.a)
 
 # 强制 g++ 以 UTF-8 处理源文件和生成的可执行文件（解决中文乱码）
-target_compile_options(MemorySea PRIVATE -finput-charset=UTF-8 -fexec-charset=UTF-8)
+target_compile_options(MemorySea PRIVATE
+    -finput-charset=UTF-8
+    -fexec-charset=UTF-8
+)

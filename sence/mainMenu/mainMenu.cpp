@@ -11,7 +11,7 @@ extern "C" EXPORT void mainMenu() {
         if(scene.ptr != "mainMenu") return;
         window.run();
 
-        
+        //std::cout << window.mouse.x << std::endl;
             switch (pt) {
                 case 1: splashScreenAnimation1(pt); break;
                 case 2: splashScreenAnimation2(pt,lx,ly); break;

@@ -28,6 +28,8 @@
 #include <mutex>
 #include <condition_variable>
 #include <future>
+#include <atomic>
+
 
 #ifdef _WIN32
     #include <windows.h>
@@ -59,6 +61,12 @@
 #include "cpp/INIReader.cpp"
 
 //图形库
+#ifndef NDEBUG
+#ifndef VULKAN_HPP_ASSERT
+#define VULKAN_HPP_ASSERT(...) ((void)0)
+#endif
+#endif
+#include <vulkan/vulkan.h>
 #include <vulkan/vulkan_raii.hpp>
 
 //自定义封装库

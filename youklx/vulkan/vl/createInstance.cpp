@@ -6,7 +6,7 @@ namespace youklx {
             VK_MAKE_VERSION(1, 0, 0),
             "YouklxEngine",
             VK_MAKE_VERSION(1, 0, 0),
-            VK_API_VERSION_1_3
+            VK_API_VERSION_1_0
         );
 
         // 用 SDL 查询所需的 Vulkan 实例扩展（自动包含平台表面扩展）

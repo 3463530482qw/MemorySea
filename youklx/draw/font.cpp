@@ -31,23 +31,12 @@ static std::string toUTF8(const std::string& input) {
 static std::string toUTF8(const std::string& input) { return input; }
 #endif
 
-Draw& Draw::font(
-    Font* font,
-    std::string text,
-    float x, float y,
-    float fontSize,
-    float rotate, float rox, float roy,
-    std::array<float,4> rgba
-) {
-    font->ensure(text);  // 按需加载字形到图集
-
-    Fontcmd cmd;
-    cmd.font = font;
-    cmd.text = toUTF8(text);  // 自动检测编码并转为 UTF-8
-    cmd.x = x; cmd.y = y;
-    cmd.fontSize = fontSize;
-    cmd.rotate = rotate; cmd.rox = rox; cmd.roy = roy;
-    cmd.rgba = rgba;
+Draw& Draw::font(Fontcmd cmd) {
+    // 统一文本为 UTF-8（调用者可能传入其它编码）
+    cmd.text = toUTF8(cmd.text);
+    // 若已设置字体对象，则按需加载字形到图集
+    if (cmd.font) cmd.font->ensure(cmd.text);
+    // 直接使用传入的 cmd（调用者已设置位置、大小、颜色等）
     commands.emplace_back(cmd);
     cptr += 1;
     return *this;

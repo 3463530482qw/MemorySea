@@ -109,10 +109,10 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
         draw.line(curve);
     }
 
-    draw.font(&font, "图形化界面展示", fw, fh, 120.0f,0,0,0,{0.898f,0.898f,0.898f,1.0f});
-    draw.font(&font, "开始", fw2, fh2, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
-    draw.font(&font, "设置", fw3, fh3, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
-    draw.font(&font, "结束", fw4, fh4, 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f});
+    draw.font(youklx::Fontcmd{&font, "图形化界面展示", static_cast<float>(fw), static_cast<float>(fh), 120.0f,0,0,0,{0.898f,0.898f,0.898f,1.0f}});
+    draw.font(youklx::Fontcmd{&font, "开始", static_cast<float>(fw2), static_cast<float>(fh2), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
+    draw.font(youklx::Fontcmd{&font, "设置", static_cast<float>(fw3), static_cast<float>(fh3), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
+    draw.font(youklx::Fontcmd{&font, "结束", static_cast<float>(fw4), static_cast<float>(fh4), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
     });
     if(fwh == false && curveReady == false) pt = 3;
 }

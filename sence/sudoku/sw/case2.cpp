@@ -2,8 +2,8 @@ void splashScreenAnimation2(int &pt) {
     // 数独 — 游戏主体
     static constexpr int N = 9;
     static constexpr int CELL = 72;
-    static constexpr int OFFX = (1600 - N * CELL) / 2;  // 476
-    static constexpr int OFFY = (900 - N * CELL) / 2;   // 126
+    static constexpr int OFFX = 476;
+    static constexpr int OFFY = 126;
     static youklx::Linecmd grid{
         .r = {180,180},
         .g = {180,180},
@@ -176,34 +176,34 @@ void splashScreenAnimation2(int &pt) {
             float ny = (float)(OFFY + r * CELL + 23);
 
             if (fixed[r][c]) {
-                draw.font(&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f});
+                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f}});
             } else if (conflict[r][c]) {
                 // 冲突：红色
-                draw.font(&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,0.2f,0.2f,1.0f});
+                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,0.2f,0.2f,1.0f}});
             } else {
                 // 正常：青色
-                draw.font(&font, num, nx, ny, 48.0f, 0,0,0, {0.3f,0.8f,1.0f,1.0f});
+                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {0.3f,0.8f,1.0f,1.0f}});
             }
         }
     }
 
     // UI
-    draw.font(&font, "数独",
+    draw.font(youklx::Fontcmd{&font, "数独",
               50, 45, 48.0f, 0,0,0,
-              {0.4f,0.6f,1.0f,1.0f});
-    draw.font(&font, "点击格子选中 | 1-9填入 | 0/Backspace清除",
+              {0.4f,0.6f,1.0f,1.0f}});
+    draw.font(youklx::Fontcmd{&font, "点击格子选中 | 1-9填入 | 0/Backspace清除",
               50, 805.0f, 24.0f, 0,0,0,
-              {1.0f,1.0f,1.0f,0.5f});
+              {1.0f,1.0f,1.0f,0.5f}});
     });
 
     if (solved) {
         draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
                   {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
-        draw.font(&font, "完成!",
+        draw.font(youklx::Fontcmd{&font, "完成!",
                   OFFX + 240.0f, OFFY + 285.0f, 72.0f, 0,0,0,
-                  {0.2f,1.0f,0.3f,1.0f});
-        draw.font(&font, "ESC 返回",
+                  {0.2f,1.0f,0.3f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, "ESC 返回",
                   OFFX + 250.0f, OFFY + 375.0f, 36.0f, 0,0,0,
-                  {1.0f,1.0f,1.0f,0.8f});
+                  {1.0f,1.0f,1.0f,0.8f}});
     }
 }

@@ -12,6 +12,11 @@ namespace youklx {
             int h{0};               //窗口高度
             int stsizew{0};         // 逻辑大小宽度
             int stsizeh{0};         // 逻辑大小高度
+            // viewport 参数，由渲染线程在 drawFrame 后同步，用于鼠标坐标转换
+            int viewportX{0};
+            int viewportY{0};
+            int viewportW{0};
+            int viewportH{0};
             SDL_Event pe{};         //事件
             bool isrun{true};       //是否运行
             Time time;              //时间相关

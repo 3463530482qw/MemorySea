@@ -24,13 +24,36 @@ namespace youklx {
             std::condition_variable cv_update_done;
             bool    update_ready{false};
             bool    update_done{false};
-            bool    stopw{false};
+            std::atomic<bool> stopw{false};
+
+            // 持久化工作线程池，用于分发顶点计算任务
+            struct WthPool {
+                std::vector<std::thread> threads;
+                int count{0};
+                std::atomic<int> gen{0};
+                std::atomic<int> done{0};
+                bool start{false};
+                std::atomic<bool> stop{false};
+                std::mutex mtx;
+                std::condition_variable cv_start;
+                std::condition_variable cv_done;
+                struct Task {
+                    int start, end;
+                    std::vector<float> vertices;
+                    std::vector<int> offsets;
+                };
+                std::vector<Task> tasks;
+            } wth;
         public:
             Thread& init(Window& swi,Vulkan& svk,Draw& ddr,Image& img,Font& sft);
             void wth_draw(std::function<void()> work);
             void wth_update(std::function<void()> work);
+            void wth_vupdate();
+            ~Thread();
     };
 }
 #include "init.cpp"
 #include "th_draw.cpp"
 #include "th_update.cpp"
+#include "vupdate.cpp"
+#include "stop.cpp"

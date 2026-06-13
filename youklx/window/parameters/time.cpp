@@ -25,14 +25,18 @@ namespace youklx {
                 #endif
                     vstart = false;
                 }
-                if (current > 100) {
-                    current = current - static_cast<int>(current) % 100;
-                    start = start + std::chrono::seconds(100);
-                }
                 before = current;
                 current = std::chrono::duration_cast<std::chrono::milliseconds>(
                     std::chrono::steady_clock::now() - start
                 ).count() / 1000.f;
+
+                // 定期重置基准点，防止浮点精度下降。
+                // 同时重置 before/current 避免不同步导致负值尖峰。
+                if (current > 3600.0f) {
+                    start = std::chrono::steady_clock::now();
+                    before = 0.0f;
+                    current = 0.0f;
+                }
                 different = current - before;
 
                 // 更新滚动平均帧时间

@@ -60,6 +60,12 @@ namespace youklx {
     public:
         int stsizew{}; // 交换链逻辑大小宽度
         int stsizeh{}; // 交换链逻辑大小高度
+
+        // viewport 参数（在 recordCommandBuffer 中计算，供 Window::run() 做鼠标坐标转换）
+        int viewportX{0};
+        int viewportY{0};
+        int viewportW{0};
+        int viewportH{0};
     public:
         Vulkan& createInstance();                         // 创建实例
         Vulkan& pickPhysicalDevice();                     // 选择物理设备

@@ -6,8 +6,14 @@ namespace youklx {
             return *this;
         }
 
-        (void) (*this->device).waitForFences(
-            {*this->inFlightFences[this->currentFrame]}, VK_TRUE, UINT64_MAX);
+        // 等待上一帧 GPU 工作完成，设置 3 秒超时防止窗口卡死
+        auto fenceResult = (*this->device).waitForFences(
+            {*this->inFlightFences[this->currentFrame]}, VK_TRUE, 3'000'000'000);
+        if (fenceResult == vk::Result::eTimeout) {
+            std::cerr << "Vulkan: waitForFences 超时，重建交换链" << std::endl;
+            this->recreateSwapChain();
+            return *this;
+        }
 
         uint32_t imageIndex = 0;
         try {

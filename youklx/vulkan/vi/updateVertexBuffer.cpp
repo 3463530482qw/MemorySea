@@ -16,7 +16,15 @@ Vulkan& Vulkan::updateVertexBuffer(const std::vector<float>& vertices) {
     this->vertexCount = static_cast<uint32_t>(vertices.size() / 8);
 
     if (this->vertexCount == 0) {
-        this->device->waitIdle();
+        // 等待 GPU 完成当前工作后清理顶点缓冲
+        if (!this->inFlightFences.empty()) {
+            std::vector<vk::Fence> fences;
+            fences.reserve(this->inFlightFences.size());
+            for (auto& f : this->inFlightFences) {
+                fences.push_back(*f);
+            }
+            auto _ = (*this->device).waitForFences(fences, VK_TRUE, 2'000'000'000);
+        }
         this->vertexBuffer.reset();
         this->vertexBufferMemory.reset();
         return *this;
@@ -26,7 +34,15 @@ Vulkan& Vulkan::updateVertexBuffer(const std::vector<float>& vertices) {
         this->vertexBuffer->getMemoryRequirements().size < bufferSize;
 
     if (needRecreate) {
-        this->device->waitIdle();
+        // 等待所有在途 GPU 工作完成后再销毁旧顶点缓冲
+        if (!this->inFlightFences.empty()) {
+            std::vector<vk::Fence> fences;
+            fences.reserve(this->inFlightFences.size());
+            for (auto& f : this->inFlightFences) {
+                fences.push_back(*f);
+            }
+            auto _ = (*this->device).waitForFences(fences, VK_TRUE, 2'000'000'000);
+        }
         this->vertexBuffer.reset();
         this->vertexBufferMemory.reset();
 
@@ -53,8 +69,12 @@ Vulkan& Vulkan::updateVertexBuffer(const std::vector<float>& vertices) {
     // drawFrame 结束后 currentFrame 已推进，上一帧索引 = (currentFrame + MAX-1) % MAX
     if (!this->inFlightFences.empty()) {
         uint32_t prevFrame = (this->currentFrame == 0) ? (MAX_FRAMES_IN_FLIGHT - 1) : (this->currentFrame - 1);
-        (void) (*this->device).waitForFences(
-            {*this->inFlightFences[prevFrame]}, VK_TRUE, UINT64_MAX);
+        auto fenceResult = (*this->device).waitForFences(
+            {*this->inFlightFences[prevFrame]}, VK_TRUE, 3'000'000'000);
+        if (fenceResult == vk::Result::eTimeout) {
+            std::cerr << "Vulkan: updateVertexBuffer waitForFences 超时，跳过本帧上传" << std::endl;
+            return *this;
+        }
     }
 
     void* data = this->vertexBufferMemory->mapMemory(0, bufferSize);

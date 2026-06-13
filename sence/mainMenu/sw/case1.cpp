@@ -16,7 +16,7 @@ void splashScreenAnimation1(int &pt) {
     thread.wth_draw([&]() {
         draw.image(bk);
 
-        draw.font(&font, "图形化界面展示", 440, 405, 120.0f, 0, 0, 0, {1.0f, 1.0f, 1.0f, ah});
+        draw.font(youklx::Fontcmd{&font, "图形化界面展示", 440, 405, 120.0f, 0, 0, 0, {1.0f, 1.0f, 1.0f, ah}});
 
     });
     

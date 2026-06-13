@@ -20,6 +20,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
                     window.mouse.y >= 700 && window.mouse.y <= 820);
     static float rma1 = 270.0f;
     static float rma2 = 0.0f;
+    static bool transitionReset = true;
     static youklx::Linecmd curve{
         .thickness = 5
     };
@@ -83,10 +84,10 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         }
 
         // 文字
-        draw.font(&font, "图形化界面展示", 100, 110, 120.0f, 0,0,0, {0.898f,0.898f,0.898f,1.0f});
-        draw.font(&font, "开始", 1250, 400, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
-        draw.font(&font, "设置", 1250, 550, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
-        draw.font(&font, "结束", 1250, 700, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f});
+        draw.font(youklx::Fontcmd{&font, "图形化界面展示", 100, 110, 120.0f, 0,0,0, {0.898f,0.898f,0.898f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, "开始", 1250, 400, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, "设置", 1250, 550, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, "结束", 1250, 700, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
 
         // 按钮选中背景和旋转图标（两个状态都要画）
         draw.image(pt1);
@@ -95,6 +96,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
 
     thread.wth_update([&]() {
         if (pts) {
+        transitionReset = true;
         // --- 修正悬停：先重置为 -1，无悬停时高亮消失 ---
         pptt = -1;
         if (isHoverStart) pptt = 0;
@@ -120,10 +122,20 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
             if (pptta <= 0.6) ppttb = true;
         }
         } else {
+        // 每次进入切换动画时，重置动画参数
+        if (transitionReset) {
+            rma1 = 270.0f;
+            rma2 = 0.0f;
+            transitionReset = false;
+        }
         // 切换动画阶段：让动画继续，按钮淡出
         lda += window.time.different * 200;            // 光点继续流动
         pptta -= window.time.different * 0.8f;         // 逐渐透明
         if (pptta < 0.0f) pptta = 0.0f;
+
+        rma1 += window.time.different * 200;
+        rma2 -= window.time.different * 100;
+        if (rma1 >= 335) scene.ptr = "mselect";
         }
 
     // --- 统一更新 pt1/pt2 属性（两个分支都会执行）---
@@ -139,20 +151,16 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         .rgba3({255,255,255,pptta})
         .rgba4({255,255,255,pptta});
 
-    // 调用公共绘制
-    drawCommonUI();
-    });
-    thread.wth_draw([&]() {
-
-    // 仅在切换态绘制额外的转场背景
-    if (!pts) {
         an1.srot(rma1, 0, 900);
         an2.srot(rma2, 0, 0);
 
-        rma1 += window.time.different * 200;
-        rma2 -= window.time.different * 100;
-        if (rma1 >= 335) scene.ptr = "mselect";
+    
+    });
+    thread.wth_draw([&]() {
+    drawCommonUI();
 
+    // 仅在切换态绘制额外的转场背景
+    if (!pts) {
         draw.image(an1);
         draw.image(an2);
     }
