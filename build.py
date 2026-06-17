@@ -28,7 +28,7 @@ shaders_build.mkdir(parents=True, exist_ok=True)
 subprocess.run([
     "cmake",
     "-G", "MinGW Makefiles",     # 指定使用 MinGW 生成器
-    #"-DCMAKE_BUILD_TYPE=Release",# 开启 Release 模式
+    "-DCMAKE_BUILD_TYPE=Release",# 开启 Release 模式
     "-S", str(mopath),           # 源代码目录（当前目录）
     "-B", str(mopath / "build")  # 构建输出目录（./build）
 ], check=True)
@@ -41,7 +41,7 @@ subprocess.run([
 
 #sdl动态链接库位置与目标位置
 sdldll = [ 
-    #Path("C:/vulkan/Lib/vulkan-1.lib"),
+    Path("C:/Windows/WinSxS/x86_microsoft-windows-vulkan-loader_31bf3856ad364e35_10.0.26100.1_none_b0165e7e6d4a049a/vulkan-1.dll"),
     Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll"),
     Path("D:/mingw64/bin/libunwind.dll"),
     Path("D:/mingw64/bin/libc++.dll")
