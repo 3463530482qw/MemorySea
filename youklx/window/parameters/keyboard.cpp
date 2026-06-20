@@ -1,3 +1,4 @@
+#include "key.hpp"
 namespace youklx {
 
 class Keyboard {

@@ -21,6 +21,7 @@ namespace youklx {
             bool isrun{true};       //是否运行
             Time time;              //时间相关
             Keyboard keyboard;      //键盘输入
+            Keyboard key;
             Mouse mouse;            //鼠标输入
         public:
             Window() {};
