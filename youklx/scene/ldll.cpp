@@ -14,14 +14,14 @@ namespace youklx {
 
     Scene& Scene::ldll(std::string pdll, std::string nfun) {
         // 加载动态链接库，获取句柄
-        auto handle = ildll(pdll.c_str());
+        auto handle = IL_DLL(pdll.c_str());
         if (!handle) {
             std::cerr << "Failed to load DLL: " << pdll << std::endl;
             return *this;
         }
         
         // 获取库中指定名称的函数指针
-        void (*func)() = (void(*)())igfunc(handle, nfun.c_str());
+        void (*func)() = (void(*)())IG_FUNC(handle, nfun.c_str());
         
         // 若函数存在，则注册到字典并保存句柄
         if (func) {
@@ -29,7 +29,7 @@ namespace youklx {
             handles.insert(handle);  // 保存句柄用于后续释放
         } else {
             std::cerr << "Function " << nfun << " not found in " << pdll << std::endl;
-            icdll(handle);  // 函数未找到，释放已加载的 DLL
+            IC_DLL(handle);  // 函数未找到，释放已加载的 DLL
         }
         
         return *this;
@@ -43,22 +43,22 @@ namespace youklx {
         if (ini_parse(ini.c_str(), lildll, &ca) < 0) {
             std::cerr << "Error parsing config file." << std::endl;
         } else {
-            for (auto& ildll : ca.vildll) {
-                auto ildlltp = ildll;
-                ildll = reader.Get(ivrtp, ildll, "");
-                if (ildll.empty()) continue;
-                auto handle = ildll(ildll.c_str());
+            for (auto& dllkey : ca.vildll) {
+                auto ildlltp = dllkey;
+                dllkey = reader.Get(ivrtp, dllkey, "");
+                if (dllkey.empty()) continue;
+                auto handle = IL_DLL(dllkey.c_str());
                 if (!handle) {
-                    std::cerr << "Failed to load DLL: " << ildll << std::endl;
+                    std::cerr << "Failed to load DLL: " << dllkey << std::endl;
                     continue;
                 }
-                void (*func)() = (void(*)())igfunc(handle, ildlltp.c_str());
+                void (*func)() = (void(*)())IG_FUNC(handle, ildlltp.c_str());
                 if (func) {
                     dict[ildlltp] = func;
                     handles.insert(handle);
                 } else {
-                    std::cerr << "Function " << ildlltp << " not found in " << ildll << std::endl;
-                    icdll(handle);
+                    std::cerr << "Function " << ildlltp << " not found in " << dllkey << std::endl;
+                    IC_DLL(handle);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace youklx {
     Scene::~Scene() {
         for (void* handle : handles) {
             if (handle) {
-                icdll(handle);
+                IC_DLL(handle);
             }
         }
     }

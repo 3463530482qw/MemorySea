@@ -1,6 +1,7 @@
 namespace youklx {
 
-float Font::textWidth(const std::string& text, float drawSize) const {
+float Font::textWidth(const std::string& text, float drawSize) {
+    ensure(text);
     if (!loaded) return 0;
     float s = drawSize / fontSize;
     float x = 0;

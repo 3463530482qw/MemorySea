@@ -13,10 +13,7 @@ Image& Image::buildAtlas() {
     int imgCount = 0;
     for (auto& group : ima) {
         for (auto& imgvar : group) {
-            Plpng* png = nullptr;
-            if (std::holds_alternative<Plpng>(imgvar)) {
-                png = &std::get<Plpng>(imgvar);
-            }
+            auto* png = std::get_if<Plpng>(&imgvar);
             if (!png || !png->data || png->w <= 0 || png->h <= 0) continue;
             totalW += png->w;
             if (png->h > maxH) maxH = png->h;
@@ -34,10 +31,7 @@ Image& Image::buildAtlas() {
     int curX = PADDING;  // 左侧留 padding，防止线性采样 bleeding
     for (auto& group : ima) {
         for (auto& imgvar : group) {
-            Plpng* png = nullptr;
-            if (std::holds_alternative<Plpng>(imgvar)) {
-                png = &std::get<Plpng>(imgvar);
-            }
+            auto* png = std::get_if<Plpng>(&imgvar);
             if (!png || !png->data || png->w <= 0 || png->h <= 0) continue;
 
             // 设置图集 UV（指向实际图片数据，不含 padding）

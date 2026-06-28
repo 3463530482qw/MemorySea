@@ -93,28 +93,11 @@ void splashScreenAnimation2(int &pt) {
     static float inputLockTimer        = 0.0f;
     static const float inputLockDelay  = 0.08f;
     static bool inputLocked            = false;
-    static youklx::Linecmd grid{
-        .r = {20, 20},
-        .g = {20, 20},
-        .b = {20, 20},
-        .a = {0.15f, 0.15f}
-    };
-    static youklx::Linecmd bias{
-        .thickness = 28,
-    };
-    static youklx::Linecmd shad{
-        .thickness = 28,
-        .r = {100,100},
-        .g = {100,100},
-        .b = {100,100},
-        .a = {0.3f,0.3f}
-    };
-    static youklx::Linecmd curr{
-        .thickness = 28,
-    };
-    static youklx::Linecmd next{
-        .thickness = 22,
-    };
+    static youklx::Linecmd grid;
+    static youklx::Linecmd bias;
+    static youklx::Linecmd shad;
+    static youklx::Linecmd curr;
+    static youklx::Linecmd next;
     // ---- 碰撞检测（两个线程共用） ----
     auto checkCollision = [&](int px, int py, int piece, int rot) -> bool {
         for (int r = 0; r < 4; r++) {
@@ -148,6 +131,13 @@ void splashScreenAnimation2(int &pt) {
         dropInterval = 0.8f;
         inputLocked = false;
         inputLockTimer = 0.0f;
+        // 初始化模板命令样式（仅首次）
+        grid.color(20, 20, 20, 0.15f);
+        bias.slw(28.0f);
+        shad.color(100, 100, 100, 0.3f).slw(28.0f);
+        curr.slw(28.0f);
+        next.slw(22.0f);
+
         inited = true;
     }
 
@@ -291,14 +281,14 @@ void splashScreenAnimation2(int &pt) {
     // ---- 网格线 ----
     for (int r = 0; r <= BH; r++) {
         int y = OFFY + r * CELL;
-        grid.sp1(OFFX, y)
-            .sp2(OFFX+bw, y);
+        grid.from(OFFX, y)
+            .to(OFFX+bw, y);
         draw.line(grid);
     }
     for (int c = 0; c <= BW; c++) {
         int x = OFFX + c * CELL;
-        grid.sp1(x, OFFY)
-            .sp2(x, OFFY+bh);
+        grid.from(x, OFFY)
+            .to(x, OFFY+bh);
         draw.line(grid);
     }
 
@@ -310,11 +300,9 @@ void splashScreenAnimation2(int &pt) {
                 int bx = OFFX + c * CELL + 2;
                 int by = OFFY + r * CELL + 2;
                 int midY = by + 14;
-                bias.sp1(bx, midY)
-                    .sp2(bx + 28, midY)
-                    .sr({COLORS[idx][0], COLORS[idx][0]})
-                    .sg({COLORS[idx][1], COLORS[idx][1]})
-                    .sb({COLORS[idx][2], COLORS[idx][2]});
+                bias.color(COLORS[idx][0], COLORS[idx][1], COLORS[idx][2])
+                    .from(bx, midY)
+                    .to(bx + 28, midY);
                 draw.line(bias);
             }
         }
@@ -333,8 +321,8 @@ void splashScreenAnimation2(int &pt) {
                             int gx = OFFX + (curX + c) * CELL + 2;
                             int gyPos = OFFY + gy * CELL + 2;
                             int midY = gyPos + 14;
-                            shad.sp1(gx, midY)
-                                .sp2(gx + 28, midY);
+                            shad.from(gx, midY)
+                                .to(gx + 28, midY);
                             draw.line(shad);
                         }
                     }
@@ -354,11 +342,9 @@ void splashScreenAnimation2(int &pt) {
                         int px = OFFX + (curX + c) * CELL + 2;
                         int ppx = OFFY + py * CELL + 2;
                         int midY = ppx + 14;
-                        curr.sp1(px, midY)
-                            .sp2(px + 28, midY)
-                            .sr({COLORS[idx][0], COLORS[idx][0]})
-                            .sg({COLORS[idx][1], COLORS[idx][1]})
-                            .sb({COLORS[idx][2], COLORS[idx][2]});
+                        curr.color(COLORS[idx][0], COLORS[idx][1], COLORS[idx][2])
+                            .from(px, midY)
+                            .to(px + 28, midY);
                         draw.line(curr);
                     }
                 }
@@ -378,11 +364,9 @@ void splashScreenAnimation2(int &pt) {
                     int px = previewX + c * previewCell + 1;
                     int py = previewY + r * previewCell + 16;
                     int midY = py + 10;
-                    next.sp1(px, midY)
-                        .sp2(px + 24, midY)
-                        .sr({COLORS[nextPiece][0], COLORS[nextPiece][0]})
-                        .sg({COLORS[nextPiece][1], COLORS[nextPiece][1]})
-                        .sb({COLORS[nextPiece][2], COLORS[nextPiece][2]});
+                    next.color(COLORS[nextPiece][0], COLORS[nextPiece][1], COLORS[nextPiece][2])
+                        .from(px, midY)
+                        .to(px + 24, midY);
                     draw.line(next);
                 }
             }

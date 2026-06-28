@@ -54,18 +54,10 @@ void splashScreenAnimation2(int &pt) {
     static std::vector<Splash> splashes;
 
     // ---- 绘制命令模板 ----
-    static youklx::Linecmd platCmd{
-        .r = {160,190}, .g = {160,190}, .b = {160,190}, .a = {1.0f,1.0f}
-    };
-    static youklx::Linecmd plyrCmd{
-        .r = {50,50}, .g = {230,230}, .b = {80,80}, .a = {1.0f,1.0f}
-    };
-    static youklx::Linecmd waterCmd{
-        .r = {180,220}, .g = {210,240}, .b = {235,255}, .a = {0.80f,0.80f}
-    };
-    static youklx::Linecmd splashCmd{
-        .r = {200,255}, .g = {220,255}, .b = {255,255}, .a = {0.9f,0.9f}
-    };
+    static youklx::Linecmd platCmd;
+    static youklx::Linecmd plyrCmd;
+    static youklx::Linecmd waterCmd;
+    static youklx::Linecmd splashCmd;
 
     thread.wth_update([&]() {
         float dt = window.time.different;
@@ -84,7 +76,12 @@ void splashScreenAnimation2(int &pt) {
                 wy[i]  = wyBase;
                 wyv[i] = 0.0f;
             }
-            inited = true;
+            // 模板命令初始样式（仅首次）
+        platCmd.color(160, 190, 190, 1.0f);
+        plyrCmd.color(50, 230, 80, 1.0f);
+        waterCmd.color(180, 210, 235, 0.80f);
+        splashCmd.color(200, 220, 255, 0.9f);
+        inited = true;
         }
 
         if (window.keyboard.isPressed(SDLK_ESCAPE)) {
@@ -222,9 +219,9 @@ void splashScreenAnimation2(int &pt) {
             if (p.x + p.w < 0.0f || p.x > SCRN_W) continue;
             float t = (platSpd - PLAT_SPD_START) / (PLAT_SPD_MAX - PLAT_SPD_START + 0.01f);
             int r = 160 - static_cast<int>(t * 60), g = 190 - static_cast<int>(t * 60), b = 190 - static_cast<int>(t * 80);
-            platCmd.sr({r,r}).sg({g,g}).sb({b,b});
-            platCmd.sp1(static_cast<int>(p.x), static_cast<int>(p.y))
-                   .sp2(static_cast<int>(p.x + p.w), static_cast<int>(p.y)).slw(p.thick);
+            platCmd.color(r, g, b);
+            platCmd.from(static_cast<int>(p.x), static_cast<int>(p.y))
+                   .to(static_cast<int>(p.x + p.w), static_cast<int>(p.y)).slw(p.thick);
             draw.line(platCmd);
         }
 
@@ -232,22 +229,22 @@ void splashScreenAnimation2(int &pt) {
         if (!dead) {
             int cx = static_cast<int>(px), cy = static_cast<int>(py), hf = static_cast<int>(PLYR_HALF);
             int gr = 50 + bounceCount * 40, gg = 230 - bounceCount * 50, gb = 80;
-            plyrCmd.sr({gr,gr}).sg({gg,gg}).sb({gb,gb});
-            plyrCmd.sp1(cx-hf, cy).sp2(cx+hf, cy).slw(PLYR_SZ); draw.line(plyrCmd);
-            plyrCmd.sr({gr+60,gr+60}).sg({gg+25,gg+25}).sb({gb+40,gb+40}).slw(2.0f);
-            plyrCmd.sp1(cx-hf, cy-hf).sp2(cx+hf, cy-hf); draw.line(plyrCmd);
-            plyrCmd.sp1(cx+hf, cy-hf).sp2(cx+hf, cy+hf); draw.line(plyrCmd);
-            plyrCmd.sp1(cx+hf, cy+hf).sp2(cx-hf, cy+hf); draw.line(plyrCmd);
-            plyrCmd.sp1(cx-hf, cy+hf).sp2(cx-hf, cy-hf); draw.line(plyrCmd);
-            plyrCmd.sr({50,50}).sg({230,230}).sb({80,80});
+            plyrCmd.color(gr, gg, gb);
+            plyrCmd.from(cx-hf, cy).to(cx+hf, cy).slw(PLYR_SZ); draw.line(plyrCmd);
+            plyrCmd.color(gr+60, gg+25, gb+40).slw(2.0f);
+            plyrCmd.from(cx-hf, cy-hf).to(cx+hf, cy-hf); draw.line(plyrCmd);
+            plyrCmd.from(cx+hf, cy-hf).to(cx+hf, cy+hf); draw.line(plyrCmd);
+            plyrCmd.from(cx+hf, cy+hf).to(cx-hf, cy+hf); draw.line(plyrCmd);
+            plyrCmd.from(cx-hf, cy+hf).to(cx-hf, cy-hf); draw.line(plyrCmd);
+            plyrCmd.color(50, 230, 80);
         }
 
         // ---- 飞溅粒子 ----
         for (const auto &s : splashes) {
             float alpha = s.life / 1.0f; if (alpha > 1.0f) alpha = 1.0f;
-            splashCmd.sa({alpha, alpha});
-            splashCmd.sp1(static_cast<int>(s.x), static_cast<int>(s.y))
-                     .sp2(static_cast<int>(s.x+1), static_cast<int>(s.y+1)).slw(2.0f);
+            splashCmd.color(255, 255, 255, alpha);
+            splashCmd.from(static_cast<int>(s.x), static_cast<int>(s.y))
+                     .to(static_cast<int>(s.x+1), static_cast<int>(s.y+1)).slw(2.0f);
             draw.line(splashCmd);
         }
 
@@ -256,7 +253,7 @@ void splashScreenAnimation2(int &pt) {
             float x0 = static_cast<float>(i)*WDX, x1 = static_cast<float>(i+1)*WDX;
             int ix0 = static_cast<int>(x0), ix1 = static_cast<int>(x1);
             int iy0 = static_cast<int>(wy[i]), iy1 = static_cast<int>(wy[i+1]);
-            waterCmd.sp1(ix0, iy0).sp2(ix1, iy1).slw(3.0f);
+            waterCmd.from(ix0, iy0).to(ix1, iy1).slw(3.0f);
             draw.line(waterCmd);
         }
 

@@ -17,20 +17,9 @@ void splashScreenAnimation2(int &pt) {
     static int score = 0;
     static bool dead = false;
     static bool inited = false;
-    static youklx::Linecmd grid{
-        .r = {30, 30},
-        .g = {30, 30},
-        .b = {30, 30},
-        .a = {0.3f, 0.3f}
-    };
-    static youklx::Linecmd dfood{
-        .g = {30, 30},
-        .b = {30, 30},
-    };
-    static youklx::Linecmd snk{
-        .r = {0, 0},
-        .b = {50, 50},
-    };
+    static youklx::Linecmd grid;
+    static youklx::Linecmd dfood;
+    static youklx::Linecmd snk;
     thread.wth_update([&]() {
     if (!inited) {
         snake.clear();
@@ -46,6 +35,10 @@ void splashScreenAnimation2(int &pt) {
         // 随机食物
         food.x = std::rand() % COLS;
         food.y = std::rand() % ROWS;
+        // 模板命令初始样式（仅首次）
+        grid.color(30, 30, 30, 0.3f);
+        dfood.color(255, 30, 30);
+        snk.color(0, 255, 50);
         inited = true;
     }
 
@@ -104,12 +97,12 @@ void splashScreenAnimation2(int &pt) {
     // 网格线
     for (int r = 0; r <= ROWS; r++) {
         int y = OFFY + r * CELL;
-        grid.sp1(OFFX, y).sp2(OFFX+bw, y);
+        grid.from(OFFX, y).to(OFFX+bw, y);
         draw.line(grid);
     }
     for (int c = 0; c <= COLS; c++) {
         int x = OFFX + c * CELL;
-        grid.sp1(x, OFFY).sp2(x, OFFY+bh);
+        grid.from(x, OFFY).to(x, OFFY+bh);
         draw.line(grid);
     }
 
@@ -119,8 +112,8 @@ void splashScreenAnimation2(int &pt) {
         int fy = OFFY + food.y * CELL;
         int fcx = fx + CELL / 2;
         int fcy = fy + CELL / 2;
-        dfood.sp1(fx, fcy)
-             .sp2(fx + CELL - 6, fcy)
+        dfood.from(fx, fcy)
+             .to(fx + CELL - 6, fcy)
              .slw((float)(CELL - 6));
         draw.line(dfood);
     }
@@ -131,10 +124,10 @@ void splashScreenAnimation2(int &pt) {
         int sy = OFFY + snake[i].y * CELL + 2;
         int midY = sy + (CELL-4)/2;
         int bright = (i == 0) ? 255 : 180;
-        snk.sp1(sx, midY)
-           .sp2(sx + CELL - 4, midY)
-           .slw((float)(CELL - 4))
-           .sg({bright,bright});
+        snk.color(255, bright, 255)
+           .from(sx, midY)
+           .to(sx + CELL - 4, midY)
+           .slw((float)(CELL - 4));
         draw.line(snk);
     }
 

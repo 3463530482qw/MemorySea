@@ -21,9 +21,8 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
     static float rma1 = 270.0f;
     static float rma2 = 0.0f;
     static bool transitionReset = true;
-    static youklx::Linecmd curve{
-        .thickness = 5
-    };
+    static youklx::Linecmd curve;
+    static bool curveInited = false;
     static youklx::Imagecmd bk = {
         .img = image.ima[0][0],
         .x = 0,
@@ -60,6 +59,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         .h = 900
     };
     auto drawCommonUI = [&]() {
+        if (!curveInited) { curve.slw(5.0f); curveInited = true; }
         draw.image(bk);
         draw.image(abk);
 
@@ -77,9 +77,9 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
             int rgb = 25 + static_cast<int>(204.0f * glowIntensity);
             float a = 0.5f + 0.5f * glowIntensity;
 
-            curve.sp1(lx[i], ly[i])
-                 .sp2(lx[i - 1], ly[i - 1])
-                 .sr({rgb, rgb}).sg({rgb, rgb}).sb({rgb, rgb}).sa({a, a});
+            curve.color(rgb, rgb, rgb, a)
+                 .from(lx[i], ly[i])
+                 .to(lx[i - 1], ly[i - 1]);
             draw.line(curve);
         }
 

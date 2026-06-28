@@ -4,11 +4,7 @@ void splashScreenAnimation2(int &pt) {
     static constexpr int CELL = 72;
     static constexpr int OFFX = 476;
     static constexpr int OFFY = 126;
-    static youklx::Linecmd grid{
-        .r = {180,180},
-        .g = {180,180},
-        .b = {180,180},
-    };
+    static youklx::Linecmd grid;
 
     // 预设谜题 (0 = 空格)
     static int puzzle[N][N] = {
@@ -39,6 +35,8 @@ void splashScreenAnimation2(int &pt) {
             }
         selR = -1; selC = -1;
         solved = false;
+        // 模板命令初始样式（仅首次）
+        grid.color(180, 180, 180);
         inited = true;
     }
     // ---- 合法性检测：行/列/宫格是否无重复（两个线程共用） ----
@@ -144,16 +142,16 @@ void splashScreenAnimation2(int &pt) {
     for (int r = 0; r <= N; r++) {
         int y = OFFY + r * CELL;
         int thick = (r % 3 == 0) ? 3 : 1;
-        grid.sp1(OFFX, y)
-            .sp2(OFFX+bw, y)
+        grid.from(OFFX, y)
+            .to(OFFX+bw, y)
             .slw((float)thick);
         draw.line(grid);
     }
     for (int c = 0; c <= N; c++) {
         int x = OFFX + c * CELL;
         int thick = (c % 3 == 0) ? 3 : 1;
-        grid.sp1(x, OFFY)
-            .sp2(x, OFFY+bh)
+        grid.from(x, OFFY)
+            .to(x, OFFY+bh)
             .slw((float)thick);
         draw.line(grid);
     }

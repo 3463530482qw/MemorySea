@@ -19,7 +19,7 @@ main_import_lib = memorySea / "build" / "libMemorySea.dll.a"
 cmd = [
     "g++", "-shared", "-std=c++23", "-Os", "-s",
     "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
-    #"-DNDEBUG",
+    "-DNDEBUG",
     "-DEXPORT=__declspec(dllexport)",
     "-o", str(build_dir / f"{proj_name}.dll"),
     *sources,

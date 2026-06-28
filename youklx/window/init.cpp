@@ -23,7 +23,7 @@ namespace youklx {
                 h = w * aspectRatio;
             }
         } else {
-            throw std::runtime_error("Erro:standardAspectRatio the parameter must be between zero and one hundred");
+            throw std::runtime_error("Error: standardAspectRatio the parameter must be between zero and one hundred");
         }
         return *this;
     }

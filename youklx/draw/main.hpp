@@ -18,7 +18,10 @@ namespace youklx {
             Draw& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
             Draw& line(
                 Linecmd &cmd
-            ); // 绘制直线
+            ); // 绘制直线（传入完整 Linecmd）
+            Draw& lineBegin(int x, int y); // 创建新折线，设置起始顶点
+            Draw& lineTo(int x, int y);    // 为当前折线追加顶点
+            Draw& color(int r, int g, int b, float a = 1.0f);  // 设置画笔色（后续 lineTo 使用此色）
             Draw& image(
                 const Imagecmd &cmd
             ); // 绘制图片
@@ -31,6 +34,9 @@ namespace youklx {
 
 #include "draw.cpp"
 #include "lstsize.cpp"
+// std::visit 辅助：用 lambda 集合访问 variant
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 #include "line.cpp"
 #include "image.cpp"
 #include "font.cpp"

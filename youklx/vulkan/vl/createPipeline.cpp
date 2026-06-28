@@ -42,6 +42,9 @@ Vulkan& Vulkan::createPipeline() {
         {}, 1, &bindingDesc,
         static_cast<uint32_t>(attrDescs.size()), attrDescs.data()};
 
+    // 线条管线使用 TriangleList（后面单独创建），此处为图片管线共用
+    vk::PipelineInputAssemblyStateCreateInfo lineInputAssembly{
+        {}, vk::PrimitiveTopology::eTriangleList, VK_FALSE};
     vk::PipelineInputAssemblyStateCreateInfo inputAssembly{
         {}, vk::PrimitiveTopology::eTriangleStrip, VK_FALSE};
 
@@ -126,7 +129,7 @@ Vulkan& Vulkan::createPipeline() {
         vk::PipelineShaderStageCreateInfo vs{{}, vk::ShaderStageFlagBits::eVertex, *vm, "main"};
         vk::PipelineShaderStageCreateInfo fs{{}, vk::ShaderStageFlagBits::eFragment, *fm, "main"};
         vk::PipelineShaderStageCreateInfo ss[] = {vs, fs};
-        vk::GraphicsPipelineCreateInfo pi{{}, 2, ss, &vertexInput, &inputAssembly, nullptr,
+        vk::GraphicsPipelineCreateInfo pi{{}, 2, ss, &vertexInput, &lineInputAssembly, nullptr,
             &viewportState, &rasterizer, &multisampling, nullptr,
             &lineBlending, &dynamicState, *this->pipelineLayout, *this->renderPass, 0};
         this->graphicsPipeline.emplace(*this->device, nullptr, pi);

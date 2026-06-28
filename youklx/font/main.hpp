@@ -30,8 +30,8 @@ namespace youklx {
         // 确保文本中所有字符的字形已装入图集（按需光栅化）
         void ensure(const std::string& text);
 
-        // 计算 UTF-8 文本的渲染宽度
-        float textWidth(const std::string& text, float drawSize) const;
+        // 计算 UTF-8 文本的渲染宽度（内部自动确保字形已加载）
+        float textWidth(const std::string& text, float drawSize);
 
         // 释放全部图集数据和字形缓存
         void clean();

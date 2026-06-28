@@ -1,6 +1,5 @@
 namespace youklx {
-    Draw::Draw() {
-    }
+    Draw::Draw() = default;
 
     Draw& Draw::clear() {
         commands.clear();

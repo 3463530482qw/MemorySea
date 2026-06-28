@@ -24,15 +24,11 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     static youklx::Imagecmd abk = {
         .img = image.ima[0][1],
     };
-    static youklx::Linecmd curve{
-        .thickness = 5,
-        .r = {229, 229},
-        .g = {229, 229},
-        .b = {229, 229},
-        .a = {0.05f, 0.05f}
-    };
+    static youklx::Linecmd curve;
+    static bool curveInited = false;
     thread.wth_update([&]() {
     if (curveReady) {
+        if (!curveInited) { curve.color(229, 229, 229, 0.05f).slw(5.0f); curveInited = true; }
         // 必经点（按 x 升序排列，共6个）
         const int n = 6;
         double xs[n] = {0.0, 100.0, 550.0, 1198.0, 1430.0, 1600.0};
@@ -104,8 +100,8 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     draw.image(abk);
 
     for (int i = 160; i > dl; i--) {
-        curve.sp1(lx[i], ly[i])
-             .sp2(lx[i - 1], ly[i - 1]);
+        curve.from(lx[i], ly[i])
+             .to(lx[i - 1], ly[i - 1]);
         draw.line(curve);
     }
 

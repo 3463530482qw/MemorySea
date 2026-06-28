@@ -1,20 +1,37 @@
 namespace youklx {
 
-    // 4顶点TriangleStrip
+    // 折线顶点生成：遍历 points 相邻对，每段生成 6 顶点 TriangleList
     std::vector<float> lineVertices(const Linecmd& cmd) {
-        float fx1=float(cmd.x1),fy1=float(cmd.y1),fx2=float(cmd.x2),fy2=float(cmd.y2);
-        float dx=fx2-fx1,dy=fy2-fy1;
-        float len=std::sqrt(dx*dx+dy*dy);
-        if(len<0.0001f) return {};
-        float nx=-dy/len,ny=dx/len,hw=cmd.thickness*0.5f;
-        float r1=cmd.r[0]/255.f,g1=cmd.g[0]/255.f,b1=cmd.b[0]/255.f,a1=cmd.a[0];
-        float r2=cmd.r[1]/255.f,g2=cmd.g[1]/255.f,b2=cmd.b[1]/255.f,a2=cmd.a[1];
-        // 纹理坐标统一为(0,0)，触发片段着色器的纯色绘制模式
-        return {
-            fx1-nx*hw, fy1-ny*hw, 0,0, r1,g1,b1,a1,
-            fx1+nx*hw, fy1+ny*hw, 0,0, r1,g1,b1,a1,
-            fx2-nx*hw, fy2-ny*hw, 0,0, r2,g2,b2,a2,
-            fx2+nx*hw, fy2+ny*hw, 0,0, r2,g2,b2,a2
-        };
+        const auto& pts = cmd.points;
+        if (pts.size() < 2) return {};
+        float hw = cmd.thickness * 0.5f;
+
+        std::vector<float> verts;
+        verts.reserve((pts.size() - 1) * 6 * 8);
+
+        for (size_t i = 0; i + 1 < pts.size(); ++i) {
+            float fx0 = float(pts[i].x),     fy0 = float(pts[i].y);
+            float fx1 = float(pts[i+1].x),   fy1 = float(pts[i+1].y);
+            float dx = fx1 - fx0, dy = fy1 - fy0;
+            float len = std::sqrt(dx*dx + dy*dy);
+            if (len < 0.0001f) continue;
+            float nx = -dy/len, ny = dx/len;
+
+            // 每段直接使用顶点自身的颜色（逐顶点色）
+            float sR = pts[i].r,   sG = pts[i].g,   sB = pts[i].b,   sA = pts[i].a;
+            float eR = pts[i+1].r, eG = pts[i+1].g, eB = pts[i+1].b, eA = pts[i+1].a;
+
+            float seg[] = {
+                fx0-nx*hw, fy0-ny*hw, 0,0, sR,sG,sB,sA,
+                fx0+nx*hw, fy0+ny*hw, 0,0, sR,sG,sB,sA,
+                fx1-nx*hw, fy1-ny*hw, 0,0, eR,eG,eB,eA,
+
+                fx0+nx*hw, fy0+ny*hw, 0,0, sR,sG,sB,sA,
+                fx1+nx*hw, fy1+ny*hw, 0,0, eR,eG,eB,eA,
+                fx1-nx*hw, fy1-ny*hw, 0,0, eR,eG,eB,eA,
+            };
+            verts.insert(verts.end(), std::begin(seg), std::end(seg));
+        }
+        return verts;
     }
 }

@@ -29,18 +29,19 @@
 #include <condition_variable>
 #include <future>
 #include <atomic>
+#include <random>
 
 
 #ifdef _WIN32
     #include <windows.h>
-    #define ildll(name) LoadLibraryA(name)
-    #define igfunc(handle, name) GetProcAddress(handle, name)
-    #define icdll(handle) FreeLibrary((HMODULE)handle)
+    #define IL_DLL(name) LoadLibraryA(name)
+    #define IG_FUNC(handle, name) GetProcAddress(handle, name)
+    #define IC_DLL(handle) FreeLibrary((HMODULE)handle)
 #else
     #include <dlfcn.h>
-    #define ildll(name) dlopen(name, RTLD_LAZY)
-    #define igfunc(handle, name) dlsym(handle, name)
-    #define icdll(handle) dlclose(handle)
+    #define IL_DLL(name) dlopen(name, RTLD_LAZY)
+    #define IG_FUNC(handle, name) dlsym(handle, name)
+    #define IC_DLL(handle) dlclose(handle)
 #endif
 
 //媒体库
@@ -77,4 +78,5 @@
 #include "draw/main.hpp"
 #include "vulkan/main.hpp"
 #include "thread/main.hpp"
+#include "ai/main.hpp"
 #include "init.hpp"

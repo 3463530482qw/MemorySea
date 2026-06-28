@@ -1,6 +1,4 @@
 namespace youklx {
-    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
     Draw& Draw::vupdate() {
         vertex.clear();
         vertexptr.clear();
