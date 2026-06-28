@@ -1,13 +1,12 @@
 namespace youklx {
+    // 原始图片数据——始终为 4 通道 RGBA 未压缩像素
     class Plpng {
         public:
-            unsigned char* data{nullptr};   //图片数据
-            int w{0};   //图片宽
-            int h{0};   //图片高
-            int channels{4};    //图片通道
-            int desired_channels{4};    //图片目标通道
-            // 纹理图集内的 UV 坐标
+            unsigned char* data{nullptr};   // RGBA 像素 (stbi_load 强制 4 通道)
+            int w{0};                       // 宽 (px)
+            int h{0};                       // 高 (px)
+            int channels{4};                // 固定为 4 (RGBA)
+            // 纹理图集内的 UV 坐标（buildAtlas 中填充）
             float u0{0.0f}, v0{0.0f}, u1{1.0f}, v1{1.0f};
-            std::string lable{"png"};   //图片类型
     };
 }

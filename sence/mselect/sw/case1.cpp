@@ -11,6 +11,7 @@ void splashScreenAnimation1(int &pt) {
     static float scroll = 0.0f;
     static float scrollVel = 0.0f;
     static bool  inited = false;
+    static float gradTime = 0.0f;               // 四角渐变旋转计时
 
     static youklx::Imagecmd bk = {
         .img = image.ima[0][0],
@@ -31,6 +32,7 @@ void splashScreenAnimation1(int &pt) {
     thread.wth_update([&]() {
         // ---- 弹性滚动 ----
         float dt = window.time.different;
+        gradTime += dt;  // 驱动四角渐变旋转
         scroll -= window.mouse.wheelY * 40.0f;
         float maxScroll = MAX_SCROLL_BASE < 0.0f ? 0.0f : MAX_SCROLL_BASE;
 
@@ -74,8 +76,21 @@ void splashScreenAnimation1(int &pt) {
             float dy = posY[i] - scroll;
             if (dy + OH < 0.0f || dy > 900.0f) continue;
 
-            // 先绘制选项本体
-            draw.image(youklx::Imagecmd{image.ima[0][4], NX, dy, NW, OH});
+            // 四角旋转红蓝渐变——展示引擎逐顶点颜色控制能力
+            {
+                float t = gradTime * 2.8f;                   // 旋转速度
+                float a = 0.30f;                              // 淡色叠加
+                auto mk = [&](int c) -> std::array<float,4> {
+                    float ph = t + c * 1.5707963f;           // 90° 相位差
+                    return {200.f + 55.f * std::sin(ph),     // R: 145~255
+                            160.f,                            // G: 固定淡色
+                            200.f + 55.f * std::cos(ph),     // B: 145~255
+                            a};
+                };
+                draw.image(youklx::Imagecmd{image.ima[0][4]}
+                    .sp(NX, dy).ss(NW, OH)
+                    .rgba1(mk(0)).rgba2(mk(1)).rgba3(mk(2)).rgba4(mk(3)));
+            }
 
             // 焦点效果叠加在选项之上
             if (i == focus) {
@@ -84,34 +99,28 @@ void splashScreenAnimation1(int &pt) {
             }
 
             // 左侧绘制编号
-            draw.font(youklx::Fontcmd{&font, std::to_string(i + 1),
-                      NX - 100.0f, dy + 25.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+            draw.font(youklx::Fontcmd{&font, std::to_string(i + 1)}.sp(NX - 100.0f, dy + 25.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             if (i == 0) {
-                draw.font(youklx::Fontcmd{&font, "俄罗斯方块",
-                      NX + 450.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+                draw.font(youklx::Fontcmd{&font, "俄罗斯方块"}.sp(NX + 450.0f, dy + 15.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             } else if (i == 1) {
-                draw.font(youklx::Fontcmd{&font, "贪吃蛇",
-                      NX + 550.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+                draw.font(youklx::Fontcmd{&font, "贪吃蛇"}.sp(NX + 550.0f, dy + 15.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             } else if (i == 2) {
-                draw.font(youklx::Fontcmd{&font, "数独",
-                      NX + 600.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+                draw.font(youklx::Fontcmd{&font, "数独"}.sp(NX + 600.0f, dy + 15.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             } else if (i == 3) {
-                draw.font(youklx::Fontcmd{&font, "平台跳跃",
-                      NX + 500.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+                draw.font(youklx::Fontcmd{&font, "平台跳跃"}.sp(NX + 500.0f, dy + 15.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             } else {
-                draw.font(youklx::Fontcmd{&font, "待完成",
-                      NX + 550.0f, dy + 15.0f, OH, 0.0f, 0.0f, 0.0f,
-                      {1.0f, 1.0f, 1.0f, 1.0f}});
+                draw.font(youklx::Fontcmd{&font, "待完成"}.sp(NX + 550.0f, dy + 15.0f).ss(OH).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
             }
         }
 
         draw.image(youklx::Imagecmd{image.ima[0][6], 0, 0, 1600, 900});
     });
+
+    // ---- ESC 返回主菜单 ----
+    if (window.keyboard.isPressed(SDLK_ESCAPE)) {
+        scene.ptr = "mainMenu";
+        return;
+    }
 
     // ---- 点击判断 ----
     if (window.mouse.leftPressed() && focus >= 0) {

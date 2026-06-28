@@ -13,17 +13,11 @@ void splashScreenAnimation1(int &pt) {
         float a = timer * 1.2f;
         if (a > 1.0f) a = 1.0f;
 
-        draw.font(youklx::Fontcmd{&font, "贪吃蛇",
-                  665.0f, 300.0f, 90.0f, 0.0f, 0.0f, 0.0f,
-                  {0.2f, 1.0f, 0.3f, a}});
+        draw.font(youklx::Fontcmd{&font, "贪吃蛇"}.sp(665.0f, 300.0f).ss(90.0f).srgba({0.2f, 1.0f, 0.3f, a}));
 
-        draw.font(youklx::Fontcmd{&font, "← → ↑ ↓ 控制方向",
-                  660.0f, 430.0f, 28.0f, 0.0f, 0.0f, 0.0f,
-                  {1.0f, 1.0f, 1.0f, a * 0.8f}});
+        draw.font(youklx::Fontcmd{&font, "← → ↑ ↓ 控制方向"}.sp(660.0f, 430.0f).ss(28.0f).srgba({1.0f, 1.0f, 1.0f, a * 0.8f}));
 
-        draw.font(youklx::Fontcmd{&font, "ESC 返回",
-                  725.0f, 480.0f, 28.0f, 0.0f, 0.0f, 0.0f,
-                  {1.0f, 1.0f, 1.0f, a * 0.5f}});
+        draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp(725.0f, 480.0f).ss(28.0f).srgba({1.0f, 1.0f, 1.0f, a * 0.5f}));
     });
 
     if (timer > 2.0f) {

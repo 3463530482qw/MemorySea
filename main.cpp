@@ -4,12 +4,12 @@ int main() {
     try {
         youklx::init();
 
-        image.ilpng("ini/main.ini", "mainMenu");
+        image.load("ini/main.ini", "mainMenu");
         image.buildAtlas();
 
         {
             youklx::Image vimage;
-            vimage.ilpng("ini/main.ini", "icon");
+            vimage.load("ini/main.ini", "icon");
             youklx::windowcreateinfo wc;
             wc.loadini("ini/main.ini","windowcreate").load();
             window.iinit("ini/main.ini","windowcreate","acp")

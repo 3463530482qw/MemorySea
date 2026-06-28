@@ -174,34 +174,26 @@ void splashScreenAnimation2(int &pt) {
             float ny = (float)(OFFY + r * CELL + 23);
 
             if (fixed[r][c]) {
-                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f}});
+                draw.font(youklx::Fontcmd{&font, num}.sp(nx, ny).ss(48.0f).srgba({1.0f,1.0f,1.0f,1.0f}));
             } else if (conflict[r][c]) {
                 // 冲突：红色
-                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {1.0f,0.2f,0.2f,1.0f}});
+                draw.font(youklx::Fontcmd{&font, num}.sp(nx, ny).ss(48.0f).srgba({1.0f,0.2f,0.2f,1.0f}));
             } else {
                 // 正常：青色
-                draw.font(youklx::Fontcmd{&font, num, nx, ny, 48.0f, 0,0,0, {0.3f,0.8f,1.0f,1.0f}});
+                draw.font(youklx::Fontcmd{&font, num}.sp(nx, ny).ss(48.0f).srgba({0.3f,0.8f,1.0f,1.0f}));
             }
         }
     }
 
     // UI
-    draw.font(youklx::Fontcmd{&font, "数独",
-              50, 45, 48.0f, 0,0,0,
-              {0.4f,0.6f,1.0f,1.0f}});
-    draw.font(youklx::Fontcmd{&font, "点击格子选中 | 1-9填入 | 0/Backspace清除",
-              50, 805.0f, 24.0f, 0,0,0,
-              {1.0f,1.0f,1.0f,0.5f}});
+    draw.font(youklx::Fontcmd{&font, "数独"}.sp(50, 45).ss(48.0f).srgba({0.4f,0.6f,1.0f,1.0f}));
+    draw.font(youklx::Fontcmd{&font, "点击格子选中 | 1-9填入 | 0/Backspace清除"}.sp(50, 805.0f).ss(24.0f).srgba({1.0f,1.0f,1.0f,0.5f}));
     });
 
     if (solved) {
         draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
                   {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
-        draw.font(youklx::Fontcmd{&font, "完成!",
-                  OFFX + 240.0f, OFFY + 285.0f, 72.0f, 0,0,0,
-                  {0.2f,1.0f,0.3f,1.0f}});
-        draw.font(youklx::Fontcmd{&font, "ESC 返回",
-                  OFFX + 250.0f, OFFY + 375.0f, 36.0f, 0,0,0,
-                  {1.0f,1.0f,1.0f,0.8f}});
+        draw.font(youklx::Fontcmd{&font, "完成!"}.sp(OFFX + 240.0f, OFFY + 285.0f).ss(72.0f).srgba({0.2f,1.0f,0.3f,1.0f}));
+        draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp(OFFX + 250.0f, OFFY + 375.0f).ss(36.0f).srgba({1.0f,1.0f,1.0f,0.8f}));
     }
 }

@@ -1,56 +1,84 @@
 namespace youklx {
-    struct Clilpng {
-        std::vector<std::string> vilpng{};
-        std::string givrtp{};
+    // INI 解析回调：收集指定 section 下的所有 key 名
+    struct LoadIniCtx {
+        std::vector<std::string> keys{};
+        std::string targetSection{};
     };
-
-    static int lilpng(void* ini, const char* ivrtp, const char* itype, const char* value) {
-        Clilpng* data = static_cast<Clilpng*>(ini);
-        //如果是指定标签保存对应值
-        if (std::string(ivrtp) == data->givrtp) {
-            data->vilpng.push_back(itype);
-        }
+    static int loadIniCb(void* ctx, const char* section, const char* key, const char* /*value*/) {
+        auto* c = static_cast<LoadIniCtx*>(ctx);
+        if (std::string(section) == c->targetSection) c->keys.push_back(key);
         return 1;
     }
 
-    Image& Image::lpng(const char* image) {
+    // 注册所有可用的图片格式加载器（类似 AI 模块的 iact()）
+    Image& Image::initLoaders() {
+        // PNG 加载器：stb_image 强制转为 4 通道 RGBA
+        loaders["png"] = [](const char* path) -> Plimage {
+            Plpng img;
+            img.data = stbi_load(path, &img.w, &img.h, nullptr, 4);
+            img.channels = 4;
+            if (!img.data)
+                throw std::runtime_error(std::string("load png: ") + stbi_failure_reason());
+            return img;
+        };
+        // 未来扩展只需在此添加：loaders["jpg"] = ...; loaders["bmp"] = ...;
+        return *this;
+    }
+
+    // 根据扩展名自动选择加载器（类似 AI 的 curact 分发）
+    Image& Image::load(const char* path) {
         ima.push_back(std::vector<Plimage>());
-        Plpng imapng;
-        imapng.data = stbi_load(image, &imapng.w, &imapng.h, &imapng.channels, imapng.desired_channels);
-        
-        
-        if (imapng.data == nullptr) {
-            std::cerr << "加载图片失败: " << stbi_failure_reason() << std::endl;
-        } else {
-            ima.back().push_back(imapng);
+        if (loaders.empty()) initLoaders();
+
+        // 提取扩展名
+        std::string p(path);
+        auto dot = p.find_last_of('.');
+        std::string ext = (dot != std::string::npos) ? p.substr(dot + 1) : "png";
+
+        auto it = loaders.find(ext);
+        if (it == loaders.end()) {
+            std::cerr << "unsupported image format: ." << ext << std::endl;
+            return *this;
+        }
+
+        try {
+            ima.back().push_back(it->second(path));
+        } catch (const std::exception& e) {
+            std::cerr << "load failed: " << path << " (" << e.what() << ")" << std::endl;
         }
         return *this;
     }
 
-    Image& Image::ilpng(std::string ini, std::string ivrtp) {
-        //载入新图片组
+    // 从 INI 配置文件加载一组图片
+    Image& Image::load(const std::string& ini, const std::string& section) {
         ima.push_back(std::vector<Plimage>());
-        //读取的图像数据class load ini load png
-        Clilpng ca;
-        //设置ini读取标签名
-        ca.givrtp = ivrtp;
-        //空png图片
-        Plpng imapng;
-        //读取ini创建INIReader类
+        if (loaders.empty()) initLoaders();
+
+        LoadIniCtx ctx;
+        ctx.targetSection = section;
         INIReader reader(ini);
-        //遍历指定标签加载png数据
-        if (ini_parse(ini.c_str(), lilpng, &ca) < 0) {
-            std::cerr << "Error parsing config file." << std::endl;
+
+        if (ini_parse(ini.c_str(), loadIniCb, &ctx) < 0) {
+            std::cerr << "load ini parse error: " << ini << std::endl;
         } else {
-            for (auto& ilpng : ca.vilpng) {
-                //通过读取的值取出图片路径
-                ilpng = reader.Get(ivrtp, ilpng, "");
-                //加载图片
-                imapng.data = stbi_load(ilpng.c_str(), &imapng.w, &imapng.h, &imapng.channels, imapng.desired_channels);
-                if (imapng.data == nullptr) {
-                    std::cerr << "加载图片失败: " << stbi_failure_reason() << std::endl;
-                } else {
-                    ima.back().push_back(imapng);
+            for (auto& key : ctx.keys) {
+                std::string path = reader.Get(section, key, "");
+                if (path.empty()) continue;
+
+                std::string ext;
+                auto dot = path.find_last_of('.');
+                ext = (dot != std::string::npos) ? path.substr(dot + 1) : "png";
+
+                auto it = loaders.find(ext);
+                if (it == loaders.end()) {
+                    std::cerr << "unsupported format: ." << ext << std::endl;
+                    continue;
+                }
+
+                try {
+                    ima.back().push_back(it->second(path.c_str()));
+                } catch (const std::exception& e) {
+                    std::cerr << "load failed: " << path << " (" << e.what() << ")" << std::endl;
                 }
             }
         }

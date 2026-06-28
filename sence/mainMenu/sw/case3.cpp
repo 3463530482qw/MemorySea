@@ -21,6 +21,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
     static float rma1 = 270.0f;
     static float rma2 = 0.0f;
     static bool transitionReset = true;
+    static bool needReset = false;               // 从场景返回后需重置过渡状态
     static youklx::Linecmd curve;
     static bool curveInited = false;
     static youklx::Imagecmd bk = {
@@ -84,10 +85,10 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         }
 
         // 文字
-        draw.font(youklx::Fontcmd{&font, "图形化界面展示", 100, 110, 120.0f, 0,0,0, {0.898f,0.898f,0.898f,1.0f}});
-        draw.font(youklx::Fontcmd{&font, "开始", 1250, 400, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
-        draw.font(youklx::Fontcmd{&font, "设置", 1250, 550, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
-        draw.font(youklx::Fontcmd{&font, "结束", 1250, 700, 120.0f, 0,0,0, {0.102f,0.102f,0.102f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, "图形化界面展示"}.sp(100, 110).ss(120.0f).srgba({0.898f,0.898f,0.898f,1.0f}));
+        draw.font(youklx::Fontcmd{&font, "开始"}.sp(1250, 400).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
+        draw.font(youklx::Fontcmd{&font, "设置"}.sp(1250, 550).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
+        draw.font(youklx::Fontcmd{&font, "结束"}.sp(1250, 700).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
 
         // 按钮选中背景和旋转图标（两个状态都要画）
         draw.image(pt1);
@@ -95,6 +96,12 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
     };
 
     thread.wth_update([&]() {
+        // 从场景返回后重置过渡状态
+        if (needReset) {
+            pts = true; rma1 = 270.0f; rma2 = 0.0f;
+            pptta = 0.8f; ppttb = true;  // 按钮透明度呼吸复位
+            needReset = false;
+        }
         if (pts) {
         transitionReset = true;
         // --- 修正悬停：先重置为 -1，无悬停时高亮消失 ---
@@ -135,7 +142,7 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
 
         rma1 += window.time.different * 200;
         rma2 -= window.time.different * 100;
-        if (rma1 >= 335) scene.ptr = "mselect";
+        if (rma1 >= 335) { scene.ptr = "mselect"; needReset = true; }
         }
 
     // --- 统一更新 pt1/pt2 属性（两个分支都会执行）---

@@ -261,21 +261,21 @@ void splashScreenAnimation2(int &pt) {
         static constexpr float UI_X = 80.0f;
         char buf[64];
         std::snprintf(buf, sizeof(buf), "分数 %d", score);
-        draw.font(youklx::Fontcmd{&font, buf, UI_X, 50, 52.0f, 0,0,0, {1.0f,1.0f,1.0f,1.0f}});
+        draw.font(youklx::Fontcmd{&font, buf}.sp(UI_X, 50).ss(52.0f).srgba({1.0f,1.0f,1.0f,1.0f}));
         std::snprintf(buf, sizeof(buf), "速度 Lv.%d", static_cast<int>((platSpd-PLAT_SPD_START)/5.0f)+1);
-        draw.font(youklx::Fontcmd{&font, buf, UI_X, 110.0f, 28.0f, 0,0,0, {1.0f,0.85f,0.3f,0.8f}});
-        draw.font(youklx::Fontcmd{&font, "A D 移动  SPACE 跳跃", UI_X, 740.0f, 26.0f, 0,0,0, {1.0f,1.0f,1.0f,0.5f}});
-        draw.font(youklx::Fontcmd{&font, "ESC 返回",               UI_X, 780.0f, 24.0f, 0,0,0, {1.0f,1.0f,1.0f,0.35f}});
+        draw.font(youklx::Fontcmd{&font, buf}.sp(UI_X, 110.0f).ss(28.0f).srgba({1.0f,0.85f,0.3f,0.8f}));
+        draw.font(youklx::Fontcmd{&font, "A D 移动  SPACE 跳跃"}.sp(UI_X, 740.0f).ss(26.0f).srgba({1.0f,1.0f,1.0f,0.5f}));
+        draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp(UI_X, 780.0f).ss(24.0f).srgba({1.0f,1.0f,1.0f,0.35f}));
 
         if (dead) {
             draw.image(youklx::Imagecmd{image.ima[0][0], 0,0,1600,900, 0,0,0,
                       {0,0,0,0.55f},{0,0,0,0.55f},{0,0,0,0.55f},{0,0,0,0.55f}});
-            draw.font(youklx::Fontcmd{&font, "游戏结束", 664.0f, 260.0f, 68.0f, 0,0,0, {1.0f,0.3f,0.3f,1.0f}});
+            draw.font(youklx::Fontcmd{&font, "游戏结束"}.sp(664.0f, 260.0f).ss(68.0f).srgba({1.0f,0.3f,0.3f,1.0f}));
             std::snprintf(buf, sizeof(buf), "得分 %d", score);
-            draw.font(youklx::Fontcmd{&font, buf, 704.0f, 360.0f, 48.0f, 0,0,0, {1.0f,1.0f,1.0f,0.9f}});
+            draw.font(youklx::Fontcmd{&font, buf}.sp(704.0f, 360.0f).ss(48.0f).srgba({1.0f,1.0f,1.0f,0.9f}));
             std::snprintf(buf, sizeof(buf), "速度等级 %d", static_cast<int>((platSpd-PLAT_SPD_START)/5.0f)+1);
-            draw.font(youklx::Fontcmd{&font, buf, 700.0f, 430.0f, 32.0f, 0,0,0, {1.0f,0.85f,0.3f,0.8f}});
-            draw.font(youklx::Fontcmd{&font, "ESC 返回", 707.0f, 500.0f, 32.0f, 0,0,0, {1.0f,1.0f,1.0f,0.7f}});
+            draw.font(youklx::Fontcmd{&font, buf}.sp(700.0f, 430.0f).ss(32.0f).srgba({1.0f,0.85f,0.3f,0.8f}));
+            draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp(707.0f, 500.0f).ss(32.0f).srgba({1.0f,1.0f,1.0f,0.7f}));
         }
     });
 }

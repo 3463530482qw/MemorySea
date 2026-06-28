@@ -354,9 +354,7 @@ void splashScreenAnimation2(int &pt) {
 
     // ---- 下一个方块预览 ----
     {
-        draw.font(youklx::Fontcmd{&font, "Next",
-                  (float)previewX, (float)previewY - 8.0f, 22.0f, 0,0,0,
-                  {0.8f, 0.8f, 0.8f, 1.0f}});
+        draw.font(youklx::Fontcmd{&font, "Next"}.sp((float)previewX, (float)previewY - 8.0f).ss(22.0f).srgba({0.8f, 0.8f, 0.8f, 1.0f}));
 
         for (int r = 0; r < 4; r++) {
             for (int c = 0; c < 4; c++) {
@@ -377,42 +375,24 @@ void splashScreenAnimation2(int &pt) {
     {
         char buf[64];
         std::snprintf(buf, sizeof(buf), "分数 %d", score);
-        draw.font(youklx::Fontcmd{&font, buf,
-                  (float)(OFFX + bw + 30), (float)(OFFY + 100), 28.0f, 0,0,0,
-                  {1.0f, 1.0f, 1.0f, 1.0f}});
+        draw.font(youklx::Fontcmd{&font, buf}.sp((float)(OFFX + bw + 30), (float)(OFFY + 100)).ss(28.0f).srgba({1.0f, 1.0f, 1.0f, 1.0f}));
     }
 
     // ---- 操作提示 ----
-    draw.font(youklx::Fontcmd{&font, "← → 移动",
-              (float)(OFFX + bw + 30), (float)(OFFY + 200), 20.0f, 0,0,0,
-              {1.0f, 1.0f, 1.0f, 0.5f}});
-    draw.font(youklx::Fontcmd{&font, "↑ 旋转",
-              (float)(OFFX + bw + 30), (float)(OFFY + 230), 20.0f, 0,0,0,
-              {1.0f, 1.0f, 1.0f, 0.5f}});
-    draw.font(youklx::Fontcmd{&font, "↓ 加速",
-              (float)(OFFX + bw + 30), (float)(OFFY + 260), 20.0f, 0,0,0,
-              {1.0f, 1.0f, 1.0f, 0.5f}});
-    draw.font(youklx::Fontcmd{&font, "空格 硬降",
-              (float)(OFFX + bw + 30), (float)(OFFY + 290), 20.0f, 0,0,0,
-              {1.0f, 1.0f, 1.0f, 0.5f}});
-    draw.font(youklx::Fontcmd{&font, "ESC 返回",
-              (float)(OFFX + bw + 30), (float)(OFFY + 340), 18.0f, 0,0,0,
-              {1.0f, 1.0f, 1.0f, 0.35f}});
+    draw.font(youklx::Fontcmd{&font, "← → 移动"}.sp((float)(OFFX + bw + 30), (float)(OFFY + 200)).ss(20.0f).srgba({1.0f, 1.0f, 1.0f, 0.5f}));
+    draw.font(youklx::Fontcmd{&font, "↑ 旋转"}.sp((float)(OFFX + bw + 30), (float)(OFFY + 230)).ss(20.0f).srgba({1.0f, 1.0f, 1.0f, 0.5f}));
+    draw.font(youklx::Fontcmd{&font, "↓ 加速"}.sp((float)(OFFX + bw + 30), (float)(OFFY + 260)).ss(20.0f).srgba({1.0f, 1.0f, 1.0f, 0.5f}));
+    draw.font(youklx::Fontcmd{&font, "空格 硬降"}.sp((float)(OFFX + bw + 30), (float)(OFFY + 290)).ss(20.0f).srgba({1.0f, 1.0f, 1.0f, 0.5f}));
+    draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp((float)(OFFX + bw + 30), (float)(OFFY + 340)).ss(18.0f).srgba({1.0f, 1.0f, 1.0f, 0.35f}));
     });
     // ---- 游戏结束遮罩 ----
     if (gameOver) {
         draw.image(youklx::Imagecmd{image.ima[0][0], static_cast<float>(OFFX), static_cast<float>(OFFY), static_cast<float>(bw), static_cast<float>(bh), 0.0f, 0.0f, 0.0f,
                   {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}, {0,0,0,0.6f}});
-        draw.font(youklx::Fontcmd{&font, "游戏结束",
-                  (float)(OFFX + bw/2 - 85), (float)(OFFY + bh/2 - 40), 48.0f, 0,0,0,
-                  {1.0f, 0.3f, 0.3f, 1.0f}});
+        draw.font(youklx::Fontcmd{&font, "游戏结束"}.sp((float)(OFFX + bw/2 - 85), (float)(OFFY + bh/2 - 40)).ss(48.0f).srgba({1.0f, 0.3f, 0.3f, 1.0f}));
         char buf[64];
         std::snprintf(buf, sizeof(buf), "得分 %d", score);
-        draw.font(youklx::Fontcmd{&font, buf,
-                  (float)(OFFX + bw/2 - 50), (float)(OFFY + bh/2 + 30), 32.0f, 0,0,0,
-                  {1.0f, 1.0f, 1.0f, 0.9f}});
-        draw.font(youklx::Fontcmd{&font, "ESC 返回",
-                  (float)(OFFX + bw/2 - 50), (float)(OFFY + bh/2 + 80), 24.0f, 0,0,0,
-                  {1.0f, 1.0f, 1.0f, 0.7f}});
+        draw.font(youklx::Fontcmd{&font, buf}.sp((float)(OFFX + bw/2 - 50), (float)(OFFY + bh/2 + 30)).ss(32.0f).srgba({1.0f, 1.0f, 1.0f, 0.9f}));
+        draw.font(youklx::Fontcmd{&font, "ESC 返回"}.sp((float)(OFFX + bw/2 - 50), (float)(OFFY + bh/2 + 80)).ss(24.0f).srgba({1.0f, 1.0f, 1.0f, 0.7f}));
     }
 }

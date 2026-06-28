@@ -1,42 +1,20 @@
 namespace youklx {
     Vulkan& Vulkan::createDevice() {
-        // 1. 队列优先级
+        // 队列创建信息（图形队列，单一优先级）
         float queuePriority = 1.0f;
-        vk::DeviceQueueCreateInfo queueCreateInfo{
-            {},
-            this->graphicsFamilyIndex,
-            1,
-            &queuePriority
-        };
+        vk::DeviceQueueCreateInfo queueInfo{{}, graphicsFamilyIndex, 1, &queuePriority};
 
-        // 2. 所需的设备扩展（交换链是必须的）
-        std::vector<const char*> deviceExtensions = {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
-        };
+        // 所需设备扩展
+        std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
-        // 3. 设备特性（暂不启用额外特性）
-        vk::PhysicalDeviceFeatures deviceFeatures{};
+        // 设备特性（未启用可选特性；future：samplerAnisotropy、geometryShader）
+        vk::PhysicalDeviceFeatures features{};
 
-        // 4. 逻辑设备创建信息
-        vk::DeviceCreateInfo createInfo{
-            {},
-            1,
-            &queueCreateInfo,
-            0,
-            nullptr,
-            static_cast<uint32_t>(deviceExtensions.size()),  // 扩展数量
-            deviceExtensions.data(),                         // 扩展名称
-            &deviceFeatures
-        };
-
-        // 5. 创建逻辑设备
-        device.emplace(*physicalDevice, createInfo);
-
-        // 6. 获取图形队列
-        graphicsQueue.emplace(
-            (*device).getQueue(graphicsFamilyIndex, 0)
-        );
-
+        // 创建逻辑设备 + 获取图形队列句柄
+        device.emplace(*physicalDevice,
+            vk::DeviceCreateInfo{{}, 1, &queueInfo, 0, nullptr,
+                static_cast<uint32_t>(extensions.size()), extensions.data(), &features});
+        graphicsQueue.emplace(device->getQueue(graphicsFamilyIndex, 0));
         return *this;
     }
 }

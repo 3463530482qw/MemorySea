@@ -4,8 +4,8 @@
 #include "sw/case2.cpp"
 #include "sw/case3.cpp"
 extern "C" EXPORT void mainMenu() {
-    std::array<int, 161> lx; 
-    std::array<int, 161> ly; 
+    static std::array<int, 161> lx{};  // 跨调用持久，case3 直接使用
+    static std::array<int, 161> ly{};
     int pt = 1;
     while (window.isrun) {
         if(scene.ptr != "mainMenu") return;

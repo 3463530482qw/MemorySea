@@ -5,7 +5,7 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     static int i1h = 0;
     static int i1x = 0;
     static int i1y = 0;
-    static int dl;
+    static int dl = 0;
     static bool curveReady = true;
     static int fw2 = 1600;
     static int fh2 = 400;
@@ -26,6 +26,11 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     };
     static youklx::Linecmd curve;
     static bool curveInited = false;
+    // 从场景返回后重置动画到初始状态
+    if (!fwh && !curveReady) {
+        fw = 440; fh = 405; fwh = true; curveReady = true;
+        fw2 = 1600; fh2 = 400; fw3 = 1600; fh3 = 550; fw4 = 1600; fh4 = 700;
+    }
     thread.wth_update([&]() {
     if (curveReady) {
         if (!curveInited) { curve.color(229, 229, 229, 0.05f).slw(5.0f); curveInited = true; }
@@ -105,10 +110,10 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
         draw.line(curve);
     }
 
-    draw.font(youklx::Fontcmd{&font, "图形化界面展示", static_cast<float>(fw), static_cast<float>(fh), 120.0f,0,0,0,{0.898f,0.898f,0.898f,1.0f}});
-    draw.font(youklx::Fontcmd{&font, "开始", static_cast<float>(fw2), static_cast<float>(fh2), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
-    draw.font(youklx::Fontcmd{&font, "设置", static_cast<float>(fw3), static_cast<float>(fh3), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
-    draw.font(youklx::Fontcmd{&font, "结束", static_cast<float>(fw4), static_cast<float>(fh4), 120.0f,0,0,0,{0.102f,0.102f,0.102f,1.0f}});
+    draw.font(youklx::Fontcmd{&font, "图形化界面展示"}.sp(static_cast<float>(fw), static_cast<float>(fh)).ss(120.0f).srgba({0.898f,0.898f,0.898f,1.0f}));
+    draw.font(youklx::Fontcmd{&font, "开始"}.sp(static_cast<float>(fw2), static_cast<float>(fh2)).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
+    draw.font(youklx::Fontcmd{&font, "设置"}.sp(static_cast<float>(fw3), static_cast<float>(fh3)).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
+    draw.font(youklx::Fontcmd{&font, "结束"}.sp(static_cast<float>(fw4), static_cast<float>(fh4)).ss(120.0f).srgba({0.102f,0.102f,0.102f,1.0f}));
     });
     if(fwh == false && curveReady == false) pt = 3;
 }

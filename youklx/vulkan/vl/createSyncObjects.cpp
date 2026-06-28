@@ -1,19 +1,18 @@
 namespace youklx {
     Vulkan& Vulkan::createSyncObjects() {
-        vk::SemaphoreCreateInfo semaphoreInfo{};
-        vk::FenceCreateInfo fenceInfo{vk::FenceCreateFlagBits::eSignaled};
+        // 信号量：GPU→GPU 同步；围栏：GPU→CPU 同步
+        auto semInfo = vk::SemaphoreCreateInfo{};
+        auto fenceInfo = vk::FenceCreateInfo{vk::FenceCreateFlagBits::eSignaled};
 
-        // imageAvailableSemaphores 和 inFlightFences 的数量与 MAX_FRAMES_IN_FLIGHT 对齐
+        // 图像可用 / 飞行中围栏：每帧一个（MAX_FRAMES_IN_FLIGHT 个）
         for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-            imageAvailableSemaphores.emplace_back(*device, semaphoreInfo);
+            imageAvailableSemaphores.emplace_back(*device, semInfo);
             inFlightFences.emplace_back(*device, fenceInfo);
         }
-
-        // renderFinishedSemaphores 每张交换链图像一个，避免信号量重用冲突
+        // 渲染完成信号量：每张交换链图像一个（避免信号量重用冲突）
         for (size_t i = 0; i < swapChainImages.size(); i++) {
-            renderFinishedSemaphores.emplace_back(*device, semaphoreInfo);
+            renderFinishedSemaphores.emplace_back(*device, semInfo);
         }
-
         return *this;
     }
 }

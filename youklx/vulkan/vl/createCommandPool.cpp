@@ -1,14 +1,10 @@
 namespace youklx {
     Vulkan& Vulkan::createCommandPool() {
-        // 命令池创建信息
-        vk::CommandPoolCreateInfo createInfo{
-            vk::CommandPoolCreateFlagBits::eResetCommandBuffer, // 允许单独重置命令缓冲
-            graphicsFamilyIndex                     // 队列族索引
-        };
-
-        // 创建命令池
-        commandPool.emplace(*device, createInfo);
-
+        // 创建命令池（允许单独重置命令缓冲，适合逐帧重录）
+        commandPool.emplace(*device,
+            vk::CommandPoolCreateInfo{
+                vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+                graphicsFamilyIndex});
         return *this;
     }
 }
