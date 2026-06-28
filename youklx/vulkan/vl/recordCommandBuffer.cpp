@@ -38,7 +38,11 @@ namespace youklx {
         vk::Rect2D scissor{{offsetX,offsetY},{vpW,vpH}};
         this->commandBuffers[this->currentFrame].setScissor(0, scissor);
         float mvp[16] = {2.0f/logW,0,0,0, 0,2.0f/logH,0,0, 0,0,1,0, -1,-1,0,1};
-        this->commandBuffers[this->currentFrame].pushConstants<float>(*this->pipelineLayout, vk::ShaderStageFlagBits::eVertex, 0, {mvp[0],mvp[1],mvp[2],mvp[3],mvp[4],mvp[5],mvp[6],mvp[7],mvp[8],mvp[9],mvp[10],mvp[11],mvp[12],mvp[13],mvp[14],mvp[15]});
+        float snap = pixelPerfect ? 1.0f : 0.0f;
+        this->commandBuffers[this->currentFrame].pushConstants<float>(*this->pipelineLayout, vk::ShaderStageFlagBits::eVertex, 0,
+            {mvp[0],mvp[1],mvp[2],mvp[3],mvp[4],mvp[5],mvp[6],mvp[7],
+             mvp[8],mvp[9],mvp[10],mvp[11],mvp[12],mvp[13],mvp[14],mvp[15],
+             (float)vpW, (float)vpH, snap});  // viewport 物理分辨率用于像素吸附
 
         // 遍历绘制命令，按类型绑定不同管线
         // 记录上次绑定的类型，避免连续同类型命令的冗余管线/描述符绑定

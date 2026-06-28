@@ -23,7 +23,8 @@ int main() {
         draw.ilstsize("ini/main.ini","windowcreate","sw","sh");
         vulkan.ilstsize("ini/main.ini","windowcreate","sw","sh");
 
-        vulkan.init(window);
+        vulkan.pixelPerfect = true;
+        vulkan.msaa(4).init(window);
 
         font.px(100.0f).load("font/LXGWWenKaiLite-Light.ttf");
         vulkan.updateFontTexture(&font);

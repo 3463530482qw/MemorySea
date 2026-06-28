@@ -248,14 +248,11 @@ void splashScreenAnimation2(int &pt) {
             draw.line(splashCmd);
         }
 
-        // ---- 水面：仅轮廓线，带正弦流动 ----
-        for (int i = 0; i < WN - 1; i++) {
-            float x0 = static_cast<float>(i)*WDX, x1 = static_cast<float>(i+1)*WDX;
-            int ix0 = static_cast<int>(x0), ix1 = static_cast<int>(x1);
-            int iy0 = static_cast<int>(wy[i]), iy1 = static_cast<int>(wy[i+1]);
-            waterCmd.from(ix0, iy0).to(ix1, iy1).slw(3.0f);
-            draw.line(waterCmd);
-        }
+        // 水面：一条折线消除段间缝隙
+        waterCmd.from(0, static_cast<int>(wy[0]));
+        for (int i = 1; i < WN; i++)
+            waterCmd.to(static_cast<int>(i * WDX), static_cast<int>(wy[i]));
+        draw.line(waterCmd);
 
         // ---- UI（文字左对齐 80px） ----
         static constexpr float UI_X = 80.0f;

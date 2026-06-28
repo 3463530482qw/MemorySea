@@ -104,9 +104,10 @@ void splashScreenAnimation2(int &pt,std::array<int, 161> &lx,std::array<int, 161
     draw.image(bk);
     draw.image(abk);
 
-    for (int i = 160; i > dl; i--) {
-        curve.from(lx[i], ly[i])
-             .to(lx[i - 1], ly[i - 1]);
+    // 一条折线替代 160 次 draw.line——展示引擎折线能力
+    if (160 > dl) {
+        curve.from(lx[160], ly[160]);
+        for (int i = 159; i >= dl; i--) curve.to(lx[i], ly[i]);
         draw.line(curve);
     }
 

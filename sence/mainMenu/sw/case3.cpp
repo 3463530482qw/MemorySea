@@ -64,23 +64,21 @@ void splashScreenAnimation3(int &pt, std::array<int, 161> &lx, std::array<int, 1
         draw.image(bk);
         draw.image(abk);
 
-        // 曲线发光绘制
-        for (int i = 160; i > 0; --i) {
-            float dist = fabs(i - center);
-            if (dist > half_ldm) dist = ldm - dist;
-
-            float glowIntensity = 0.0f;
-            if (dist < ldrg_f) {
-                glowIntensity = 1.0f - dist / ldrg_f;
-                glowIntensity *= glowIntensity;
+        // 逐顶点颜色折线——展示引擎顶点颜色控制能力
+        {
+            auto glow = [&](int i) -> std::pair<int,float> {
+                float dist = fabs(i - center);
+                if (dist > half_ldm) dist = ldm - dist;
+                float gi = 0.0f;
+                if (dist < ldrg_f) { gi = 1.0f - dist / ldrg_f; gi *= gi; }
+                return {25 + (int)(204.f * gi), 0.5f + 0.5f * gi};
+            };
+            auto [rgb0, a0] = glow(160);
+            curve.color(rgb0, rgb0, rgb0, a0).from(lx[160], ly[160]);
+            for (int i = 159; i > 0; --i) {
+                auto [rgb, a] = glow(i);
+                curve.color(rgb, rgb, rgb, a).to(lx[i], ly[i]);
             }
-
-            int rgb = 25 + static_cast<int>(204.0f * glowIntensity);
-            float a = 0.5f + 0.5f * glowIntensity;
-
-            curve.color(rgb, rgb, rgb, a)
-                 .from(lx[i], ly[i])
-                 .to(lx[i - 1], ly[i - 1]);
             draw.line(curve);
         }
 

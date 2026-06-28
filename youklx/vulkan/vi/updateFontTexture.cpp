@@ -69,8 +69,10 @@ Vulkan& Vulkan::updateFontTexture(Font* font) {
     this->fontImageView.emplace(*this->device,
         vk::ImageViewCreateInfo{{}, *this->fontImage, vk::ImageViewType::e2D, vk::Format::eR8G8B8A8Srgb,
             {}, {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}});
+    // 字体图集是位图字形，最近邻采样保持像素锐利
+    auto fontFilter = vk::Filter::eNearest;
     this->fontSampler.emplace(*this->device,
-        vk::SamplerCreateInfo{{}, vk::Filter::eLinear, vk::Filter::eLinear, vk::SamplerMipmapMode::eLinear,
+        vk::SamplerCreateInfo{{}, fontFilter, fontFilter, vk::SamplerMipmapMode::eNearest,
             vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge});
 
     {

@@ -58,7 +58,7 @@ Vulkan& Vulkan::createPipeline() {
         vk::CullModeFlagBits::eNone, vk::FrontFace::eCounterClockwise,
         VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f};
 
-    vk::PipelineMultisampleStateCreateInfo multisampling{};
+    vk::PipelineMultisampleStateCreateInfo multisampling{{}, msaaSamples};
 
     // 线条混合状态：Alpha混合
     vk::PipelineColorBlendAttachmentState lineBlend{};
@@ -114,7 +114,7 @@ Vulkan& Vulkan::createPipeline() {
 
     const vk::DescriptorSetLayout& dsl = **this->descSetLayout;
     vk::PushConstantRange pushRange{
-        vk::ShaderStageFlagBits::eVertex, 0, sizeof(float) * 16};
+        vk::ShaderStageFlagBits::eVertex, 0, sizeof(float) * 19}; // mvp(16) + screenW/H + snapPixel
     vk::PipelineLayoutCreateInfo layoutInfo{{}, dsl, pushRange};
     this->pipelineLayout.emplace(*this->device, layoutInfo);
 
@@ -219,8 +219,11 @@ Vulkan& Vulkan::createPipeline() {
     this->dummyImageView.emplace(*this->device,
         vk::ImageViewCreateInfo{{}, *this->dummyImage, vk::ImageViewType::e2D, vk::Format::eR8G8B8A8Srgb,
             {}, {vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1}});
+    // 图像采样器：像素完美模式用最近邻，否则线性过滤
+    auto imgFilter = pixelPerfect ? vk::Filter::eNearest : vk::Filter::eLinear;
+    auto imgMipmap = pixelPerfect ? vk::SamplerMipmapMode::eNearest : vk::SamplerMipmapMode::eLinear;
     this->dummySampler.emplace(*this->device,
-        vk::SamplerCreateInfo{{}, vk::Filter::eLinear, vk::Filter::eLinear, vk::SamplerMipmapMode::eLinear,
+        vk::SamplerCreateInfo{{}, imgFilter, imgFilter, imgMipmap,
             vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge, vk::SamplerAddressMode::eClampToEdge});
 
     // 描述符池：分配 2 个 CombinedImageSampler（图片管线 + 字体管线）

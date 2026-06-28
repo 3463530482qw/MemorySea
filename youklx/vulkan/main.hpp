@@ -66,7 +66,17 @@ namespace youklx {
         int viewportY{0};
         int viewportW{0};
         int viewportH{0};
+        // MSAA 多样本抗锯齿（默认 1 = 关闭，设为 4 = 4x MSAA，必须在 init 前调用）
+        vk::SampleCountFlagBits msaaSamples{vk::SampleCountFlagBits::e1};
+        // MSAA 图像（每帧一个，与交换链图像一一对应）
+        std::vector<vk::raii::Image> msaaImages;
+        std::vector<vk::raii::DeviceMemory> msaaMemories;
+        std::vector<vk::raii::ImageView> msaaViews;
+        // 像素完美模式：最近邻采样 + 顶点对齐像素网格
+        bool pixelPerfect{false};
     public:
+        Vulkan& msaa(int samples);                       // 设置 MSAA 采样数
+        // pixelPerfect 直接赋值：vulkan.pixelPerfect = true;
         Vulkan& createInstance();                         // 创建实例
         Vulkan& pickPhysicalDevice();                     // 选择物理设备
         
