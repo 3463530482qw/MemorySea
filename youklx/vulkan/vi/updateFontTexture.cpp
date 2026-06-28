@@ -3,9 +3,7 @@ namespace youklx {
 Vulkan& Vulkan::updateFontTexture(Font* font) {
     if (!font || !font->loaded) return *this;
     if (font->numPages == 0 || font->atlasPages.empty()) return *this;
-    if (!font->atlasDirty) return *this;  // 图集未变化，跳过重建
-
-    font->atlasDirty = false;
+    if (!font->atlasDirty) return *this;
 
     int tw = font->atlasW;
     int pageH = font->atlasH;
@@ -13,7 +11,7 @@ Vulkan& Vulkan::updateFontTexture(Font* font) {
     vk::DeviceSize rowSize = static_cast<vk::DeviceSize>(tw) * 4;
     vk::DeviceSize imgSize = rowSize * totalH;
 
-    // 竖直堆叠所有页面到单张图集
+    // 竖直堆叠所有页面到单张图集（CPU 快照，避免后续 GPU 操作期间数据被修改）
     std::vector<uint8_t> stacked(totalH * tw * 4);
     for (int pg = 0; pg < font->numPages; ++pg) {
         const uint8_t* src = font->atlasPages[pg].data();
@@ -34,10 +32,11 @@ Vulkan& Vulkan::updateFontTexture(Font* font) {
     memcpy(ptr, stacked.data(), static_cast<size_t>(imgSize));
     stagingMem.unmapMemory();
 
+    // 等待 GPU 空闲后，按正确顺序销毁旧资源：imageView → image → imageMemory → sampler
     this->device->waitIdle();
+    this->fontImageView.reset();
     this->fontImage.reset();
     this->fontImageMemory.reset();
-    this->fontImageView.reset();
     this->fontSampler.reset();
 
     vk::ImageCreateInfo imgInfo{{}, vk::ImageType::e2D, vk::Format::eR8G8B8A8Srgb,
@@ -80,6 +79,8 @@ Vulkan& Vulkan::updateFontTexture(Font* font) {
         this->device->updateDescriptorSets(writeDesc, nullptr);
     }
 
+    // 上传成功后再清除脏标记，防止中途失败导致丢失更新
+    font->atlasDirty = false;
     return *this;
 }
 
