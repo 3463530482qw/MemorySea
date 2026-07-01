@@ -16,7 +16,7 @@ int main() {
             .create(wc)
             .positionAdjustment()
             .icon(vimage.ima[0][0])
-            .ifps("ini/main.ini","windowcreate","fps");
+            .fps({"ini/main.ini","windowcreate","fps"});
         }
 
         window.ilstsize("ini/main.ini","windowcreate","sw","sh");

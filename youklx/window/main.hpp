@@ -1,4 +1,5 @@
 #include "parameters/init.hpp"
+#include "parameters/fps.hpp"
 #include "parameters/create.cpp"
 #include "parameters/time.cpp"
 #include "parameters/keyboard.cpp"
@@ -32,8 +33,8 @@ namespace youklx {
             Window& positionAdjustment(int px = 0, int py = 0); //设置窗口位置
             Window& run();  //运行窗口 事件处理
             Window& icon(Plimage ima);  //设置窗口图标
-            Window& fps(int sfps);
-            Window& ifps(std::string ini, std::string ivrtp, std::string itp);
+            Window& fps(const w_fps setfps);
+            Window& fps(const iw_fps setfps);
             Window& lstsize(int w, int h); // 设置逻辑大小
             Window& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
 
