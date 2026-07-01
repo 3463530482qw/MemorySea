@@ -29,7 +29,6 @@
 #include <condition_variable>
 #include <future>
 #include <atomic>
-#include <random>
 
 
 #ifdef _WIN32
@@ -78,5 +77,4 @@
 #include "draw/main.hpp"
 #include "vulkan/main.hpp"
 #include "thread/main.hpp"
-#include "ai/main.hpp"
 #include "init.hpp"

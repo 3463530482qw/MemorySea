@@ -1,6 +1,6 @@
 namespace youklx {
     void Thread::wth_vupdate() {
-        int cptr = dr->cptr;
+        int cptr = dr->cptr[dr->activeRead];
         dr->vertex.clear();
         dr->vertexptr.clear();
 
@@ -9,8 +9,9 @@ namespace youklx {
         int n = wth.count;
         if (n > cptr) n = cptr;
 
-        // 命令数太少时直接单线程处理，避免分发开销
-        if (n <= 1 || cptr < 1000) {
+        // 命令数太少时单线程处理以避免分发开销
+        // 阈值 = 工作线程数 × 8，确保每个线程至少分到 8 条命令
+        if (n <= 1 || cptr < n * 8) {
             dr->vertex.reserve(cptr * 48);
             dr->vertexptr.reserve(cptr);
             for (int i = 0; i < cptr; ++i) {
@@ -28,7 +29,7 @@ namespace youklx {
                         auto verts = fontVertices(cmd);
                         dr->vertex.insert(dr->vertex.end(), verts.begin(), verts.end());
                     },
-                }, dr->commands[i]);
+                }, dr->commands[dr->activeRead][i]);
             }
             return;
         }
@@ -47,17 +48,12 @@ namespace youklx {
         // 下一轮分发，唤醒所有工作线程
         wth.done.store(0);
         wth.gen.fetch_add(1);
-        {
-            std::lock_guard<std::mutex> lock(wth.mtx);
-            wth.start = true;
-        }
         wth.cv_start.notify_all();
 
         // 等待所有工作线程完成
         {
             std::unique_lock<std::mutex> lock(wth.mtx);
             wth.cv_done.wait(lock, [this, n]() { return wth.done.load() >= n; });
-            wth.start = false;
         }
 
         // 按顺序合并各线程结果到 dr->vertex / dr->vertexptr

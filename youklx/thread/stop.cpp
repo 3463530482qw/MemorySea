@@ -17,11 +17,7 @@ namespace youklx {
         }
         cv_update_ready.notify_one();
 
-        // 唤醒所有工作线程使其退出
-        {
-            std::lock_guard<std::mutex> lock(wth.mtx);
-            wth.start = true;
-        }
+        // 唤醒所有工作线程使其退出（stop 标志已设置，直接通知即可）
         wth.cv_start.notify_all();
 
         // 等待所有线程结束

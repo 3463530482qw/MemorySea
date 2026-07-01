@@ -16,6 +16,7 @@ namespace youklx {
             std::condition_variable cv_draw_done;
             bool    draw_ready{false};
             bool    draw_done{false};
+            bool    draw_work_stored{false};
             // update 线程（执行状态更新 + 渲染）
             std::thread th_update;
             std::function<void()> update_work;
@@ -32,7 +33,6 @@ namespace youklx {
                 int count{0};
                 std::atomic<int> gen{0};
                 std::atomic<int> done{0};
-                bool start{false};
                 std::atomic<bool> stop{false};
                 std::mutex mtx;
                 std::condition_variable cv_start;

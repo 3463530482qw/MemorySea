@@ -10,8 +10,8 @@ namespace youklx {
             copied.u1 = png.u1; copied.v1 = png.v1;
         }
 
-        commands.emplace_back(copied);
-        cptr += 1;
+        commands[activeWrite].emplace_back(copied);
+        cptr[activeWrite] += 1;
         return *this;
     }
 }

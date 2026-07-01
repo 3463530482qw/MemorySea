@@ -47,13 +47,13 @@ namespace youklx {
         // 遍历绘制命令，按类型绑定不同管线
         // 记录上次绑定的类型，避免连续同类型命令的冗余管线/描述符绑定
         int lastCmdType = -1;  // 0=Linecmd, 1=Imagecmd, 2=Fontcmd
-        int cmdCount = std::min(draw.cptr, static_cast<int>(draw.commands.size()));
+        int cmdCount = std::min(draw.cptr[draw.activeRead], static_cast<int>(draw.commands[draw.activeRead].size()));
         for (int i = 0; i < cmdCount; ++i) {
             uint32_t firstVertex = (i < static_cast<int>(draw.vertexptr.size()))
                 ? static_cast<uint32_t>(draw.vertexptr[i]) : 0u;
             uint32_t vertexCount = 0;
             if (i < static_cast<int>(draw.vertexptr.size())) {
-                uint32_t nextOffset = (i + 1 < draw.cptr && (i + 1) < static_cast<int>(draw.vertexptr.size()))
+                uint32_t nextOffset = (i + 1 < draw.cptr[draw.activeRead] && (i + 1) < static_cast<int>(draw.vertexptr.size()))
                     ? static_cast<uint32_t>(draw.vertexptr[i + 1])
                     : static_cast<uint32_t>(draw.vertex.size() / 8);
                 if (nextOffset > firstVertex) {
@@ -93,7 +93,7 @@ namespace youklx {
                     this->commandBuffers[this->currentFrame].bindVertexBuffers(0, {**this->vertexBuffer}, vbOffsets);
                     this->commandBuffers[this->currentFrame].draw(vertexCount, 1, firstVertex, 0);
                 },
-            }, draw.commands[i]);
+            }, draw.commands[draw.activeRead][i]);
         }
 
         this->commandBuffers[this->currentFrame].endRenderPass();

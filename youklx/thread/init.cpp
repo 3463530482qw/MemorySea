@@ -6,9 +6,8 @@ namespace youklx {
         img = &simg;
         ft = &sft;
         int hcount = std::thread::hardware_concurrency();
-        // 求可用线程
-        nthread = (hcount <= 4 ? 4 : hcount - 3);
-        if (nthread < 1) nthread = 1;
+        // 为更新/绘制线程预留 2 核，工作池取剩余核心，下限 2
+        nthread = std::max(2, hcount - 2);
 
         // 创建持久化工作线程池，每个线程等待顶点计算任务分发
         wth.count = nthread;
@@ -20,7 +19,7 @@ namespace youklx {
                     {
                         std::unique_lock<std::mutex> lock(wth.mtx);
                         wth.cv_start.wait(lock, [this, &my_gen]() {
-                            return wth.stop || (wth.start && wth.gen.load() > my_gen);
+                            return wth.stop || wth.gen.load() > my_gen;
                         });
                         if (wth.stop) return;
                         my_gen = wth.gen.load();
@@ -46,13 +45,17 @@ namespace youklx {
                                 auto verts = fontVertices(cmd);
                                 task.vertices.insert(task.vertices.end(), verts.begin(), verts.end());
                             },
-                        }, dr->commands[n]);
+                        }, dr->commands[dr->activeRead][n]);
                     }
-                    // 通知主线程完成
-                    wth.done.fetch_add(1);
-                    wth.cv_done.notify_one();
+                    // 仅最后一个完成的工作线程通知主线程
+                    if (wth.done.fetch_add(1) == wth.count - 1)
+                        wth.cv_done.notify_one();
                 }
             });
+            // 工作线程优先级低于关键路径，避免抢占更新/绘制线程
+            #ifdef _WIN32
+            SetThreadPriority(wth.threads.back().native_handle(), THREAD_PRIORITY_BELOW_NORMAL);
+            #endif
         }
         return *this;
     }

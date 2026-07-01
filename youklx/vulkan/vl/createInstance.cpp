@@ -3,7 +3,7 @@ namespace youklx {
         vk::ApplicationInfo appInfo(
             "MemorySea", VK_MAKE_VERSION(1, 0, 0),
             "YouklxEngine", VK_MAKE_VERSION(1, 0, 0),
-            VK_API_VERSION_1_0);
+            VK_API_VERSION_1_3);
 
         // SDL 查询所需的 Vulkan 实例扩展（自动包含平台表面扩展）
         uint32_t extCount = 0;

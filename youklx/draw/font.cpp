@@ -37,8 +37,8 @@ Draw& Draw::font(Fontcmd cmd) {
     // 若已设置字体对象，则按需加载字形到图集
     if (cmd.font) cmd.font->ensure(cmd.text);
     // 直接使用传入的 cmd（调用者已设置位置、大小、颜色等）
-    commands.emplace_back(cmd);
-    cptr += 1;
+    commands[activeWrite].emplace_back(cmd);
+    cptr[activeWrite] += 1;
     return *this;
 }
 }

@@ -1,5 +1,6 @@
 namespace youklx {
     void Thread::wth_draw(std::function<void()> work) {
+        // 首次调用时创建绘制线程（仅一次）
         if (!th_draw.joinable()) {
             th_draw = std::thread([this]() {
                 while (true) {
@@ -21,18 +22,8 @@ namespace youklx {
             });
         }
 
+        // 仅存储工作，由 wth_update 内部触发执行
         draw_work = std::move(work);
-
-        {
-            std::lock_guard<std::mutex> lock(mtx_draw);
-            draw_ready = true;
-            draw_done = false;
-        }
-        cv_draw_ready.notify_one();
-
-        {
-            std::unique_lock<std::mutex> lock(mtx_draw);
-            cv_draw_done.wait(lock, [this]() { return draw_done; });
-        }
+        draw_work_stored = true;
     }
 }
