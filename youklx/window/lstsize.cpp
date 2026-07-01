@@ -1,18 +1,16 @@
 namespace youklx {
-    Window& Window::lstsize(int w, int h) {
-        stsizew = w;
-        stsizeh = h;
+    Window& Window::lstsize(const w_lstsize vlstsize) {
+        stsizew = vlstsize.w;
+        stsizeh = vlstsize.h;
         return *this;
     }
 
-    Window& Window::ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp) {
-        //读取配置
-        INIReader reader(ini);
+    Window& Window::lstsize(const iw_lstsize vlstsize) {
+        INIReader reader(vlstsize.ini);
         if (reader.ParseError() != 0) {
             std::cerr << "Configuration load failed, using default configuration" << std::endl;
         }
-        //调用初始化
-        lstsize(reader.GetReal(ivrtp, witp, 1600), reader.GetReal(ivrtp, hitp, 900));
+        lstsize({reader.GetInteger(vlstsize.ivrtp, vlstsize.witp, 1600), reader.GetInteger(vlstsize.ivrtp, vlstsize.hitp, 900)});
         return *this;
     }
 }

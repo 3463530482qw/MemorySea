@@ -19,7 +19,7 @@ int main() {
             .fps({"ini/main.ini","windowcreate","fps"});
         }
 
-        window.ilstsize("ini/main.ini","windowcreate","sw","sh");
+        window.lstsize({"ini/main.ini","windowcreate","sw","sh"});
         draw.ilstsize("ini/main.ini","windowcreate","sw","sh");
         vulkan.ilstsize("ini/main.ini","windowcreate","sw","sh");
 

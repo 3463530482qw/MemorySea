@@ -1,5 +1,6 @@
 #include "parameters/init.hpp"
 #include "parameters/fps.hpp"
+#include "parameters/lstsize.hpp"
 #include "parameters/create.cpp"
 #include "parameters/time.cpp"
 #include "parameters/keyboard.cpp"
@@ -27,16 +28,16 @@ namespace youklx {
             Mouse mouse;            //鼠标输入
         public:
             Window() {};
-            Window& init(const w_init cfg);
-            Window& init(const iw_init cfg);
+            Window& init(const w_init clinit);
+            Window& init(const iw_init clinit);
             Window& create(windowcreateinfo &exwindowcreatinfo); //创建窗口
             Window& positionAdjustment(int px = 0, int py = 0); //设置窗口位置
             Window& run();  //运行窗口 事件处理
             Window& icon(Plimage ima);  //设置窗口图标
-            Window& fps(const w_fps setfps);
-            Window& fps(const iw_fps setfps);
-            Window& lstsize(int w, int h); // 设置逻辑大小
-            Window& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
+            Window& fps(const w_fps vfps);
+            Window& fps(const iw_fps vfps);
+            Window& lstsize(const w_lstsize vlstsize);
+            Window& lstsize(const iw_lstsize vlstsize);
 
         private:
             Window& pinit(const float sar);

@@ -19,15 +19,15 @@ namespace youklx {
         return *this;
     }
 
-    Window& Window::init(const w_init clinit) {
-        aspectRatio = clinit.standardAspectRatio;
+    Window& Window::init(const w_init vinit) {
+        aspectRatio = vinit.standardAspectRatio;
         return pinit(aspectRatio);
     }
-    Window& Window::init(const iw_init clinit) {
-        INIReader reader(clinit.ini);
+    Window& Window::init(const iw_init vinit) {
+        INIReader reader(vinit.ini);
         if (reader.ParseError() != 0) {
             std::cerr << "Configuration load failed, using default configuration" << std::endl;
         }
-        return pinit(reader.GetReal(clinit.ivrtp, clinit.itp, 1.778));
+        return pinit(reader.GetReal(vinit.ivrtp, vinit.itp, 1.778));
     }
 }
