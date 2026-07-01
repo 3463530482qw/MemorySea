@@ -1,3 +1,4 @@
+#include "parameters/init.hpp"
 #include "parameters/create.cpp"
 #include "parameters/time.cpp"
 #include "parameters/keyboard.cpp"
@@ -25,8 +26,8 @@ namespace youklx {
             Mouse mouse;            //鼠标输入
         public:
             Window() {};
-            Window& init(float standardAspectRatio);    //初始化窗口所需数据
-            Window& iinit(std::string ini, std::string ivrtp, std::string itp);
+            Window& init(const w_init cfg);
+            Window& init(const iw_init cfg);
             Window& create(windowcreateinfo &exwindowcreatinfo); //创建窗口
             Window& positionAdjustment(int px = 0, int py = 0); //设置窗口位置
             Window& run();  //运行窗口 事件处理
@@ -37,6 +38,7 @@ namespace youklx {
             Window& ilstsize(std::string ini, std::string ivrtp, std::string witp, std::string hitp);
 
         private:
+            Window& pinit(const float sar);
     };
 }
 #include "init.cpp"

@@ -36,9 +36,6 @@ namespace youklx {
 
 #include "draw.cpp"
 #include "lstsize.cpp"
-// std::visit 辅助：用 lambda 集合访问 variant
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 #include "line.cpp"
 #include "image.cpp"
 #include "font.cpp"

@@ -12,7 +12,7 @@ int main() {
             vimage.load("ini/main.ini", "icon");
             youklx::windowcreateinfo wc;
             wc.loadini("ini/main.ini","windowcreate").load();
-            window.iinit("ini/main.ini","windowcreate","acp")
+            window.init({"ini/main.ini","windowcreate","acp"})
             .create(wc)
             .positionAdjustment()
             .icon(vimage.ima[0][0])

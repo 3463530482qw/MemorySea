@@ -1,40 +1,33 @@
 namespace youklx {
-    Window& Window::init(float standardAspectRatio) {
-        //设置宽高比
-        aspectRatio = standardAspectRatio;
-        //获取桌面大小
+    Window& Window::pinit(const float sar) {
         SDL_DisplayID primary_display = SDL_GetPrimaryDisplay();
         mode = SDL_GetDesktopDisplayMode(primary_display);
         //计算桌面长宽高
-        if(aspectRatio >= 1 && aspectRatio <= 100) {
-            if(mode->w > mode->h * aspectRatio) {
-                w = mode->h * 0.9;
-                h = w / aspectRatio;
-            } else {
-                w = mode->w * 0.9;
-                h = w / aspectRatio;
-            }
-        } else if (aspectRatio >= 0 && aspectRatio < 1) {
-            if(mode->w > mode->h * aspectRatio) {
-                w = mode->h * 0.9;
-                h = w * aspectRatio;
-            } else {
-                w = mode->w * 0.9;
-                h = w * aspectRatio;
-            }
-        } else {
-            throw std::runtime_error("Erro:standardAspectRatio the parameter must be between zero and one hundred");
+        if (sar <= 0.01f || sar > 100.0f) {
+            throw std::runtime_error("The aspect ratio for creating the window doesn't meet the requirements");
         }
+        float target_w, target_h;
+        if ((static_cast<float>(mode->w) / static_cast<float>(mode->h)) > sar) {
+            target_h = mode->h * 0.9f;
+            target_w = target_h * sar;
+        } else {
+            target_w = mode->w * 0.9f;
+            target_h = target_w / sar;
+        }
+        w = static_cast<int>(target_w);
+        h = static_cast<int>(target_h);
         return *this;
     }
-    Window& Window::iinit(std::string ini, std::string ivrtp, std::string itp) {
-        //读取配置
-        INIReader reader(ini);
+
+    Window& Window::init(const w_init clinit) {
+        aspectRatio = clinit.standardAspectRatio;
+        return pinit(aspectRatio);
+    }
+    Window& Window::init(const iw_init clinit) {
+        INIReader reader(clinit.ini);
         if (reader.ParseError() != 0) {
             std::cerr << "Configuration load failed, using default configuration" << std::endl;
         }
-        //调用初始化
-        init(reader.GetReal(ivrtp, itp, 1.778));
-        return *this;
+        return pinit(reader.GetReal(clinit.ivrtp, clinit.itp, 1.778));
     }
 }

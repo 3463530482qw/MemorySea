@@ -1,9 +1,3 @@
-// 强制源文件和执行字符集为 UTF-8（MinGW 兼容）
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic ignored "-Wunknown-pragmas"
-#endif
-#pragma execution_character_set("utf-8")
-
 //cpp标准库
 #include<iostream>
 #include<variant>
@@ -69,6 +63,11 @@
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_raii.hpp>
 
+namespace youklx {
+    //重载模板
+    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+}
 //自定义封装库
 #include "font/main.hpp"
 #include "image/main.hpp"
