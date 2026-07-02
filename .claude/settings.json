@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p d:/MemorySea/.claude/output-styles)"
+    ],
+    "additionalDirectories": [
+      "d:\\MemorySea\\.claude"
+    ]
+  }
+}

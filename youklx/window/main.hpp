@@ -38,7 +38,6 @@ namespace youklx {
             Window& fps(const iw_fps vfps);
             Window& lstsize(const w_lstsize vlstsize);
             Window& lstsize(const iw_lstsize vlstsize);
-
         private:
             Window& pinit(const float sar);
     };
