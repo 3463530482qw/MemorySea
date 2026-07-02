@@ -1,5 +1,6 @@
 namespace youklx {
     Window& Window::run() {
+        time.update();
         keyboard.beginFrame();
         mouse.beginFrame();
 

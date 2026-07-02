@@ -2,7 +2,7 @@
 #include "parameters/fps.hpp"
 #include "parameters/lstsize.hpp"
 #include "parameters/create.cpp"
-#include "parameters/time.cpp"
+#include "parameters/time/main.hpp"
 #include "parameters/keyboard.cpp"
 #include "parameters/mouse.cpp"
 namespace youklx {
@@ -49,3 +49,6 @@ namespace youklx {
 #include "icon.cpp"
 #include "fps.cpp"
 #include "lstsize.cpp"
+#include "parameters/time/update.cpp"
+#include "parameters/time/stats.cpp"
+#include "parameters/time/limiter.cpp"
