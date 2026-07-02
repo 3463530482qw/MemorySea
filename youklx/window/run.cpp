@@ -62,6 +62,10 @@ namespace youklx {
                 case SDL_EVENT_MOUSE_WHEEL:
                     mouse.addWheel(pe.wheel.x, pe.wheel.y);
                     break;
+                case SDL_EVENT_USER:
+                    SDL_SetWindowIcon(id, static_cast<SDL_Surface*>(pe.user.data1));
+                    SDL_DestroySurface(static_cast<SDL_Surface*>(pe.user.data1));
+                    break;
 
                 default:
                     break;

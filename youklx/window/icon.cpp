@@ -10,7 +10,10 @@ namespace youklx {
         }
         //设置窗口图标
         SDL_SetWindowIcon(id, surf);
-        SDL_DestroySurface(surf);
+        pe.type = SDL_EVENT_USER;
+        pe.user.code = 1;
+        pe.user.data1 = surf;
+        SDL_PushEvent(&pe);
         return *this;
     }
 }
