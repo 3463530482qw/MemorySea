@@ -38,6 +38,15 @@ subprocess.run([
     "--build", str(mopath / "build")  # 在 build 目录中执行构建
 ], check=True)
 
+# 编译所有场景模块
+print("=== 编译场景模块 ===")
+sence_dir = Path("sence")
+for bulid_py in sence_dir.glob("*/bulid.py"):
+    scene_name = bulid_py.parent.name
+    print(f"编译场景: {scene_name}")
+    subprocess.run([
+        "python", str(bulid_py)
+    ], check=True)
 
 #sdl动态链接库位置与目标位置
 sdldll = [ 

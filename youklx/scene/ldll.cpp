@@ -1,77 +1,62 @@
 namespace youklx {
-    struct Clildll {
-        std::vector<std::string> vildll{};
-        std::string givrtp{};
-    };
-    static int lildll(void* ini, const char* ivrtp, const char* itype, const char* value) {
-        Clildll* data = static_cast<Clildll*>(ini);
-        //如果是指定标签保存对应值
-        if (std::string(ivrtp) == data->givrtp) {
-            data->vildll.push_back(itype);
-        }
-        return 1;
-    }
 
-    Scene& Scene::ldll(std::string pdll, std::string nfun) {
-        // 加载动态链接库，获取句柄
-        auto handle = IL_DLL(pdll.c_str());
-        if (!handle) {
-            std::cerr << "Failed to load DLL: " << pdll << std::endl;
-            return *this;
-        }
-        
-        // 获取库中指定名称的函数指针
-        void (*func)() = (void(*)())IG_FUNC(handle, nfun.c_str());
-        
-        // 若函数存在，则注册到字典并保存句柄
-        if (func) {
-            dict[nfun] = func;       // 记录函数名与函数指针的映射
-            handles.insert(handle);  // 保存句柄用于后续释放
-        } else {
-            std::cerr << "Function " << nfun << " not found in " << pdll << std::endl;
-            IC_DLL(handle);  // 函数未找到，释放已加载的 DLL
-        }
-        
-        return *this;
+// 私有辅助：加载单个 DLL 并将指定函数注册到菜单字典
+void Scene::_load_dll(const std::string& dll, const std::string& nfun) {
+    auto handle = IL_DLL(dll.c_str());
+    if (!handle) {
+        std::cerr << "Failed to load DLL: " << dll << std::endl;
+        return;
     }
-    Scene& Scene::ldlli(std::string ini, std::string ivrtp) {
-        Clildll ca;
-        //设置ini读取标签名
-        ca.givrtp = ivrtp;
-        INIReader reader(ini);
-        //遍历指定标签加载dll数据
-        if (ini_parse(ini.c_str(), lildll, &ca) < 0) {
-            std::cerr << "Error parsing config file." << std::endl;
-        } else {
-            for (auto& dllkey : ca.vildll) {
-                auto ildlltp = dllkey;
-                dllkey = reader.Get(ivrtp, dllkey, "");
-                if (dllkey.empty()) continue;
-                auto handle = IL_DLL(dllkey.c_str());
-                if (!handle) {
-                    std::cerr << "Failed to load DLL: " << dllkey << std::endl;
-                    continue;
-                }
-                void (*func)() = (void(*)())IG_FUNC(handle, ildlltp.c_str());
-                if (func) {
-                    dict[ildlltp] = func;
-                    handles.insert(handle);
-                } else {
-                    std::cerr << "Function " << ildlltp << " not found in " << dllkey << std::endl;
-                    IC_DLL(handle);
-                }
-            }
-        }
+    auto func = reinterpret_cast<void(*)()>(IG_FUNC(handle, nfun.c_str()));
+    if (func) {
+        dict[nfun] = func;
+        handles[nfun] = handle;
+    } else {
+        std::cerr << "Function " << nfun << " not found in " << dll << std::endl;
+        IC_DLL(handle);
+    }
+}
+
+Scene& Scene::ldll(const std::string& dll, const std::string& nfun) {
+    _load_dll(dll, nfun);
+    return *this;
+}
+
+// ini_parse 回调：收集指定节下的键值对（一次解析同时拿到 key 和 value）
+struct Clildll {
+    std::string givrtp;
+    std::vector<std::pair<std::string, std::string>> vildll;
+};
+
+static int lildll(void* ini, const char* ivrtp, const char* itype, const char* value) {
+    auto* data = static_cast<Clildll*>(ini);
+    if (data->givrtp == ivrtp) {
+        data->vildll.emplace_back(itype, value);
+    }
+    return 1;
+}
+
+Scene& Scene::ldlli(const std::string& ini, const std::string& ivrtp) {
+    Clildll ca;
+    ca.givrtp = ivrtp;
+
+    // 只解析一次 INI，回调中同时收集键和值，无需 INIReader 二次解析
+    if (ini_parse(ini.c_str(), lildll, &ca) < 0) {
+        std::cerr << "Error parsing config file: " << ini << std::endl;
         return *this;
     }
 
-    Scene::~Scene() {
-        for (void* handle : handles) {
-            if (handle) {
-                IC_DLL(handle);
-            }
-        }
+    for (auto& [key, dll_path] : ca.vildll) {
+        if (dll_path.empty()) continue;
+        _load_dll(dll_path, key);
     }
+    return *this;
+}
+
+Scene::~Scene() {
+    for (auto& [name, handle] : handles) {
+        IC_DLL(handle);
+    }
+}
 
 }
-    

@@ -34,7 +34,10 @@ namespace youklx {
     public:
         windowcreateinfo& fname(std::string exname) { name = exname; return *this; };
         windowcreateinfo& fw(int exw) { w = exw; return *this; };
-        windowcreateinfo& fh(int exh) { h = exh; return *this; }; 
+        windowcreateinfo& fh(int exh) { h = exh; return *this; };
+        windowcreateinfo& 设置名称(std::string exname) { name = exname; return *this; };
+        windowcreateinfo& 设置宽度(int exw) { w = exw; return *this; };
+        windowcreateinfo& 设置高度(int exh) { h = exh; return *this; };
         windowcreateinfo& fopengl(bool exopengl) { opengl = exopengl; return *this; }
         windowcreateinfo& foccluded(bool exoccluded) { occluded = exoccluded; return *this; }
         windowcreateinfo& fhidden(bool exhidden) { hidden = exhidden; return *this; }
@@ -97,6 +100,8 @@ namespace youklx {
             not_focusable       = reader.GetBoolean(ivrtp, "not_focusable", false);
             return *this;
         }
+        windowcreateinfo& 加载配置(std::string ini, std::string ivrtp) { return loadini(ini, ivrtp); }
+        void 加载标志() { load(); }
         void load() {
             flage = static_cast<SDL_WindowFlags>(0);
             if (fullscreen)          flage |= SDL_WINDOW_FULLSCREEN;
@@ -127,4 +132,5 @@ namespace youklx {
             if (not_focusable)       flage |= SDL_WINDOW_NOT_FOCUSABLE;
         }
     };
+    using 窗口创建配置 = windowcreateinfo;
 }

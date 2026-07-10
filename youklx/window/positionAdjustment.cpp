@@ -5,7 +5,6 @@ namespace youklx {
             px = (mode->w - w) * 0.5;
             py = (mode->h - h) * 0.45;
         }
-        
         if(!SDL_SetWindowPosition(id, px, py)) {
             throw std::runtime_error("Position adjustment failed");
         }

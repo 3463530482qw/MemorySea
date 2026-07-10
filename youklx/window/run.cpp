@@ -1,7 +1,6 @@
 namespace youklx {
     Window& Window::run() {
-        time.update();
-        keyboard.beginFrame();
+        key.beginFrame();
         mouse.beginFrame();
 
         while (SDL_PollEvent(&pe)) {
@@ -15,10 +14,10 @@ namespace youklx {
 
                 // ---- 键盘 ----
                 case SDL_EVENT_KEY_DOWN:
-                    keyboard.setDown(pe.key.key);
+                    key.setDown(pe.key.key);
                     break;
                 case SDL_EVENT_KEY_UP:
-                    keyboard.setUp(pe.key.key);
+                    key.setUp(pe.key.key);
                     break;
 
                 // ---- 鼠标移动 ----
@@ -74,7 +73,7 @@ namespace youklx {
         }
 
         mouse.endFrame();
-
+        time.update();
         return *this;
     }
 }

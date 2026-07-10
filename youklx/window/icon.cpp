@@ -1,15 +1,14 @@
 namespace youklx {
     Window& Window::icon(Plimage ima) {
-        //取出图片数据
         auto& gima = std::visit(std::identity{}, ima);
-        //创建表面
-        SDL_Surface* surf = SDL_CreateSurfaceFrom(gima.w, gima.h, SDL_PIXELFORMAT_RGBA32, gima.data, gima.w * 4);
+        // 创建自带像素缓冲区的表面（拷贝数据，不依赖外部生命周期）
+        SDL_Surface* surf = SDL_CreateSurface(gima.w, gima.h, SDL_PIXELFORMAT_RGBA32);
         if (!surf) {
             std::cerr << "创建窗口图标表面失败: " << SDL_GetError() << std::endl;
             return *this;
         }
-        //设置窗口图标
-        SDL_SetWindowIcon(id, surf);
+        memcpy(surf->pixels, gima.data, gima.w * gima.h * 4);
+        // 推入事件队列，由 run() 统一设置图标并销毁表面
         pe.type = SDL_EVENT_USER;
         pe.user.code = 1;
         pe.user.data1 = surf;
@@ -17,3 +16,4 @@ namespace youklx {
         return *this;
     }
 }
+

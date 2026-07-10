@@ -1,10 +1,30 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir -p d:/MemorySea/.claude/output-styles)"
+      "Bash(mkdir -p d:/MemorySea/.claude/output-styles)",
+      "Bash(cmake --build .)",
+      "Bash(cmake .. -G \"MinGW Makefiles\")",
+      "Bash(make)",
+      "Bash(git fetch *)",
+      "Bash(sed -i 's/graphicsPipelineImage/pipelineImage/g' main.hpp vl/recordCommandBuffer.cpp vl/pipelines/image.cpp)",
+      "Bash(sed -i 's/graphicsPipelineFont/pipelineFont/g' main.hpp vl/recordCommandBuffer.cpp vl/pipelines/font.cpp)",
+      "Bash(sed -i 's/graphicsPipeline/pipelineLine/g' main.hpp vl/recordCommandBuffer.cpp vl/pipelines/line.cpp)",
+      "Bash(sed -i 's/dummyImageMemory/defaultImageMemory/g' main.hpp vl/createPipeline.cpp vi/updateTexture.cpp)",
+      "Bash(sed -i 's/dummyImageView/defaultImageView/g' main.hpp vl/createPipeline.cpp vi/updateTexture.cpp)",
+      "Bash(python build.py)",
+      "Bash(xargs sed -i 's/this->//g')",
+      "Bash(mkdir -p youklx/thread/pool youklx/thread/loop)",
+      "Bash(python sence/mainMenu/bulid.py)",
+      "Bash(./MemorySea.exe)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(cat /c/Users/华硕/AppData/Local/Temp/claude/d--MemorySea/8eb82678-54c9-47b2-aa15-9cd40d68447e/tasks/bz5dsg1xr.output 2>&1)",
+      "Read(//c/Users/华硕/AppData/Local/Temp/claude/d--MemorySea/8eb82678-54c9-47b2-aa15-9cd40d68447e/tasks/**)",
+      "Bash(g++ -std=c++23 -E -I. -I\"D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include\" -I\"C:/vulkan/Include\" main.cpp)",
+      "Bash(rm -rf build)"
     ],
     "additionalDirectories": [
-      "d:\\MemorySea\\.claude"
+      "d:\\MemorySea\\.claude",
+      "d:\\MemorySea\\youklx\\thread\\pool"
     ]
   }
 }

@@ -68,6 +68,7 @@ namespace youklx {
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 }
+namespace 有棵黎夕的 = youklx;
 //自定义封装库
 #include "font/main.hpp"
 #include "image/main.hpp"
