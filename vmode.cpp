@@ -7,3 +7,4 @@
 #define API __declspec(dllimport)
 
 API youklx::场景 场景;
+API youklx::线程 线程;

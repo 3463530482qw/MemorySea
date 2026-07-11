@@ -59,11 +59,13 @@ namespace youklx {
 }
 namespace 有棵黎夕的 = youklx;
 //自定义封装库
+#include "scene/main.hpp"
+#include "thread/main.hpp"
 //#include "font/main.hpp"
 //#include "image/main.hpp"
 //#include "window/main.hpp"
-#include "scene/main.hpp"
+
 //#include "draw/main.hpp"
 //#include "vulkan/main.hpp"
-//#include "thread/main.hpp"
+
 #include "init.hpp"
