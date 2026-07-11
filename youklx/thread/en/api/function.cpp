@@ -1,0 +1,1 @@
+Thread& pack(std::function<void()> vpack);
