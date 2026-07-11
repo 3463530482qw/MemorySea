@@ -4,10 +4,10 @@ int main() {
     try {
         youklx::init();
 
-        scene.ldlli("ini/scene/main.ini","scene");
-        scene.ptr = "mainMenu";
+        场景.iload("ini/scene/main.ini","scene");
+        场景.查询 = "mainMenu";
         while(1) {
-            if (auto it = scene.dict.find(scene.ptr); it != scene.dict.end()) {
+            if (auto it = 场景.菜单.find(场景.查询); it != 场景.菜单.end()) {
                 it->second();
             }
         }

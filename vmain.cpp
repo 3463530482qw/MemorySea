@@ -1,5 +1,9 @@
-#include "youklx/iall.hpp"
+#ifdef _WIN32
+#include "youklx/wiall.hpp"
+#else
+
+#endif
 
 #define API __declspec(dllexport)
 
-API youklx::Scene scene;
+API youklx::场景 场景;

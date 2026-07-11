@@ -24,18 +24,7 @@
 #include <future>
 #include <atomic>
 
-
-#ifdef _WIN32
-    #include <windows.h>
-    #define IL_DLL(name) LoadLibraryA(name)
-    #define IG_FUNC(handle, name) GetProcAddress(handle, name)
-    #define IC_DLL(handle) FreeLibrary((HMODULE)handle)
-#else
-    #include <dlfcn.h>
-    #define IL_DLL(name) dlopen(name, RTLD_LAZY)
-    #define IG_FUNC(handle, name) dlsym(handle, name)
-    #define IC_DLL(handle) dlclose(handle)
-#endif
+#include <windows.h>
 
 //媒体库
 #include "SDL_vulkan.h"
@@ -70,11 +59,11 @@ namespace youklx {
 }
 namespace 有棵黎夕的 = youklx;
 //自定义封装库
-#include "font/main.hpp"
-#include "image/main.hpp"
-#include "window/main.hpp"
+//#include "font/main.hpp"
+//#include "image/main.hpp"
+//#include "window/main.hpp"
 #include "scene/main.hpp"
-#include "draw/main.hpp"
-#include "vulkan/main.hpp"
-#include "thread/main.hpp"
+//#include "draw/main.hpp"
+//#include "vulkan/main.hpp"
+//#include "thread/main.hpp"
 #include "init.hpp"

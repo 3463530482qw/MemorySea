@@ -1,19 +1,14 @@
 namespace youklx {
+    Scene& Scene::clear() {
+        ptr.clear();
 
-Scene& Scene::clear() {
-    // 清空当前场景指针
-    ptr.clear();
+        dt.clear();
 
-    // 清空菜单字典
-    dict.clear();
+        for (auto& [name, handle] : pe_dt) {
+            FreeLibrary(handle);
+        }
+        pe_dt.clear();
 
-    // 释放所有 DLL 句柄并清空
-    for (auto& [name, handle] : handles) {
-        IC_DLL(handle);
+        return *this;
     }
-    handles.clear();
-
-    return *this;
-}
-
 }
