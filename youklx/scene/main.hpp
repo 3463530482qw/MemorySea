@@ -1,29 +1,30 @@
+#include"en/parameters/cload.cpp"
+#include"中文/参数/类加载.cpp"
 namespace youklx {
     class Scene{
         public:
-            std::unordered_map<std::string, std::function<void ()>> dt{};
-            std::unordered_map<std::string, std::function<void ()>>& 菜单{dt};
-            std::string ptr;
-            std::string& 查询{ptr};
+            #include"en/api/var.cpp"
+            #include"中文/接口/变量.cpp"
         public:
-            Scene& load(const std::string& dll, const std::string& nfun);
-            Scene& iload(const std::string& ini, const std::string& ivrtp);
-            Scene& remove(const std::string& name);
-            Scene& clear();
+            #include"en/api/function.cpp"
+            #include"中文/接口/函数.cpp"
         private:
-            std::unordered_map<std::string, HMODULE> pe_dt{};
+            #include "en/api/internal/var.cpp"
+            #include "中文/接口/内部/变量.cpp"
         private:
-            void pe_load(const std::string& dll, const std::string& nfun);
-            static int pe_sh_load(void* ini, const char* ivrtp, const char* itype, const char* value);
+            #include "en/api/internal/function.cpp"
+            #include"中文/接口/内部/函数.cpp"
         public:
             ~Scene();
     };
     using 场景 = Scene;
 }
 #include"main.cpp"
-#include"remove.cpp"
-#include"clear.cpp"
-#include"en/parameters/cload.cpp"
-#include"中文/参数/cload.cpp"
+#include"en/remove.cpp"
+#include"中文/删除.cpp"
+#include"en/clear.cpp"
+#include"中文/清空.cpp"
 #include"en/pe_load.cpp"
+#include"中文/私有加载.cpp"
 #include"en/load.cpp"
+#include"中文/加载.cpp"

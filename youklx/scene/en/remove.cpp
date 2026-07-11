@@ -13,6 +13,5 @@ namespace youklx {
         }
 
         return *this;
-
     }
 }
