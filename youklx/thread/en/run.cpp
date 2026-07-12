@@ -1,6 +1,5 @@
 namespace youklx {
-    template<uint8_t tnths>
-    Thread<tnths>& Thread<tnths>::run() {
+    Thread& Thread::run() {
         // ===== 阶段1：等待上一帧绘制完成 =====
         {
             std::unique_lock lock(mtx);
@@ -16,6 +15,8 @@ namespace youklx {
                 std::lock_guard lock(mtx);
                 update_claimed.store(0, std::memory_order_relaxed);
                 update_completed.store(0, std::memory_order_relaxed);
+                // 防止工作线程 fallthrough 时用过期的 draw_claimed 索引本帧 draw_tasks
+                draw_claimed.store(draw_tasks.size(), std::memory_order_relaxed);
             }
             cv.notify_all();
 
@@ -38,15 +39,6 @@ namespace youklx {
             cv.notify_all();
         }
 
-        return *this;
-    }
-
-    template<uint8_t tnths>
-    Thread<tnths>& Thread<tnths>::wait() {
-        std::unique_lock lock(mtx);
-        cv.wait(lock, [this]() {
-            return draw_done.load(std::memory_order_acquire);
-        });
         return *this;
     }
 }

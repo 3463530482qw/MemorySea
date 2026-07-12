@@ -1,6 +1,6 @@
 namespace youklx {
-    template<uint8_t tnths>
-    Thread<tnths>& Thread<tnths>::clear() {
+    Thread& Thread::clear() {
+        wait();
         update_tasks.clear();
         draw_tasks.clear();
         return *this;

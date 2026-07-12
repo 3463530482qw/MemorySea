@@ -1,13 +1,11 @@
 namespace youklx {
-    template<uint8_t tnths>
-    Thread<tnths>::Thread() {
+    Thread::Thread() {
         auto haco = std::thread::hardware_concurrency();
         haco = haco == 0 ? 4 : haco;
         nths = static_cast<uint8_t>(haco > 2 ? haco - 2 : 1);
-        if (nths > mnths) nths = mnths;
         // 创建常驻工作线程
         for (uint8_t i = 0; i < nths; ++i) {
-            th_pool[i] = std::jthread([this](std::stop_token st) {
+            th_pool.emplace_back([this](std::stop_token st) {
                 while (!st.stop_requested()) {
                     {
                         std::unique_lock lock(mtx);
@@ -22,7 +20,7 @@ namespace youklx {
                     if (st.stop_requested()) return;
 
                     // 抢更新任务
-                    size_t i = update_claimed.fetch_add(1, std::memory_order_relaxed);
+                    size_t i = update_claimed.fetch_add(1, std::memory_order_acq_rel);
                     if (i < update_tasks.size()) {
                         update_tasks[i]();
                         size_t done = update_completed.fetch_add(1, std::memory_order_acq_rel) + 1;
@@ -37,7 +35,7 @@ namespace youklx {
                     }
 
                     // 抢绘制任务
-                    i = draw_claimed.fetch_add(1, std::memory_order_relaxed);
+                    i = draw_claimed.fetch_add(1, std::memory_order_acq_rel);
                     if (i < draw_tasks.size()) {
                         draw_tasks[i]();
                         size_t done = draw_completed.fetch_add(1, std::memory_order_acq_rel) + 1;
@@ -56,8 +54,8 @@ namespace youklx {
         }
     }
 
-    template<uint8_t tnths>
-    Thread<tnths>::~Thread() {
+    Thread::~Thread() {
+        wait();
         for (uint8_t i = 0; i < nths; ++i)
             th_pool[i].request_stop();
         cv.notify_all();

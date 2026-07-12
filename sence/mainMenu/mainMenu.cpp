@@ -10,6 +10,5 @@ extern "C" EXPORT void mainMenu() {
         线程.运行();
         if(a >= 3) break;
     }
-    线程.等待结束();
     线程.包清理();
 }

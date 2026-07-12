@@ -1,1 +1,0 @@
-static constexpr uint8_t mnths = tnths;
