@@ -9,8 +9,11 @@ namespace youklx {
             #include"en/internal/var.cpp"
         public:
             Thread();
+            ~Thread();
     };
     using 线程 = Thread<>;
 }
 #include"main.cpp"
 #include"en/pack.cpp"
+#include"en/run.cpp"
+#include"en/clear.cpp"
