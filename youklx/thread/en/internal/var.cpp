@@ -1,6 +1,10 @@
-uint8_t nths;
+// 阶段枚举：工作线程只抢当前阶段对应的任务池
+enum class Phase : uint8_t { IDLE, UPDATE, DRAW };
+
+uint16_t nths;
 std::mutex mtx;
 std::condition_variable cv;
+std::atomic<Phase> phase{Phase::IDLE};
 // 永久任务注册表
 std::vector<std::function<void()>> update_tasks;
 std::vector<std::function<void()>> draw_tasks;
