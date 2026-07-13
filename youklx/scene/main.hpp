@@ -9,9 +9,9 @@ namespace youklx {
             #include"en/api/function.cpp"
             #include"中文/接口/函数.cpp"
         private:
-            #include "en/api/internal/var.cpp"
+            #include"en/api/internal/var.cpp"
         private:
-            #include "en/api/internal/function.cpp"
+            #include"en/api/internal/function.cpp"
         public:
             ~Scene();
     };
