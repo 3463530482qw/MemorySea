@@ -3,7 +3,7 @@
 int main() {
     try {
         youklx::init();
-
+        窗口.配置().创建();
         场景.批量加载("ini/scene/main.ini","scene");
         场景.查询 = "mainMenu";
         while(1) {

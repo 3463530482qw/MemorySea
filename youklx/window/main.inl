@@ -1,10 +1,5 @@
 namespace youklx {
-    Window::Window() {
-        int count = 0;
-        SDL_DisplayID* ids = SDL_GetDisplays(&count);
-        displays.assign(ids, ids + count);
-        SDL_free(ids);
-    }
+    Window::Window() {} // 显示器列表延迟到 reinfo() 中初始化（需在 SDL_Init 之后）
     Window::~Window() {
         if (id) {
             SDL_DestroyWindow(id);
