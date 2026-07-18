@@ -1,5 +1,5 @@
-#include "parameters/plpng.cpp"
-#include "parameters/plimage.cpp"
+#include "parameters/plpng.inl"
+#include "parameters/plimage.inl"
 namespace youklx {
     class Image {
         public:
@@ -19,6 +19,6 @@ namespace youklx {
             ~Image() { clean(); };
     };
 }
-#include "lpng.cpp"
-#include "buildAtlas.cpp"
-#include "clean.cpp"
+#include "lpng.inl"
+#include "buildAtlas.inl"
+#include "clean.inl"

@@ -1,4 +1,4 @@
-#include "vmain.cpp"
+#include "vmain.inl"
 
 int main() {
     try {

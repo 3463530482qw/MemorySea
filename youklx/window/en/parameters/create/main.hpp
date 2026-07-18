@@ -1,12 +1,13 @@
+#include"en/parameters/render.inl"
 namespace youklx {
     class windowscreateinfo {
         public:
-            #include"en/api/var.cpp"
-            #include"中文/接口/变量.cpp"
+            #include"en/api/var.inl"
+            #include"中文/接口/变量.inl"
         public:
-            #include"en/api/function.cpp"
-            #include"中文/接口/函数.cpp"
+            #include"en/api/function.inl"
+            #include"中文/接口/函数.inl"
     };
 }
-#include"en/initi.cpp"
-#include"en/load.cpp"
+#include"en/initi.inl"
+#include"en/load.inl"

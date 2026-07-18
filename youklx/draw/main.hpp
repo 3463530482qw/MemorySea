@@ -1,7 +1,7 @@
-#include "parameters/linecmd.cpp"
-#include "parameters/imagecmd.cpp"
-#include "parameters/fontcmd.cpp"
-#include "parameters/drawcmd.cpp"
+#include "parameters/linecmd.inl"
+#include "parameters/imagecmd.inl"
+#include "parameters/fontcmd.inl"
+#include "parameters/drawcmd.inl"
 namespace youklx {
     class Draw {
         public:
@@ -34,11 +34,11 @@ namespace youklx {
     };
 }
 
-#include "draw.cpp"
-#include "lstsize.cpp"
-#include "line.cpp"
-#include "image.cpp"
-#include "font.cpp"
-#include "calculate/line.cpp"
-#include "calculate/image.cpp"
-#include "calculate/font.cpp"
+#include "draw.inl"
+#include "lstsize.inl"
+#include "line.inl"
+#include "image.inl"
+#include "font.inl"
+#include "calculate/line.inl"
+#include "calculate/image.inl"
+#include "calculate/font.inl"

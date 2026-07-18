@@ -1,17 +1,21 @@
+#include "en/parameters/create/main.hpp"
+#include "en/parameters/win/main.hpp"
 namespace youklx {
-    class Window{
+    class Window {
         public:
-            #include "en/api/var.cpp"
-            #include "中文/接口/变量.cpp"
+            #include "en/api/var.inl"
+            #include "中文/接口/变量.inl"
         public:
-            #include "en/api/function.cpp"
-            #include "中文/接口/函数.cpp"
+            #include "en/api/function.inl"
+            #include "中文/接口/函数.inl"
         private:
         private:
         public:
             Window();
+            ~Window();
     };
     using 窗口 = Window;
 }
-#include "main.cpp"
-#include "en/init.cpp"
+#include "main.inl"
+#include "en/reinfo/reinfo.inl"
+#include "en/create.inl"

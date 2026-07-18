@@ -5,4 +5,10 @@ namespace youklx {
         displays.assign(ids, ids + count);
         SDL_free(ids);
     }
+    Window::~Window() {
+        if (id) {
+            SDL_DestroyWindow(id);
+            id = nullptr;
+        }
+    }
 }

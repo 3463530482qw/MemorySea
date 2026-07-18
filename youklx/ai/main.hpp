@@ -34,12 +34,12 @@ namespace youklx {
             Agent& train();
     };
 }
-#include "init.cpp"
-#include "snet.cpp"
-#include "sgo.cpp"
-#include "sin.cpp"
-#include "sfunact.cpp"
-#include "save.cpp"
-#include "load.cpp"
-#include "run.cpp"
-#include "train.cpp"
+#include "init.inl"
+#include "snet.inl"
+#include "sgo.inl"
+#include "sin.inl"
+#include "sfunact.inl"
+#include "save.inl"
+#include "load.inl"
+#include "run.inl"
+#include "train.inl"

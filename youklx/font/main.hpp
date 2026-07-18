@@ -1,5 +1,5 @@
-#include "parameters/glyph.cpp"
-#include "parameters/decode.cpp"
+#include "parameters/glyph.inl"
+#include "parameters/decode.inl"
 namespace youklx {
     class Font {
     public:
@@ -38,8 +38,8 @@ namespace youklx {
         ~Font() { clean(); };
     };
 }
-#include "px.cpp"
-#include "load.cpp"
-#include "ensure.cpp"
-#include "textWidth.cpp"
-#include "clean.cpp"
+#include "px.inl"
+#include "load.inl"
+#include "ensure.inl"
+#include "textWidth.inl"
+#include "clean.inl"

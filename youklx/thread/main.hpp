@@ -1,19 +1,19 @@
 namespace youklx {
     class Thread {
         public:
-            #include"en/api/function.cpp"
-            #include"中文/接口/函数.cpp"
+            #include"en/api/function.inl"
+            #include"中文/接口/函数.inl"
         private:
-            #include"en/internal/var.cpp"
-            #include"en/internal/function.cpp"
+            #include"en/internal/var.inl"
+            #include"en/internal/function.inl"
         public:
             Thread();
             ~Thread();
     };
     using 线程 = Thread;
 }
-#include"main.cpp"
-#include"en/pack.cpp"
-#include"en/run.cpp"
-#include"en/clear.cpp"
-#include"en/wait.cpp"
+#include"main.inl"
+#include"en/pack.inl"
+#include"en/run.inl"
+#include"en/clear.inl"
+#include"en/wait.inl"
