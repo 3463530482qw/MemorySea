@@ -1,2 +1,2 @@
-windowscreateinfo& initi(std::string ini, std::string ivrtp);
+windowscreateinfo& initi(const std::string& ini, const std::string& ivrtp);
 void load();

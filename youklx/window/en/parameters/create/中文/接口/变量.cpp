@@ -1,8 +1,3 @@
-// 基本属性
-std::string& 名称{name};
-int& 宽{w};         
-int& 高{h};    
-
 // 窗口标志 — 中文引用别名
 bool& 全屏{fullscreen};
 bool& 被遮挡{occluded};
@@ -32,4 +27,4 @@ bool& 不可聚焦{not_focusable};
 wininforender& 渲染接口{render};
 
 // 原始 SDL 标志位
-SDL_WindowFlags flage{0};  
+SDL_WindowFlags& 标志位{flage};  

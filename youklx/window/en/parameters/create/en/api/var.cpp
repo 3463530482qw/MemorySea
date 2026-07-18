@@ -1,6 +1,3 @@
-std::string name;                 //窗口名称
-int w;                            //窗口宽度
-int h;                            //窗口高度
 bool fullscreen{false};           // 窗口处于全屏模式
 bool occluded{false};             // 窗口被遮挡
 bool hidden{false};               // 窗口隐藏，不在桌面映射且不显示在任务栏
