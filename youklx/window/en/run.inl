@@ -1,11 +1,25 @@
 namespace youklx {
     Window& Window::run() {
-        SDL_Event e;
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_EVENT_QUIT || e.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED) {
-                isrun = false;
+        while (SDL_PollEvent(&pept)) {
+            if (pept.window.windowID != 0 && pept.window.windowID != wid) {
+                pe.push_back(pept);
+                continue;
+            }
+            switch (pept.type) {
+                case SDL_EVENT_QUIT:
+                    isrun = false;
+                    break;
+                case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                    isrun = false;
+                    break;
+                default:
+                    break;
             }
         }
+        for (auto& e : pe) {  
+            SDL_PushEvent(&e);
+        }
+        pe.clear();
         return *this;
     }
 }

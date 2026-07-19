@@ -5,6 +5,7 @@ namespace youklx {
         if (!id) {
             throw std::runtime_error(SDL_GetError());
         }
+        wid = SDL_GetWindowID(id);
         return *this;
     }
     Window& Window::create() {

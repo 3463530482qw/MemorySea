@@ -4,8 +4,8 @@ namespace youklx {
             #include"en/api/function.inl"
             #include"中文/接口/函数.inl"
         private:
-            #include"en/internal/var.inl"
-            #include"en/internal/function.inl"
+            #include"en/api/internal/var.inl"
+            #include"en/api/internal/function.inl"
         public:
             Thread();
             ~Thread();

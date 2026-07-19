@@ -9,9 +9,9 @@ namespace youklx {
             #include "en/api/function.inl"
             #include "中文/接口/函数.inl"
         private:
+            #include"en/api/internal/var.inl"
         private:
         public:
-            Window();
             ~Window();
     };
     using 窗口 = Window;
