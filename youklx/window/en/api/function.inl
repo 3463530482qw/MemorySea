@@ -3,3 +3,4 @@ Window& reinfo(windowsinfo& wininfo);
 Window& create();
 Window& create(windowscreateinfo& info);
 Window& run();
+Window& close();
