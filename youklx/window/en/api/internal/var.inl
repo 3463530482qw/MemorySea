@@ -4,3 +4,4 @@ SDL_WindowID wid{0};
 SDL_Event pept;                       // 窗口事件
 std::vector<SDL_Event> pe;
 const SDL_DisplayMode* mode{nullptr};  // 当前显示器模式（SDL_GetCurrentDisplayMode 返回 const）
+float aspectratio{0};

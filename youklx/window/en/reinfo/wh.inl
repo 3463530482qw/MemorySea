@@ -13,3 +13,4 @@ if(wininfo.w == 0 && wininfo.h == 0) {
     w = wininfo.w;
     h = wininfo.h;
 }
+aspectratio = static_cast<float>(w) / static_cast<float>(h);

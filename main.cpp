@@ -3,7 +3,11 @@
 int main() {
     try {
         youklx::init();
-        窗口.配置().创建();
+        youklx::窗口创建信息 wincinfo;
+        wincinfo.初始化配置("ini/main.ini","wincinfo").加载();
+        youklx::窗口信息 winsinfo;
+        winsinfo.初始化配置("ini/main.ini","winsinfo").加载();
+        窗口.配置(winsinfo).创建(wincinfo).调整位置();
         场景.批量加载("ini/scene/main.ini","scene");
         场景.查询 = "mainMenu";
         while(1) {

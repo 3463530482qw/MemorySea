@@ -1,6 +1,5 @@
 namespace youklx {
     Window& Window::create(windowscreateinfo& info) {
-        info.load();
         id = SDL_CreateWindow(name.c_str(), w, h, info.flage);
         if (!id) {
             throw std::runtime_error(SDL_GetError());
@@ -10,6 +9,7 @@ namespace youklx {
     }
     Window& Window::create() {
         windowscreateinfo info;
+        info.load();
         create(info);
         return *this;
     }

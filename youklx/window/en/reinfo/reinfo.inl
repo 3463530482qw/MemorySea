@@ -1,6 +1,5 @@
 namespace youklx {
     Window& Window::reinfo(windowsinfo& wininfo) {
-        // 首次调用时初始化显示器列表（确保在 SDL_Init 之后）
         if (displays.empty()) {
             int count = 0;
             SDL_DisplayID* ids = SDL_GetDisplays(&count);
@@ -15,6 +14,7 @@ namespace youklx {
     }
     Window& Window::reinfo() {
         windowsinfo wininfo;
+        wininfo.load();
         reinfo(wininfo);
         return *this;
     }

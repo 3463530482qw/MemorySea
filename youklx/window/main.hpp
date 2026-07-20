@@ -20,4 +20,5 @@ namespace youklx {
 #include "en/reinfo/reinfo.inl"
 #include "en/create.inl"
 #include "en/close.inl"
+#include "en/positionAdjustment.inl"
 #include "en/run.inl"
