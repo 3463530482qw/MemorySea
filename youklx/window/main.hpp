@@ -21,4 +21,5 @@ namespace youklx {
 #include "en/create.inl"
 #include "en/close.inl"
 #include "en/positionAdjustment.inl"
+#include "en/resize.inl"
 #include "en/run.inl"
