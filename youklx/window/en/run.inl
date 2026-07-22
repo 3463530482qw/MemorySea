@@ -1,5 +1,6 @@
 namespace youklx {
     Window& Window::run() {
+        time.update();
         while (SDL_PollEvent(&pept)) {
             if (pept.window.windowID != 0 && pept.window.windowID != wid) {
                 pe.push_back(pept);

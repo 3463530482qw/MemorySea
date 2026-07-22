@@ -8,6 +8,7 @@ int main() {
         youklx::窗口信息 winsinfo;
         winsinfo.初始化配置("ini/main.ini","winsinfo").加载();
         窗口.配置(winsinfo).创建(wincinfo).调整位置();
+        窗口.时间.初始化配置("ini/main.ini","time");
         场景.批量加载("ini/scene/main.ini","scene");
         场景.查询 = "mainMenu";
         while(1) {
