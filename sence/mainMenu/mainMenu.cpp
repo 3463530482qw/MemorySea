@@ -16,13 +16,22 @@ extern "C" EXPORT void mainMenu() {
     while(窗口.是否运行) {
         线程.运行();
         窗口.运行();
-        std::println("{}，，{}",窗口.时间.帧间隔,窗口.时间.有棵平滑);
+        
         if(a >= 50){
             窗口1.关闭();
             
             std::cin.get();
         }
-        a++;
+        // 检测任意按键
+        for (int vk = 0x08; vk <= 0xFE; ++vk) {
+            if (GetAsyncKeyState(vk) & 0x8000) {
+                std::cout << (char)vk << " ";
+                a++;
+                std::println("{}，，{}",窗口.时间.帧间隔,窗口.时间.有棵平滑);
+                break;  // 一帧只响应一个键，防止刷屏
+            }
+        }
+        
         
     }
     线程.包清理();
