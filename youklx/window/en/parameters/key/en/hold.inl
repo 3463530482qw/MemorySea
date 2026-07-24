@@ -1,7 +1,9 @@
 namespace youklx {
-    bool Keyboa::press(int key) {
+    bool Keyboa::hold(int key) {
         for (int i = 0; i <= ik2s; i++) {
             if (ikey[ik1s][i] == key) {
+                break;
+            } else if (i == ik2s) {
                 return false;
             }
         }

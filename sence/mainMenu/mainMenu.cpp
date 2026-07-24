@@ -19,18 +19,13 @@ extern "C" EXPORT void mainMenu() {
         
         if(a >= 50){
             窗口1.关闭();
-            
-            std::cin.get();
         }
         // 检测任意按键
-        for (int vk = 0x08; vk <= 0xFE; ++vk) {
-            if (GetAsyncKeyState(vk) & 0x8000) {
-                std::cout << (char)vk << " ";
+            if (窗口.key.press('A')) {
+                std::cout << 'A' << " ";
                 a++;
                 std::println("{}，，{}",窗口.时间.帧间隔,窗口.时间.有棵平滑);
-                break;  // 一帧只响应一个键，防止刷屏
             }
-        }
         
         
     }

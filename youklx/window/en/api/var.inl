@@ -5,3 +5,4 @@ std::string icon;
 uint8_t display_index{0};         // 显示器索引（0=主显示器）
 bool isrun{true};                   // 是否运行
 Time time;
+Keyboa key;

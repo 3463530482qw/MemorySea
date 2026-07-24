@@ -9,4 +9,6 @@ namespace youklx {
     using 按键 = Keyboa;
 }
 #include"en/press.inl"
+#include"en/hold.inl"
+#include"en/release.inl"
 #include"en/update.inl"
