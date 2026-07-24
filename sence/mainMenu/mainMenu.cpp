@@ -21,11 +21,13 @@ extern "C" EXPORT void mainMenu() {
             窗口1.关闭();
         }
         // 检测任意按键
-            if (窗口.key.press('A')) {
-                std::cout << 'A' << " ";
+        for (int vk = 0x08; vk <= 0xFE; ++vk) {
+            if (窗口.key.press(vk)) {
+                std::println("{}",static_cast<char>(vk));
                 a++;
                 std::println("{}，，{}",窗口.时间.帧间隔,窗口.时间.有棵平滑);
             }
+        }
         
         
     }
