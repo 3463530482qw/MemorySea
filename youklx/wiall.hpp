@@ -62,7 +62,7 @@ namespace 有棵黎夕的 = youklx;
 #include "scene/main.hpp"
 #include "thread/main.hpp"
 //#include "font/main.hpp"
-//#include "image/main.hpp"
+#include "image/main.hpp"
 #include "window/main.hpp"
 
 //#include "draw/main.hpp"

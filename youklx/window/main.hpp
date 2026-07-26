@@ -29,3 +29,4 @@ namespace youklx {
 #include "en/run.inl"
 #include "en/mupdate.inl"
 #include "en/mwupdate.inl"
+#include "en/icon.inl"

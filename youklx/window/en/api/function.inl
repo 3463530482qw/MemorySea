@@ -6,3 +6,4 @@ Window& positionAdjustment(float px = 0, float py = 0);
 Window& resize(float nw = 0, float nh = 0);
 Window& run();
 Window& close();
+Window& icon(Plimage ima);

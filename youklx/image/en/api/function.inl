@@ -1,0 +1,1 @@
+Image& load(const char* path);

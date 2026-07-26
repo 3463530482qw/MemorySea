@@ -1,7 +1,8 @@
 namespace youklx {
     class Mouse {
         public:
-            #include "en/api/var.inl"
+            float x{0};
+            float y{0};
     };
     using 鼠标 = Mouse;
 }
