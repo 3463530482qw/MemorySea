@@ -14,6 +14,12 @@ namespace youklx {
                 case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                     isrun = false;
                     break;
+                case SDL_EVENT_MOUSE_MOTION:
+                    mupdate(pept.motion.x,pept.motion.y);
+                    break;
+                case SDL_EVENT_WINDOW_RESIZED:
+                    mwupdate(pept.window.data1,pept.window.data2); 
+                    break;
                 default:
                     break;
             }

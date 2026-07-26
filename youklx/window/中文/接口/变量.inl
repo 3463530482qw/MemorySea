@@ -5,3 +5,4 @@ uint8_t& 显示器索引{display_index};
 bool& 是否运行{isrun};
 Time& 时间{time};
 Keyboa& 按键{key};
+Mouse& 鼠标{mouse};

@@ -2,6 +2,7 @@
 #include "en/parameters/win/main.hpp"
 #include "en/parameters/time/main.hpp"
 #include "en/parameters/key/main.hpp"
+#include "en/parameters/mouse/main.hpp"
 namespace youklx {
     class Window {
         public:
@@ -13,6 +14,7 @@ namespace youklx {
         private:
             #include"en/api/internal/var.inl"
         private:
+            #include"en/api/internal/function.inl"
         public:
             ~Window();
     };
@@ -25,3 +27,5 @@ namespace youklx {
 #include "en/positionAdjustment.inl"
 #include "en/resize.inl"
 #include "en/run.inl"
+#include "en/mupdate.inl"
+#include "en/mwupdate.inl"
