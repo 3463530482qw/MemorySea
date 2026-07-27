@@ -6,3 +6,4 @@ Window& 调整位置(float px = 0, float py = 0) { return positionAdjustment(px,
 Window& 调整大小(float nw = 0, float nh = 0) { return resize(nw, nh); }
 Window& 运行() { return run(); }
 Window& 关闭() { return close(); }
+Window& 设置图标(Plimage 图片) { return sicon(图片); };

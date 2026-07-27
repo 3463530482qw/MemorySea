@@ -53,7 +53,6 @@
 #include <vulkan/vulkan_raii.hpp>
 
 namespace youklx {
-    //重载模板
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 }

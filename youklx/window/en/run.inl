@@ -20,7 +20,7 @@ namespace youklx {
                 case SDL_EVENT_WINDOW_RESIZED:
                     mwupdate(pept.window.data1,pept.window.data2); 
                     break;
-                case SDL_EVENT_USER:
+                case SDL_EVENT_SET_WICON:
                     SDL_SetWindowIcon(id, static_cast<SDL_Surface*>(pept.user.data1));
                     SDL_DestroySurface(static_cast<SDL_Surface*>(pept.user.data1));
                     break;  

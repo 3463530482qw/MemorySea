@@ -10,7 +10,7 @@ namespace youklx {
         mode = SDL_GetCurrentDisplayMode(displays[display_index]);
         #include "wh.inl"
         name = wininfo.name;
-        wicon = wininfo.icon;
+        icon = wininfo.icon;
         return *this;
     }
     Window& Window::reinfo() {
