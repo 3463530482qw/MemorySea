@@ -16,7 +16,7 @@ int main() {
             临时图片.加载(窗口.图标.c_str());
             窗口.设置图标(临时图片.ima[0][0]);
         }
-        while(1) {
+        while(窗口.是否运行) {
             if (auto it = 场景.菜单.find(场景.查询); it != 场景.菜单.end()) {
                 it->second();
             }
