@@ -4,4 +4,5 @@ namespace youklx {
         std::vector<std::pair<std::string, std::string>> viload;
         constexpr Cshload() = default;
     };
+    using 搜集键 = Cshload;
 }

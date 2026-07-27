@@ -1,5 +1,4 @@
 #include"en/parameters/cload.inl"
-#include"中文/参数/类加载.inl"
 namespace youklx {
     class Scene{
         public:

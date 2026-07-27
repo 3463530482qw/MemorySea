@@ -1,0 +1,1 @@
+std::vector<std::vector<Plimage>>& 图片集{ima};

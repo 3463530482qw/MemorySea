@@ -13,7 +13,7 @@ int main() {
         场景.查询 = "mainMenu";
         {
             youklx::图片 临时图片;
-            临时图片.load(窗口.icon.c_str());
+            临时图片.加载(窗口.图标.c_str());
             窗口.设置图标(临时图片.ima[0][0]);
         }
         while(1) {
