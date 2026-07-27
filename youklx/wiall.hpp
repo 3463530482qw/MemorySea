@@ -55,6 +55,7 @@
 namespace youklx {
     template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
     template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+    constexpr Uint32 SDL_EVENT_SET_WICON = 0x8000;
 }
 namespace 有棵黎夕的 = youklx;
 //自定义封装库
