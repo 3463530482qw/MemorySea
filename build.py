@@ -28,7 +28,7 @@ shaders_build.mkdir(parents=True, exist_ok=True)
 subprocess.run([
     "cmake",
     "-G", "MinGW Makefiles",     # 指定使用 MinGW 生成器
-    "-DCMAKE_BUILD_TYPE=Release",# 开启 Release 模式
+    #"-DCMAKE_BUILD_TYPE=Release",# 开启 Release 模式
     "-S", str(mopath),           # 源代码目录（当前目录）
     "-B", str(mopath / "build")  # 构建输出目录（./build）
 ], check=True)

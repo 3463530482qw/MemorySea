@@ -1,0 +1,1 @@
+std::string& 窗口名{wname};

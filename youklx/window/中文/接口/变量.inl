@@ -1,6 +1,6 @@
-std::string& 窗口名称{name};
-int& 窗口宽度{w};
-int& 窗口高度{h};
+std::string& 名称{name};
+int& 宽度{w};
+int& 高度{h};
 std::string& 图标{icon};
 uint8_t& 显示器索引{display_index};
 bool& 是否运行{isrun};
