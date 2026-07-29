@@ -21,6 +21,9 @@ int main() {
             youklx::火山初始化信息 itvinfo;
             itvinfo.窗口名 = 窗口.名称;
             火山.初始化(itvinfo);
+
+            窗口.窗口火山.创建表面(窗口.id, 火山.instance);
+            窗口.窗口火山.查找图形队列族(火山.physicalDevice);
         }
         
         while(窗口.是否运行) {

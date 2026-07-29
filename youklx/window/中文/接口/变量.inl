@@ -7,5 +7,6 @@ bool& 是否运行{isrun};
 Time& 时间{time};
 Keyboa& 按键{key};
 Mouse& 鼠标{mouse};
+Wvulkan& 窗口火山{wvulkan};
 int& 逻辑宽{mlx};
 int& 逻辑高{mly};

@@ -1,4 +1,4 @@
-#include "en/parameters/itvinfo/itvinfo.hpp"
+#include "en/parameters/itvinfo/main.hpp"
 namespace youklx {
     class Vulkan {
         public:
@@ -12,4 +12,5 @@ namespace youklx {
     using 火山 = Vulkan;
 }
 #include "en/instance.inl"
+#include "en/pickPhysicalDevice.inl"
 #include "en/init.inl"
