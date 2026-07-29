@@ -1,5 +1,5 @@
 namespace youklx {
-    void Vulkan::creatInstance(itvinfo ivinfo) {
+    void Vulkan::createInstance(itvinfo& ivinfo) {
         // 应用信息
         vk::ApplicationInfo appInfo = vk::ApplicationInfo()
             .setPApplicationName(ivinfo.wname.c_str())
@@ -8,24 +8,25 @@ namespace youklx {
             .setEngineVersion(VK_MAKE_VERSION(1, 0, 0))
             .setApiVersion(VK_API_VERSION_1_4);
 
-        // layer 列表（内部管理，不对外暴露）
-        std::vector<const char*> layers = {};
+        uint32_t sdlExtCount = 0;
+        auto* sdlExts = SDL_Vulkan_GetInstanceExtensions(&sdlExtCount);
+        if (!sdlExts) throw std::runtime_error("SDL_Vulkan_GetInstanceExtensions failed");
+
+        std::vector<const char*> layers;
+        ivinfo.extensions.insert(ivinfo.extensions.end(), sdlExts, sdlExts + sdlExtCount);
+
         #ifndef NDEBUG
             ivinfo.extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
             layers.push_back("VK_LAYER_KHRONOS_validation");
-        #endif
 
-        vk::ValidationFeaturesEXT validationFeatures;
-        #ifndef NDEBUG
+            vk::ValidationFeaturesEXT validationFeatures;
             std::vector<vk::ValidationFeatureEnableEXT> enabledValidationFeatures = {
                 vk::ValidationFeatureEnableEXT::eBestPractices,
                 vk::ValidationFeatureEnableEXT::eSynchronizationValidation,
             };
             validationFeatures.setEnabledValidationFeatures(enabledValidationFeatures);
-        #endif
 
-        vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo;
-        #ifndef NDEBUG
+            vk::DebugUtilsMessengerCreateInfoEXT debugCreateInfo;
             debugCreateInfo.setMessageSeverity(
                 vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
                 vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo |
@@ -44,9 +45,9 @@ namespace youklx {
         vk::InstanceCreateInfo createInfo;
         createInfo.setPApplicationInfo(&appInfo);
         createInfo.setEnabledLayerCount(static_cast<uint32_t>(layers.size()));
-        createInfo.setPpEnabledLayerNames(layers.data());
+        createInfo.setPpEnabledLayerNames(layers.empty() ? nullptr : layers.data());
         createInfo.setEnabledExtensionCount(static_cast<uint32_t>(ivinfo.extensions.size()));
-        createInfo.setPpEnabledExtensionNames(ivinfo.extensions.data());
+        createInfo.setPpEnabledExtensionNames(ivinfo.extensions.empty() ? nullptr : ivinfo.extensions.data());
         #ifndef NDEBUG
             createInfo.setPNext(&debugCreateInfo);
         #endif

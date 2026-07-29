@@ -1,2 +1,2 @@
-void creatInstance(itvinfo ivinfo);
+void createInstance(itvinfo& ivinfo);
 void init(itvinfo ivinfo);

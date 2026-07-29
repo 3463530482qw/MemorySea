@@ -1,5 +1,5 @@
 namespace youklx {
     void Vulkan::init(itvinfo ivinfo) {
-        creatInstance(ivinfo);
+        createInstance(ivinfo);
     }
 }
