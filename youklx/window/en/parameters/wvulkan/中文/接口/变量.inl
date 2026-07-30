@@ -3,3 +3,4 @@ uint32_t& 图形队列族索引{graphicsFamilyIndex};
 Swapchain& 交换链{swapchain};
 RenderPass& 渲染通道{renderpass};
 Framebuffer& 帧缓冲{framebuffer};
+CommandPool& 命令池{commandPool};

@@ -4,3 +4,4 @@ void 创建交换链(const vk::raii::PhysicalDevice& 物理设备, const vk::rai
 void 创建图像视图(const vk::raii::Device& 设备) { return createImageViews(设备); }
 void 创建渲染通道(const vk::raii::Device& 设备) { return createRenderPass(设备); }
 void 创建帧缓冲(const vk::raii::Device& 设备) { return createFramebuffers(设备); }
+void 创建命令池(const vk::raii::Device& 设备) { return createCommandPool(设备); }
