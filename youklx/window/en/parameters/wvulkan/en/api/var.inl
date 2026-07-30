@@ -5,3 +5,4 @@ RenderPass renderpass;
 Framebuffer framebuffer;
 CommandPool commandPool;
 SyncObjects syncObjects;
+CommandBuffer commandBuffer;

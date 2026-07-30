@@ -6,3 +6,4 @@ void 创建渲染通道(const vk::raii::Device& 设备) { return createRenderPas
 void 创建帧缓冲(const vk::raii::Device& 设备) { return createFramebuffers(设备); }
 void 创建命令池(const vk::raii::Device& 设备) { return createCommandPool(设备); }
 void 创建同步对象(const vk::raii::Device& 设备) { return createSyncObjects(设备); }
+void 创建命令缓冲(const vk::raii::Device& 设备) { return createCommandBuffers(设备); }

@@ -3,6 +3,7 @@
 #include "en/parameters/framebuffer/main.hpp"
 #include "en/parameters/commandpool/main.hpp"
 #include "en/parameters/synchronization/main.hpp"
+#include "en/parameters/commandbuffer/main.hpp"
 namespace youklx {
     class Wvulkan {
         public:
@@ -22,3 +23,4 @@ namespace youklx {
 #include "en/createFramebuffers.inl"
 #include "en/createCommandPool.inl"
 #include "en/createSyncObjects.inl"
+#include "en/createCommandBuffers.inl"

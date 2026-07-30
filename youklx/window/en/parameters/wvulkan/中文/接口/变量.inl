@@ -5,3 +5,4 @@ RenderPass& 渲染通道{renderpass};
 Framebuffer& 帧缓冲{framebuffer};
 CommandPool& 命令池{commandPool};
 SyncObjects& 同步对象{syncObjects};
+CommandBuffer& 命令缓冲{commandBuffer};
