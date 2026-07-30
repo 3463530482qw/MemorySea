@@ -1,1 +1,1 @@
-void 初始化(itvinfo ivinfo) { return init(ivinfo); }
+void 初始化(itvinfo& ivinfo) { return init(ivinfo); }
