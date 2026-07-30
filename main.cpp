@@ -28,6 +28,7 @@ int main() {
             窗口.窗口火山.创建交换链(火山.physicalDevice, 火山.device, 窗口.w, 窗口.h);
             窗口.窗口火山.创建图像视图(火山.device);
             窗口.窗口火山.创建渲染通道(火山.device);
+            窗口.窗口火山.创建帧缓冲(火山.device);
         }
         
         while(窗口.是否运行) {
