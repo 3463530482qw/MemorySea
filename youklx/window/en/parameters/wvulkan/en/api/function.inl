@@ -7,3 +7,5 @@ void createFramebuffers(const vk::raii::Device& device);
 void createCommandPool(const vk::raii::Device& device);
 void createSyncObjects(const vk::raii::Device& device);
 void createCommandBuffers(const vk::raii::Device& device);
+void recordCommandBuffers();
+void drawFrame(const vk::raii::Device& device);

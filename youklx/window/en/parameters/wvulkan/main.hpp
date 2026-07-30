@@ -24,3 +24,5 @@ namespace youklx {
 #include "en/createCommandPool.inl"
 #include "en/createSyncObjects.inl"
 #include "en/createCommandBuffers.inl"
+#include "en/recordCommandBuffers.inl"
+#include "en/drawFrame.inl"

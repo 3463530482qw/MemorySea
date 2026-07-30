@@ -7,3 +7,5 @@ void 创建帧缓冲(const vk::raii::Device& 设备) { return createFramebuffers
 void 创建命令池(const vk::raii::Device& 设备) { return createCommandPool(设备); }
 void 创建同步对象(const vk::raii::Device& 设备) { return createSyncObjects(设备); }
 void 创建命令缓冲(const vk::raii::Device& 设备) { return createCommandBuffers(设备); }
+void 录制命令缓冲() { return recordCommandBuffers(); }
+void 绘制帧(const vk::raii::Device& 设备) { return drawFrame(设备); }
