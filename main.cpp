@@ -13,7 +13,7 @@ int main() {
 
             场景.批量加载("ini/scene/main.ini","scene");
             场景.查询 = "mainMenu";
-            
+
             youklx::图片 临时图片;
             临时图片.加载(窗口.图标.c_str());
             窗口.设置图标(临时图片.ima[0][0]);
@@ -33,10 +33,10 @@ int main() {
             窗口.窗口火山.创建同步对象(火山.device);
             窗口.窗口火山.创建命令缓冲(火山.device);
             窗口.窗口火山.录制命令缓冲();
-        }
 
+        }
         while(窗口.是否运行) {
-            窗口.窗口火山.绘制帧(火山.device);
+
             if (auto it = 场景.菜单.find(场景.查询); it != 场景.菜单.end()) {
                 it->second();
             }

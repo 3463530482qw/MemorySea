@@ -1,51 +1,62 @@
 namespace youklx {
     void Wvulkan::drawFrame(const vk::raii::Device& device) {
-        // 1. 等待上一帧 GPU 完成（围栏未触发时阻塞，触发后重置）
-        device.waitForFences(
-            {*syncObjects.inFlightFence},
-            true,
-            std::numeric_limits<uint64_t>::max()
-        );
-        device.resetFences({*syncObjects.inFlightFence});
+        // 提取原始 C 句柄（跨模块安全：整数/指针，无 dispatch table 依赖）
+        VkDevice vkd = static_cast<VkDevice>(*device);
+        VkFence vkf = static_cast<VkFence>(*syncObjects.inFlightFence);
+        VkSemaphore imageAvail = static_cast<VkSemaphore>(*syncObjects.imageAvailableSemaphore);
+        VkSemaphore renderDone = static_cast<VkSemaphore>(*syncObjects.renderFinishedSemaphore);
+        VkSwapchainKHR vkSwap = static_cast<VkSwapchainKHR>(*swapchain.swapchain);
+        VkQueue vkq;
+        vkGetDeviceQueue(vkd, graphicsFamilyIndex, 0, &vkq);
+
+        // 1. 等待上一帧 GPU 完成
+        VkResult result = vkWaitForFences(vkd, 1, &vkf, VK_TRUE, UINT64_MAX);
+        if (result != VK_SUCCESS) {
+            throw std::runtime_error("等待帧围栏失败");
+        }
+        vkResetFences(vkd, 1, &vkf);
 
         // 2. 获取下一个可用的交换链图像索引
-        auto [result, imageIndex] = swapchain.swapchain.acquireNextImage(
-            std::numeric_limits<uint64_t>::max(),
-            *syncObjects.imageAvailableSemaphore
-        );
-
-        if (result != vk::Result::eSuccess && result != vk::Result::eSuboptimalKHR) {
+        uint32_t imageIndex;
+        result = vkAcquireNextImageKHR(vkd, vkSwap, UINT64_MAX,
+            imageAvail, VK_NULL_HANDLE, &imageIndex);
+        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("获取交换链图像失败");
         }
 
-        // 3. 提交：等待图像可用 → 执行命令缓冲 → 发出渲染完成信号
-        vk::PipelineStageFlags waitStage{vk::PipelineStageFlagBits::eColorAttachmentOutput};
+        // 3. 提交命令缓冲
+        VkCommandBuffer cmdBuf = static_cast<VkCommandBuffer>(
+            *commandBuffer.commandBuffers[imageIndex]);
+        VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-        vk::SubmitInfo submitInfo;
-        submitInfo.setWaitSemaphoreCount(1);
-        submitInfo.setPWaitSemaphores(&(*syncObjects.imageAvailableSemaphore));
-        submitInfo.setPWaitDstStageMask(&waitStage);
-        submitInfo.setCommandBufferCount(1);
-        submitInfo.setPCommandBuffers(&(*commandBuffer.commandBuffers[imageIndex]));
-        submitInfo.setSignalSemaphoreCount(1);
-        submitInfo.setPSignalSemaphores(&(*syncObjects.renderFinishedSemaphore));
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &imageAvail;
+        submitInfo.pWaitDstStageMask = &waitStage;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &cmdBuf;
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &renderDone;
 
-        // 需要手动获取 vk::Queue 进行提交（vk::raii::Queue 不中断析构链）
-        auto queue = device.getQueue(graphicsFamilyIndex, 0);
-        queue.submit({submitInfo}, *syncObjects.inFlightFence);
+        result = vkQueueSubmit(vkq, 1, &submitInfo, vkf);
+        if (result != VK_SUCCESS) {
+            throw std::runtime_error("提交命令缓冲失败");
+        }
 
-        // 4. 呈现：等待渲染完成 → 把图像交给交换链显示
-        vk::PresentInfoKHR presentInfo;
-        presentInfo.setWaitSemaphoreCount(1);
-        presentInfo.setPWaitSemaphores(&(*syncObjects.renderFinishedSemaphore));
-        presentInfo.setSwapchainCount(1);
-        presentInfo.setPSwapchains(&(*swapchain.swapchain));
-        presentInfo.setPImageIndices(&imageIndex);
+        // 4. 呈现
+        VkPresentInfoKHR presentInfo{};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = &renderDone;
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = &vkSwap;
+        presentInfo.pImageIndices = &imageIndex;
 
-        result = queue.presentKHR(presentInfo);
-        if (result == vk::Result::eSuboptimalKHR || result == vk::Result::eErrorOutOfDateKHR) {
-            // 窗口尺寸变化，后续可在此重建交换链
-        } else if (result != vk::Result::eSuccess) {
+        result = vkQueuePresentKHR(vkq, &presentInfo);
+        if (result != VK_SUCCESS &&
+            result != VK_SUBOPTIMAL_KHR &&
+            result != VK_ERROR_OUT_OF_DATE_KHR) {
             throw std::runtime_error("呈现图像失败");
         }
     }

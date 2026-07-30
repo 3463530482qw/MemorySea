@@ -50,7 +50,7 @@ for bulid_py in sence_dir.glob("*/bulid.py"):
 
 #sdl动态链接库位置与目标位置
 sdldll = [ 
-    Path("C:/Windows/WinSxS/x86_microsoft-windows-vulkan-loader_31bf3856ad364e35_10.0.26100.1_none_b0165e7e6d4a049a/vulkan-1.dll"),
+    Path("C:/Windows/System32/vulkan-1.dll"),
     Path("D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/bin/SDL3.dll"),
     Path("D:/mingw64/bin/libunwind.dll"),
     Path("D:/mingw64/bin/libc++.dll")
