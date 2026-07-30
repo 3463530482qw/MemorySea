@@ -2,6 +2,7 @@
 #include "en/parameters/renderpass/main.hpp"
 #include "en/parameters/framebuffer/main.hpp"
 #include "en/parameters/commandpool/main.hpp"
+#include "en/parameters/synchronization/main.hpp"
 namespace youklx {
     class Wvulkan {
         public:
@@ -20,3 +21,4 @@ namespace youklx {
 #include "en/createRenderPass.inl"
 #include "en/createFramebuffers.inl"
 #include "en/createCommandPool.inl"
+#include "en/createSyncObjects.inl"

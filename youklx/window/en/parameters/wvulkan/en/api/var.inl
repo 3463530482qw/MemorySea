@@ -4,3 +4,4 @@ Swapchain swapchain;
 RenderPass renderpass;
 Framebuffer framebuffer;
 CommandPool commandPool;
+SyncObjects syncObjects;

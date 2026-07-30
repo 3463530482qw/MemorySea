@@ -5,3 +5,4 @@ void createImageViews(const vk::raii::Device& device);
 void createRenderPass(const vk::raii::Device& device);
 void createFramebuffers(const vk::raii::Device& device);
 void createCommandPool(const vk::raii::Device& device);
+void createSyncObjects(const vk::raii::Device& device);
