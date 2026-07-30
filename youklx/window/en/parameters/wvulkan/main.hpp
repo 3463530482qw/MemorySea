@@ -1,3 +1,4 @@
+#include "en/parameters/swapchain/main.hpp"
 namespace youklx {
     class Wvulkan {
         public:
@@ -11,3 +12,5 @@ namespace youklx {
 }
 #include "en/createSurface.inl"
 #include "en/findGraphicsQueueFamily.inl"
+#include "en/createSwapchain.inl"
+#include "en/createImageViews.inl"
