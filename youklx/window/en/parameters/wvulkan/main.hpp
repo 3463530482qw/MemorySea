@@ -25,4 +25,4 @@ namespace youklx {
 #include "en/createSyncObjects.inl"
 #include "en/createCommandBuffers.inl"
 #include "en/recordCommandBuffers.inl"
-#include "en/drawFrame.inl"
+// drawFrame 定义仅在主可执行文件中（Vulkan-Hpp RAII 不能跨 DLL 模块调用）

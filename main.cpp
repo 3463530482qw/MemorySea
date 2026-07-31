@@ -32,7 +32,11 @@ int main() {
             窗口.窗口火山.创建命令池(火山.device);
             窗口.窗口火山.创建同步对象(火山.device);
             窗口.窗口火山.创建命令缓冲(火山.device);
+            // 初始 viewport = 全窗口（mwupdate 会在 resize 时更新为 rex/rey/dix/diy）
+            窗口.窗口火山.vpW = static_cast<uint32_t>(窗口.w);
+            窗口.窗口火山.vpH = static_cast<uint32_t>(窗口.h);
             窗口.窗口火山.录制命令缓冲();
+            窗口.窗口火山.framebufferResized = false; // 初始化完毕，清除窗口创建时可能残留的标记
 
         }
         while(窗口.是否运行) {

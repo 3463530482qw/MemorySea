@@ -9,3 +9,4 @@ void createSyncObjects(const vk::raii::Device& device);
 void createCommandBuffers(const vk::raii::Device& device);
 void recordCommandBuffers();
 void drawFrame(const vk::raii::Device& device);
+void recreateSwapchain(const vk::raii::PhysicalDevice& physicalDevice, const vk::raii::Device& device, uint32_t width, uint32_t height);
