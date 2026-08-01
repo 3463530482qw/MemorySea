@@ -5,6 +5,7 @@ namespace youklx {
             throw std::runtime_error(SDL_GetError());
         }
         wid = SDL_GetWindowID(id);
+        wvulkan.id = id;
         return *this;
     }
     Window& Window::create() {

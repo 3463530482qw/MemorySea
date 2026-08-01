@@ -1,0 +1,1 @@
+SDL_Window* id{nullptr};

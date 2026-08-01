@@ -1,5 +1,5 @@
-import os
+import subprocess
 
-os.system("git add .") #添加缓存
-os.system("git commit -m '1.0.020'")  #提交更改
-os.system("git push --force") #强制推送代码
+subprocess.run(["git", "add", "."], check=True)  #添加缓存
+subprocess.run(["git", "commit", "-m", "1.0.021"], check=True)  #提交更改
+subprocess.run(["git", "push", "--force"], check=True)  #强制推送代码
