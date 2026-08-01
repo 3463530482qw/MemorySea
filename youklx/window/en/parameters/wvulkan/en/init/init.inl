@@ -4,5 +4,6 @@ namespace youklx {
         #include "method/createsurface.inl"
         #include "method/findgraphicsqueuefamily.inl"
         swapchain.createSwapchain();
+        renderpass.createRenderPass();
     }
 }

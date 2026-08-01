@@ -1,7 +1,5 @@
-#include "en/parameters/swapchain/main.hpp"
-#include "en/parameters/renderpass/main.hpp"
 namespace youklx {
-    class Wvulkan {
+    class Renderpass {
         public:
             #include "en/api/var.inl"
         public:
@@ -9,6 +7,6 @@ namespace youklx {
         private:
             #include "en/api/internal/var.inl"
     };
-    using 窗口火山 = Wvulkan;
+    using 渲染通道 = Renderpass;
 }
-#include "en/init/init.inl"
+#include "en/createrenderpass.inl"
