@@ -23,6 +23,7 @@
 #include <condition_variable>
 #include <future>
 #include <atomic>
+#include <limits>
 
 #include <windows.h>
 

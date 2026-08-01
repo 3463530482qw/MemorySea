@@ -1,1 +1,0 @@
-vk::raii::RenderPass renderPass{nullptr};

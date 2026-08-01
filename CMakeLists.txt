@@ -36,3 +36,6 @@ target_compile_options(MemorySea PRIVATE
     -finput-charset=UTF-8
     -fexec-charset=UTF-8
 )
+
+# 与场景 DLL 保持一致的 NDEBUG（统一 Vulkan-Hpp 等头文件的 ABI 布局，避免跨模块读取错位）
+target_compile_definitions(MemorySea PRIVATE NDEBUG)

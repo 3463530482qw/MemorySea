@@ -1,10 +1,10 @@
 namespace youklx {
-    class Renderpass {
+    class SyncObjects {
         public:
             #include "en/api/var.inl"
         public:
             #include "en/api/function.inl"
     };
-    using 渲染通道 = Renderpass;
+    using 同步对象 = SyncObjects;
 }
-#include "en/createrenderpass.inl"
+#include "en/createsyncobjects.inl"

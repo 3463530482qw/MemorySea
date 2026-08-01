@@ -1,10 +1,10 @@
 namespace youklx {
-    class Renderpass {
+    class CommandPool {
         public:
             #include "en/api/var.inl"
         public:
             #include "en/api/function.inl"
     };
-    using 渲染通道 = Renderpass;
+    using 命令池 = CommandPool;
 }
-#include "en/createrenderpass.inl"
+#include "en/createcommandpool.inl"

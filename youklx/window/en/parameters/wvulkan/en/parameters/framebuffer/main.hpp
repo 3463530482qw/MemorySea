@@ -1,10 +1,10 @@
 namespace youklx {
-    class Renderpass {
+    class Framebuffer {
         public:
             #include "en/api/var.inl"
         public:
             #include "en/api/function.inl"
     };
-    using 渲染通道 = Renderpass;
+    using 帧缓冲 = Framebuffer;
 }
-#include "en/createrenderpass.inl"
+#include "en/createframebuffers.inl"

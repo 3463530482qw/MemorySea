@@ -15,12 +15,12 @@ namespace youklx {
             dix = 0;
         }
         reasc = static_cast<float>(rex) / static_cast<float>(mlx);
-        //wvulkan.framebufferResized = true;
-        //wvulkan.pendingWidth  = static_cast<uint32_t>(w);
-        //wvulkan.pendingHeight = static_cast<uint32_t>(h);
-        //wvulkan.vpX = static_cast<int32_t>(dix);
-        //wvulkan.vpY = static_cast<int32_t>(diy);
-        //wvulkan.vpW = static_cast<uint32_t>(rex);
-        //wvulkan.vpH = static_cast<uint32_t>(rey);
+        wvulkan.framebufferResized = true;
+        wvulkan.pendingWidth  = static_cast<uint32_t>(w);
+        wvulkan.pendingHeight = static_cast<uint32_t>(h);
+        wvulkan.commandBuffer.vpX = static_cast<int32_t>(dix);
+        wvulkan.commandBuffer.vpY = static_cast<int32_t>(diy);
+        wvulkan.commandBuffer.vpW = static_cast<uint32_t>(rex);
+        wvulkan.commandBuffer.vpH = static_cast<uint32_t>(rey);
     }
 }
