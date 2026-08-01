@@ -22,21 +22,21 @@ int main() {
             itvinfo.窗口名 = 窗口.名称;
             火山.初始化(itvinfo);
 
-            窗口.窗口火山.创建表面(窗口.id, 火山.instance);
-            窗口.窗口火山.查找图形队列族(火山.physicalDevice);
-            火山.创建逻辑设备(窗口.窗口火山.图形队列族索引);
-            窗口.窗口火山.创建交换链(火山.physicalDevice, 火山.device, 窗口.w, 窗口.h);
-            窗口.窗口火山.创建图像视图(火山.device);
-            窗口.窗口火山.创建渲染通道(火山.device);
-            窗口.窗口火山.创建帧缓冲(火山.device);
-            窗口.窗口火山.创建命令池(火山.device);
-            窗口.窗口火山.创建同步对象(火山.device);
-            窗口.窗口火山.创建命令缓冲(火山.device);
+            //窗口.窗口火山.创建表面(窗口.id, 火山.instance);
+            //窗口.窗口火山.查找图形队列族(火山.physicalDevice);
+            //火山.创建逻辑设备(窗口.窗口火山.图形队列族索引);
+            //窗口.窗口火山.创建交换链(火山.physicalDevice, 火山.device, 窗口.w, 窗口.h);
+            //窗口.窗口火山.创建图像视图(火山.device);
+            //窗口.窗口火山.创建渲染通道(火山.device);
+            //窗口.窗口火山.创建帧缓冲(火山.device);
+            //窗口.窗口火山.创建命令池(火山.device);
+            //窗口.窗口火山.创建同步对象(火山.device);
+            //窗口.窗口火山.创建命令缓冲(火山.device);
             // 初始 viewport = 全窗口（mwupdate 会在 resize 时更新为 rex/rey/dix/diy）
-            窗口.窗口火山.vpW = static_cast<uint32_t>(窗口.w);
-            窗口.窗口火山.vpH = static_cast<uint32_t>(窗口.h);
-            窗口.窗口火山.录制命令缓冲();
-            窗口.窗口火山.framebufferResized = false; // 初始化完毕，清除窗口创建时可能残留的标记
+            //窗口.窗口火山.vpW = static_cast<uint32_t>(窗口.w);
+            //窗口.窗口火山.vpH = static_cast<uint32_t>(窗口.h);
+            //窗口.窗口火山.录制命令缓冲();
+            //窗口.窗口火山.framebufferResized = false; // 初始化完毕，清除窗口创建时可能残留的标记
 
         }
         while(窗口.是否运行) {
