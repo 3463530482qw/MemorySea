@@ -6,6 +6,8 @@ namespace youklx {
         }
         wid = SDL_GetWindowID(id);
         wvulkan.id = id;
+        wvulkan.swapchain.w = w;
+        wvulkan.swapchain.h = h;
         return *this;
     }
     Window& Window::create() {

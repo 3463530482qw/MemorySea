@@ -1,0 +1,5 @@
+vk::raii::PhysicalDevice* physicalDevice{nullptr};
+vk::raii::Device* device{nullptr};
+vk::raii::SurfaceKHR* surface{nullptr};
+int w{0}; 
+int h{0}; 

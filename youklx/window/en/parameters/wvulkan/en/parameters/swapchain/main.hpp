@@ -1,6 +1,5 @@
-#include "en/parameters/swapchain/main.hpp"
 namespace youklx {
-    class Wvulkan {
+    class Swapchain {
         public:
             #include "en/api/var.inl"
         public:
@@ -8,6 +7,6 @@ namespace youklx {
         private:
             #include "en/api/internal/var.inl"
     };
-    using 窗口火山 = Wvulkan;
+    using 交换链 = Swapchain;
 }
-#include "en/init/init.inl"
+#include "en/createswapchain.inl"

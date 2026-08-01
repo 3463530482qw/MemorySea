@@ -13,4 +13,4 @@ if (rawSurface == VK_NULL_HANDLE) {
     throw std::runtime_error("SDL_Vulkan_CreateSurface 返回了 VK_NULL_HANDLE");
 }
 
-surface.emplace(*instance, static_cast<vk::SurfaceKHR>(rawSurface));
+surface = vk::raii::SurfaceKHR(*instance, static_cast<vk::SurfaceKHR>(rawSurface));
