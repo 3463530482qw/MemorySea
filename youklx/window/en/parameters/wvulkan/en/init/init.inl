@@ -1,6 +1,7 @@
 namespace youklx {
     void Wvulkan::init(Vulkan& vulkan) {
-        #include "inlinevar.inl"
-        #include "createsurface.inl"
+        #include "method/inlinevar.inl"
+        #include "method/createsurface.inl"
+        #include "method/findgraphicsqueuefamily.inl"
     }
 }
