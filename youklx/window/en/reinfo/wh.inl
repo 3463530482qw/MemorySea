@@ -14,8 +14,8 @@ if(wininfo.w == 0 && wininfo.h == 0) {
     h = wininfo.h;
 }
 aspectratio = static_cast<float>(w) / static_cast<float>(h);
-rex = w;
-rey = h;
+wvulkan.commandBuffer.vpW = w;
+wvulkan.commandBuffer.vpH = h;
 mlx = wininfo.mlx;
 mly = wininfo.mly;
 reasc = static_cast<float>(w) / static_cast<float>(mlx);

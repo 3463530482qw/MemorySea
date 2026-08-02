@@ -1,13 +1,13 @@
 from pathlib import Path
 import subprocess
 import shutil
+import glob
 
 ## 默认路径
 mopath = Path.cwd()
 
-## c++与cmake文件路径
-main = Path("main.cpp")
-cmake = Path("CMakeLists.txt")
+## c++文件路径
+main = Path("apitest.cpp")
 
 # 生成的可执行文件路径
 run = Path("build/MemorySea.exe")
@@ -21,22 +21,51 @@ subprocess.run([
     "python", str(mopath / "shaders" / "compile.py")
 ], check=True)
 
-# 复制着色器到 build 目录
-shaders_build = Path("./build/shaders")
-shaders_build.mkdir(parents=True, exist_ok=True)
+# 编译主程序
+print("=== 编译主程序 ===")
 
-subprocess.run([
-    "cmake",
-    "-G", "MinGW Makefiles",     # 指定使用 MinGW 生成器
-    #"-DCMAKE_BUILD_TYPE=Release",# 开启 Release 模式
-    "-S", str(mopath),           # 源代码目录（当前目录）
-    "-B", str(mopath / "build")  # 构建输出目录（./build）
-], check=True)
+# spine 运行时源码（spine-cpp 递归 + spine-sdl 顶层）
+spine_sources = (
+    glob.glob("D:/mingw64/spine-runtimes-4.3/spine-cpp/src/**/*.cpp", recursive=True) +
+    glob.glob("D:/mingw64/spine-runtimes-4.3/spine-sdl/src/*.cpp")
+)
 
-subprocess.run([
-    "cmake",
-    "--build", str(mopath / "build")  # 在 build 目录中执行构建
-], check=True)
+include_dirs = [
+    "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
+    "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3",
+    "D:/mingw64/inih-r62/inih-r62",
+    "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
+    "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
+    "D:/mingw64/stb-master/stb-master",
+    str(mopath),
+    "C:/vulkan/Include",
+]
+
+# 导出所有符号，生成导入库（场景 DLL 链接用）
+import_lib = mopath / "build" / "libMemorySea.dll.a"
+link_options = [
+    f"-Wl,--export-all-symbols,--out-implib,{import_lib.as_posix()}",
+    "-L", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib",
+    "C:/vulkan/Lib/vulkan-1.lib",
+    "-lSDL3",
+    "-lwinmm",
+]
+
+gpp_cmd = [
+    "g++",
+    "-std=c++23",
+    "-finput-charset=UTF-8",
+    "-fexec-charset=UTF-8",
+    "-DNDEBUG",
+    "-o", str(run),
+    str(main),
+    *spine_sources,
+    *[f"-I{i}" for i in include_dirs],
+    *link_options,
+]
+
+subprocess.run(gpp_cmd, check=True)
+print(f"主程序编译完成: {run}")
 
 # 编译所有场景模块
 print("=== 编译场景模块 ===")
