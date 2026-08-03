@@ -1,6 +1,5 @@
 namespace youklx {
     void Wvulkan::drawFrame() {
-        // --- 窗口尺寸变化时重建交换链 ---
         if (framebufferResized) {
             // 窗口最小化时 w/h 为 0，跳过重建等待恢复
             if (pendingWidth == 0 || pendingHeight == 0) {

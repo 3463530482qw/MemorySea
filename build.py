@@ -7,7 +7,7 @@ import glob
 mopath = Path.cwd()
 
 ## c++文件路径
-main = Path("apitest.cpp")
+main = Path("main.cpp")
 
 # 生成的可执行文件路径
 run = Path("build/MemorySea.exe")

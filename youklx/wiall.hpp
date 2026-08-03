@@ -17,6 +17,8 @@
 #include <queue>
 #include <fstream>
 #include <cstring>
+#include <cctype>
+#include <cwchar>
 #include <array>
 #include <cmath>
 #include <mutex>
@@ -68,6 +70,6 @@ namespace 有棵黎夕的 = youklx;
 #include "window/main.hpp"
 
 //#include "draw/main.hpp"
-
+#include "compiler/main.hpp"
 
 #include "init.hpp"
