@@ -1,4 +1,6 @@
 namespace youklx {
+    #include "en/parameters/token.inl"
+    #include "en/parameters/expr.inl"
     class Compiler {
         public:
             #include"en/api/var.inl"
@@ -10,5 +12,9 @@ namespace youklx {
     };
     using 编译器 = Compiler;
 }
-#include "en/work.inl"
+#include "en/read.inl"
 #include "en/registry.inl"
+#include "en/work/lex.inl"
+#include "en/work/parse.inl"
+#include "en/work/eval.inl"
+#include "en/work/work.inl"

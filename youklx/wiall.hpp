@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <queue>
+#include <memory>
 #include <fstream>
 #include <cstring>
 #include <cctype>
