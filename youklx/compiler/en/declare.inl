@@ -1,11 +1,25 @@
 namespace youklx {
-    // 变量名合法性：不能是数字、不能是关键字
+    // 变量名合法性：只能字母/数字/下划线（非 ASCII 如中文放行），
+    // 不能以数字开头、不能含特殊字符、不能是关键字
     bool Compiler::valid_name(const std::string& t) {
-        try {
-            (void)std::stod(t);
-            error("变量名不能是数字 \"" + t + "\"");
+    // 检查变量名是否为空
+        if (t.empty()) {
+            error("变量名不能为空");
             return false;
-        } catch (...) {}
+        }
+    // 遍历变量名的每个字符
+        for (size_t i = 0; i < t.size(); i++) {
+            unsigned char c = static_cast<unsigned char>(t[i]);
+            if (c >= 0x80) continue; // 非 ASCII（中文等）放行
+            if (i == 0 && std::isdigit(c)) {
+                error("变量名不能以数字开头 \"" + t + "\"");
+                return false;
+            }
+            if (!(std::isalnum(c) || c == '_')) {
+                error("变量名不能包含特殊字符 \"" + std::string(1, static_cast<char>(c)) + "\"");
+                return false;
+            }
+        }
         if (keyword.find(t) != keyword.end()) {
             error("变量名不能是关键字 \"" + t + "\"");
             return false;
@@ -34,7 +48,7 @@ namespace youklx {
                     error("变量 \"" + name + "\" 缺少初始化值");
                     return;
                 }
-                if (end - i == 1 && token[i] == "void") isvoid = true;
+                if (end - i == 1 && (token[i] == "void" || token[i] == "空")) isvoid = true;
                 else v = evaluate(i, end);
                 i = end;
             } else if (i < token.size() && token[i] == "{") {
@@ -45,7 +59,7 @@ namespace youklx {
                     error("缺少右花括号 \"}\"");
                     return;
                 }
-                if (j == i || (j - i == 1 && token[i] == "void")) isvoid = true;
+                if (j == i || (j - i == 1 && (token[i] == "void" || token[i] == "空"))) isvoid = true;
                 else v = evaluate(i, j);
                 i = j + 1;
             }

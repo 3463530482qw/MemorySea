@@ -5,6 +5,10 @@ namespace youklx {
         try {
             return std::stod(t);
         } catch (...) {
+            if (keyword.find(t) != keyword.end()) {
+                error("关键字不能作为表达式参与运算");
+                return 0;
+            }
             auto it = global.find(t);
             if (it == global.end()) {
                 error("未声明的变量 \"" + t + "\"");
