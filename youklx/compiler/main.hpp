@@ -13,8 +13,6 @@ namespace youklx {
     using 编译器 = Compiler;
 }
 #include "en/read.inl"
+#include "en/lexing.inl"
 #include "en/registry.inl"
-#include "en/work/lex.inl"
-#include "en/work/parse.inl"
-#include "en/work/eval.inl"
 #include "en/work/work.inl"
