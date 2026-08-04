@@ -11,5 +11,5 @@ if (std::string(argv[1]) == "uninstaller.yokc") {
 file.open(argv[1]);
 if (!file) {
     std::cerr << "无法打开源文件 \"" << argv[1] << "\"\n";
-    return false;
+    return;
 }
