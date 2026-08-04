@@ -1,15 +1,4 @@
 namespace youklx {
-    // 读入源码文件到 src_buf;打开失败返回 false
-    bool Compiler::load_source(const char* path) {
-        std::ifstream f(path, std::ios::binary);
-        if (!f) return false;
-        src_buf.resize(poolsz);
-        f.read(src_buf.data(), poolsz - 1);
-        int64_t n = (int64_t)f.gcount();
-        if (n <= 0) throw std::runtime_error("read() returned 0");
-        src_buf[n] = 0; // 字符串终止符,词法分析依赖
-        return true;
-    }
 
     void Compiler::work(int cargc, char** cargv) {
         argc = cargc;
@@ -43,7 +32,5 @@ namespace youklx {
         le = e = text_pool.data(); // 代码池
         data = data_pool.data();  // 数据段池
 
-        parse(); // 编译
-        run();   // 执行
     }
 }

@@ -1,7 +1,22 @@
-#include <stdio.h>
-
 int main()
 {
-  printf("hello, world\n");
+  // 初始化 SDL(宿主注册表提供)
+  // 配置窗口:读 ini(0 参版内部读默认配置)
+  窗口.配置();
+  窗口.创建();
+  窗口.调整位置();
+
+  // 时间配置
+  窗口.时间.初始化配置("ini/main.ini", "time");
+  窗口.时间.加载();
+
+  // 场景
+  场景.批量加载("ini/scene/main.ini", "scene");
+  场景.查询 = "mainMenu";
+
+  // 主循环(窗口.运行 是单帧,需要自己循环)
+  while (窗口.是否运行) {
+    窗口.运行();
+  }
   return 0;
 }
