@@ -2,8 +2,9 @@ namespace youklx {
     void Compiler::work(int cargc, char** cargv) {
         #include "init.inl"
         while (!errored && read()) {
-            lexing();
-            stmt();
+            lex.run();
+            //lexing();
+            //stmt();
         }
     }
 }

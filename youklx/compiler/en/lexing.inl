@@ -12,14 +12,26 @@ namespace youklx {
                 default: len = 1; break;
             }
             if (i + len > line.size()) len = line.size() - i;
-            if (len == 1 && c == ' ') {
-                if (i > start) token.push_back(line.substr(start, i - start));
-                start = i + 1;
-            } else if (len == 1 && (c == '+' || c == '{' || c == '}' || c == ',')) {
+            if (
+                len == 1 && c == ' ' ||
+                c == '+' || c == '-' ||
+                line.substr(i, len) == "加" ||
+                line.substr(i, len) == "减"
+            ) {
+                // 空格是纯分隔符；运算符（+ 加 - 减）切出为独立 token
+                if (!token.empty() && start == i && token.back() == line.substr(i, len) && line[i - 1] != ' ') {
+                    // 连续运算符（++、--、加加、减减）：先追加到当前 token，start 更新即切到下一个 token
+                    token.back() += line.substr(i, len);
+                } else {
+                    if (i > start) token.push_back(line.substr(start, i - start));
+                    if (c != ' ') token.push_back(line.substr(i, len)); // 运算符单独切出
+                }
+                start = i + len;
+            } else if (len == 1 && (c == '{' || c == '}' || c == ',')) {
                 // 加号、花括号、逗号单独切出（与前后 token 分离）
                 if (i > start) token.push_back(line.substr(start, i - start));
-                token.push_back(line.substr(i, 1));
-                start = i + 1;
+                token.push_back(line.substr(i, len));
+                start = i + len;
             }
             i += len;
         }
