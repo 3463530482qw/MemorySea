@@ -5,6 +5,7 @@ namespace youklx {
             #include"en/api/var.inl"
         public:
             #include"en/api/function.inl"
+            #include"../symbol/main.inl"
     };
     using 词法分析 = Lexing;
 }

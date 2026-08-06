@@ -15,7 +15,7 @@ namespace youklx {
             } else if (lptr == 1 && cptr == ' ') {
                 rptr += lptr;
                 continue;
-            } else if (ichar->find(token->back().back()) != ichar->end()) {
+            } else if (inlinechar.find(token->back().back()) != inlinechar.end()) {
                 token->push_back(line->substr(rptr, lptr));
             } else if (cptr == ':' || cptr == '+' || cptr == '-') {
                 if(!token->empty() && cptr == token->back().back()) {
@@ -23,14 +23,15 @@ namespace youklx {
                 } else {
                     token->push_back(line->substr(rptr, lptr));
                 }
-            } else if (kw->find(line->substr(rptr, lptr)) != kw->end()) {
+            } else if (keyword.find(line->substr(rptr, lptr)) != keyword.end()) {
                 token->push_back(line->substr(rptr, lptr));
-            } else if (ichar->find((*line)[rptr]) != ichar->end()) {
+            } else if (inlinechar.find((*line)[rptr]) != inlinechar.end()) {
                 token->push_back(line->substr(rptr, lptr));
             } else {
                 token->back() += line->substr(rptr, lptr);
             }
             rptr += lptr;
+            std::println("token: {}", token->back());
         }
     }
 }

@@ -4,7 +4,7 @@ namespace youklx {
         while (!errored && read()) {
             lex.run();
             //lexing();
-            //stmt();
+            stmt();
         }
     }
 }
