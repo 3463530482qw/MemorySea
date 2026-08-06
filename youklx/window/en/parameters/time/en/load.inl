@@ -4,12 +4,7 @@ namespace youklx {
         youkft = true;
         return *this;
     }
-    Time& Time::iload(const std::string& ini, const std::string& ivrtp) {
-        INIReader reader(ini);
-        if (reader.ParseError() != 0) {
-            std::cerr << "Configuration load failed, using default configuration" << std::endl;
-        }
-
+    Time& Time::iload(const INIReader& reader, const std::string& ivrtp) {
         tfps   = 1.0f / reader.GetReal(ivrtp, "fps", 60.0f);
         youkft = reader.GetBoolean(ivrtp, "youkft", true);
 

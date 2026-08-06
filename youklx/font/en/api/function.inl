@@ -1,1 +1,1 @@
-void load(const char* ttfPath){};
+void load(const char* ttfpath);

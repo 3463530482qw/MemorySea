@@ -5,7 +5,7 @@
 #endif
 
 #define API __declspec(dllexport)
-
+API youklx::配置文件 配置文件;
 API youklx::场景 场景;
 API youklx::线程 线程;
 API youklx::图片 图片;

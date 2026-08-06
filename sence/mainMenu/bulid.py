@@ -17,13 +17,7 @@ build_dir.mkdir(parents=True, exist_ok=True) #创建路径
 sources = [str(main_cpp)] #获取cpp文件路径
 main_import_lib = memorySea / "build" / "libMemorySea.dll.a" #获取主程序导出的符号
 
-cmd = [
-    "g++", "-shared", "-std=c++23", "-Os", "-s",
-    "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
-    "-DNDEBUG",
-    "-DEXPORT=__declspec(dllexport)",
-    "-o", str(build_dir / f"{proj_name}.dll"),
-    *sources,
+include_args = [
     "-I", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
     "-I", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3",
     "-I", "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
@@ -32,6 +26,24 @@ cmd = [
     "-I", "D:/mingw64/stb-master/stb-master",
     "-I", "C:/vulkan/Include",
     "-I", str(memorySea),
+]
+
+# 场景模块拆两步:先 ccache 编译 .o(命中缓存则秒过),再纯链接成 dll
+obj = build_dir / f"{proj_name}.o"
+subprocess.run([
+    "ccache", "g++", "-std=c++23", "-Os",
+    "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
+    "-DNDEBUG",
+    "-DEXPORT=__declspec(dllexport)",
+    "-c", str(main_cpp), "-o", str(obj),
+    *include_args,
+], check=True)
+
+link_cmd = [
+    "g++", "-shared", "-Os", "-s", "-std=c++23",
+    "-DNDEBUG",
+    "-o", str(build_dir / f"{proj_name}.dll"),
+    str(obj),
     str(main_import_lib),
     "-L", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib",
     "C:/vulkan/Lib/vulkan-1.lib",
@@ -39,5 +51,5 @@ cmd = [
     "-lwinmm"
 ]
 
-subprocess.run(cmd, check=True)
+subprocess.run(link_cmd, check=True)
 print(f"{proj_name}.dll 生成在: {build_dir}")

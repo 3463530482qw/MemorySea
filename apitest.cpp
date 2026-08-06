@@ -4,12 +4,13 @@ int main() {
     try {
         youklx::init();
         {
+            配置文件.添加("ini/main.ini", "初始化配置");
             youklx::窗口创建信息 wincinfo;
-            wincinfo.初始化配置("ini/main.ini","wincinfo").加载();
+            wincinfo.初始化配置(配置文件.取("初始化配置"),"wincinfo").加载();
             youklx::窗口信息 winsinfo;
-            winsinfo.初始化配置("ini/main.ini","winsinfo").加载();
+            winsinfo.初始化配置(配置文件.取("初始化配置"),"winsinfo").加载();
             窗口.配置(winsinfo).创建(wincinfo).调整位置();
-            窗口.时间.初始化配置("ini/main.ini","time");
+            窗口.时间.初始化配置(配置文件.取("初始化配置"),"time");
 
             场景.批量加载("ini/scene/main.ini","scene");
             场景.查询 = "mainMenu";

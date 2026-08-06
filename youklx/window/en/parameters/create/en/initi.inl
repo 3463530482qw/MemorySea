@@ -1,10 +1,5 @@
 namespace youklx {
-    windowscreateinfo& windowscreateinfo::initi(const std::string& ini, const std::string& ivrtp) {
-        INIReader reader(ini);
-        if (reader.ParseError() != 0) {
-            std::cerr << "Configuration load failed, using default configuration" << std::endl;
-        }
-
+    windowscreateinfo& windowscreateinfo::initi(const INIReader& reader, const std::string& ivrtp) {
         fullscreen          = reader.GetBoolean(ivrtp, "fullscreen", false);
         occluded            = reader.GetBoolean(ivrtp, "occluded", false);
         hidden              = reader.GetBoolean(ivrtp, "hidden", false);
