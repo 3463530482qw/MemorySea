@@ -9,5 +9,6 @@ Time time;
 Keyboa key;
 Mouse mouse;
 Wvulkan wvulkan;
+Draw draw;
 int mlx{1600};
 int mly{900};

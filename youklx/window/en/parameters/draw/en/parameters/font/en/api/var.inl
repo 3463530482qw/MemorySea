@@ -1,4 +1,4 @@
-Font* font{nullptr};            // 字体对象指针
+Font* fot{nullptr};             // 字体对象指针
 std::string text;               // 要绘制的文字
 float x{0.0f}, y{0.0f};         // 绘制位置（左上角）
 float fontSize{20.0f};          // 文字大小

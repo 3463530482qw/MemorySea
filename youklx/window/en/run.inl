@@ -1,6 +1,7 @@
 namespace youklx {
     Window& Window::run() {
         wvulkan.drawFrame();
+        draw.vertices.clear();
         time.update();
         key.update();
         while (SDL_PollEvent(&pept)) {

@@ -1,4 +1,4 @@
-Fontcmd& sf(Font* fot) { font=fot;return *this; }
+Fontcmd& sf(Font* fot) { this->fot=fot;return *this; }
 Fontcmd& sc(std::string tex) { text=tex;return *this; }
 Fontcmd& sp(float sx, float sy) { x=sx;y=sy;return *this; }
 Fontcmd& ss(float fsize) { fontSize=fsize;return *this; }
