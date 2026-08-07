@@ -41,6 +41,12 @@ namespace youklx {
             commandBuffers[i].beginRenderPass(rpInfo, vk::SubpassContents::eInline);
             commandBuffers[i].setViewport(0, viewport);
             commandBuffers[i].setScissor(0, scissor);
+
+            // 字体绘制(顶点每帧变化,由回调从 wvulkan 取当前顶点与逻辑画布尺寸)
+            if (drawCallback) {
+                drawCallback(commandBuffers[i]);
+            }
+
             commandBuffers[i].endRenderPass();
             commandBuffers[i].end();
         }

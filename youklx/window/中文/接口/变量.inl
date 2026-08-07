@@ -9,5 +9,6 @@ Keyboa& 按键{key};
 Mouse& 鼠标{mouse};
 Wvulkan& 窗口火山{wvulkan};
 Draw& 绘制{draw};
+Font& 字体{font};
 int& 逻辑宽{mlx};
 int& 逻辑高{mly};

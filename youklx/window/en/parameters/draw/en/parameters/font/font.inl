@@ -1,20 +1,67 @@
 namespace youklx {
     Draw& Draw::font(Fontcmd cmd) {
-        // 接收一条字体绘制命令,把参数转成四边形顶点(两个三角形)存入通用顶点数据
-        float w = cmd.fontSize * cmd.text.size();       // 粗略宽度,字形烘焙后按实际宽
-        float x0 = cmd.x, y0 = cmd.y, x1 = x0 + w, y1 = y0 + cmd.fontSize;
-        Vertex quad[4] = {
-            {x0, y0, 0, 0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-            {x1, y0, 1, 0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-            {x1, y1, 1, 1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-            {x0, y1, 0, 1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-        };
-        vertices.push_back(quad[0]);
-        vertices.push_back(quad[1]);
-        vertices.push_back(quad[2]);
-        vertices.push_back(quad[0]);
-        vertices.push_back(quad[2]);
-        vertices.push_back(quad[3]);
+        if (!cmd.fot) return *this;
+        std::lock_guard lock(vertMtx);   // 并发 push 保护
+        Font* f = cmd.fot;
+
+        // 逐字符生成带图集 uv 的四边形顶点(两个三角形)
+        float penX = cmd.x, penY = cmd.y;
+        const char* p = cmd.text.c_str();
+        while (*p) {
+            // UTF-8 解码(中文 3 字节)
+            unsigned char b0 = static_cast<unsigned char>(*p++);
+            char32_t ch = b0;
+            if ((b0 & 0xE0) == 0xC0) {
+                unsigned char b1 = static_cast<unsigned char>(*p++);
+                ch = ((static_cast<char32_t>(b0) & 0x1F) << 6) | (b1 & 0x3F);
+            } else if ((b0 & 0xF0) == 0xE0) {
+                unsigned char b1 = static_cast<unsigned char>(*p++);
+                unsigned char b2 = static_cast<unsigned char>(*p++);
+                ch = ((static_cast<char32_t>(b0) & 0x0F) << 12) | ((static_cast<char32_t>(b1) & 0x3F) << 6) | (b2 & 0x3F);
+            } else if ((b0 & 0xF8) == 0xF0) {
+                unsigned char b1 = static_cast<unsigned char>(*p++);
+                unsigned char b2 = static_cast<unsigned char>(*p++);
+                unsigned char b3 = static_cast<unsigned char>(*p++);
+                ch = ((static_cast<char32_t>(b0) & 0x07) << 18) | ((static_cast<char32_t>(b1) & 0x3F) << 12)
+                    | ((static_cast<char32_t>(b2) & 0x3F) << 6) | (b3 & 0x3F);
+            }
+
+            Glyph g = f->query(ch);   // 副本(锁内返回,避免引用失效)
+
+            // 字形在屏幕上的大小 = 位图像素尺寸(烘焙时已按 size 缩放)
+            float gw = (g.u1 - g.u0) * f->atlasW;
+            float gh = (g.v1 - g.v0) * f->atlasH;
+            if (gw <= 0 || gh <= 0) { penX += g.advance; continue; }   // 空白字符
+
+            // 字形位图左上角(基线 yoff 偏移)
+            float x0 = penX + g.xoff, y0 = penY + g.yoff;
+            float x1 = x0 + gw,     y1 = y0 + gh;
+
+            // 旋转(绕 rox/roy)
+            float cosr = std::cos(cmd.rotate), sinr = std::sin(cmd.rotate);
+            auto rot = [&](float& x, float& y) {
+                float dx = x - cmd.rox, dy = y - cmd.roy;
+                x = cmd.rox + dx * cosr - dy * sinr;
+                y = cmd.roy + dx * sinr + dy * cosr;
+            };
+            Vertex quad[4] = {
+                {x0, y0, g.u0, g.v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x1, y0, g.u1, g.v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x1, y1, g.u1, g.v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x0, y1, g.u0, g.v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+            };
+            if (cmd.rotate != 0.0f) {
+                for (auto& v : quad) rot(v.x, v.y);
+            }
+            vertices.push_back(quad[0]);
+            vertices.push_back(quad[1]);
+            vertices.push_back(quad[2]);
+            vertices.push_back(quad[0]);
+            vertices.push_back(quad[2]);
+            vertices.push_back(quad[3]);
+
+            penX += g.advance;
+        }
         return *this;
     }
 }

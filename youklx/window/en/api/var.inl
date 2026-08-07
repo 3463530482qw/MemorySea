@@ -10,5 +10,6 @@ Keyboa key;
 Mouse mouse;
 Wvulkan wvulkan;
 Draw draw;
+Font font;                    // 字体渲染管线绑定的字体对象
 int mlx{1600};
 int mly{900};

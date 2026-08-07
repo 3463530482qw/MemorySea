@@ -12,6 +12,7 @@ namespace youklx {
         syncObjects.createSyncObjects();
         commandBuffer.createCommandBuffers();
         commandBuffer.recordCommandBuffers();
+        fontrender.init(vulkan.physicalDevice, vulkan.device, renderpass.renderPass, swapchain.format, swapchain.extent, font, graphicsFamilyIndex);
         framebufferResized = false; // 初始化完毕，清除窗口创建时可能残留的标记
     }
 }

@@ -1,5 +1,10 @@
 namespace youklx {
     Window& Window::run() {
+        wvulkan.font = &font;                 // 字体渲染绑定窗口字体
+        wvulkan.fontrender.font = &font;      // 同步 FontRender 内部字体指针(init 时可能为 null)
+        wvulkan.drawVertices = &draw.vertices; // 顶点注入
+        wvulkan.logicW = mlx;                 // 逻辑画布尺寸注入(投影用)
+        wvulkan.logicH = mly;
         wvulkan.drawFrame();
         draw.vertices.clear();
         time.update();

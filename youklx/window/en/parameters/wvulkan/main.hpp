@@ -4,6 +4,7 @@
 #include "en/parameters/commandpool/main.hpp"
 #include "en/parameters/synchronization/main.hpp"
 #include "en/parameters/commandbuffer/main.hpp"
+#include "en/parameters/fontrender/main.hpp"
 namespace youklx {
     class Wvulkan {
         public:
