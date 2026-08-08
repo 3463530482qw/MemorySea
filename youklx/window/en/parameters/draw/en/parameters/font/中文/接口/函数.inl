@@ -1,0 +1,6 @@
+Fontcmd& 设字体(Font* 字体) { return sf(字体); }
+Fontcmd& 设文字(std::string 文字内容) { return sc(文字内容); }
+Fontcmd& 设位置(float 位置x, float 位置y) { return sp(位置x, 位置y); }
+Fontcmd& 设字号(float 字号) { return ss(字号); }
+Fontcmd& 设旋转(float 角度, float 中心x, float 中心y) { return srot(角度, 中心x, 中心y); }
+Fontcmd& 设颜色(std::array<float, 4> 颜色值) { return srgba(颜色值); }
