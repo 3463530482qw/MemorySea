@@ -8,6 +8,7 @@ SDL_Window* id{nullptr};          // SDL 窗口指针
 Time time;
 Keyboa key;
 Mouse mouse;
+Camera camera;
 Wvulkan wvulkan;
 Draw draw;
 Font font;                    // 字体渲染管线绑定的字体对象

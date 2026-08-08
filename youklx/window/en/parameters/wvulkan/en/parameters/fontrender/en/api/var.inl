@@ -4,6 +4,7 @@ vk::raii::RenderPass* renderPass{nullptr};
 vk::Format* format{nullptr};
 vk::Extent2D* extent{nullptr};
 Font* font{nullptr};                       // 绑定的字体对象(图集数据源)
+Camera* camera{nullptr};                   // 相机(投影变换用,由 wvulkan 注入)
 uint32_t graphicsFamilyIndex{0};           // 图形队列族(上传用)
 uint64_t atlasVersion{0};                  // 已上传图集版本快照
 int atlasW{1024}, atlasH{1024};            // 已上传图集尺寸(变化时重建纹理)

@@ -111,12 +111,16 @@ namespace youklx {
             float mvp[16];
             float screenW, screenH, snapPixel;
         } pc{};
-        // 正交投影: Vulkan NDC y 向下,左上角(-1,-1)
-        // x∈[0,w]→[-1,1], y∈[0,h]→[-1,1](y=0 在顶部)
-        pc.mvp[0] = 2.0f / screenW;  pc.mvp[4] = 0;            pc.mvp[8] = 0;  pc.mvp[12] = -1.0f;
-        pc.mvp[1] = 0;               pc.mvp[5] = 2.0f / screenH;  pc.mvp[9] = 0;  pc.mvp[13] = -1.0f;
-        pc.mvp[2] = 0;               pc.mvp[6] = 0;            pc.mvp[10] = 1; pc.mvp[14] = 0;
-        pc.mvp[3] = 0;               pc.mvp[7] = 0;            pc.mvp[11] = 0; pc.mvp[15] = 1;
+        // 相机变换:相机对准的世界点 (camX,camY) 显示在屏幕中心,zoom 缩放
+        // ndc.x = (wx - camX) * zoom * 2/w   →  (camX, camY) 映射到 NDC (0,0) 即屏幕中心
+        // 列主序: 屏幕映射 × 相机(缩放+平移)
+        float camX = camera ? camera->x : 0.0f;
+        float camY = camera ? camera->y : 0.0f;
+        float z = camera ? camera->zoom : 1.0f;
+        pc.mvp[0] = 2.0f * z / screenW;  pc.mvp[4] = 0;                pc.mvp[8] = 0;  pc.mvp[12] = -2.0f * z * camX / screenW;
+        pc.mvp[1] = 0;                   pc.mvp[5] = 2.0f * z / screenH;  pc.mvp[9] = 0;  pc.mvp[13] = -2.0f * z * camY / screenH;
+        pc.mvp[2] = 0;                   pc.mvp[6] = 0;                pc.mvp[10] = 1; pc.mvp[14] = 0;
+        pc.mvp[3] = 0;                   pc.mvp[7] = 0;                pc.mvp[11] = 0; pc.mvp[15] = 1;
         pc.screenW = screenW;
         pc.screenH = screenH;
         pc.snapPixel = 0.0f;

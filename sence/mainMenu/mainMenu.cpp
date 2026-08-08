@@ -1,12 +1,8 @@
 #include "vmode.inl"
 
 extern "C" EXPORT void mainMenu() {
-    // 字体:用窗口绑定的字体(渲染管线从此字体取图集)
-    static bool fontLoaded = []() {
-        窗口.字体.加载("font/LXGWWenKaiLite-Light.ttf");
-        return true;
-    }();
-    (void)fontLoaded;
+    // 加载字体(渲染管线从此字体取图集)
+    窗口.字体.加载("font/LXGWWenKaiLite-Light.ttf");
 
     // 线程测试
     int a{0},b{0};
@@ -20,6 +16,15 @@ extern "C" EXPORT void mainMenu() {
     while(窗口.是否运行) {
         线程.运行();
         窗口.运行();
+
+        // 相机控制:方向键移动,加减号缩放
+        float speed = 5.0f / 窗口.相机.zoom;   // 缩放后移动速度相应调整
+        if (窗口.按键.按住(0x26)) 窗口.相机.位置y -= speed;   // ↑
+        if (窗口.按键.按住(0x28)) 窗口.相机.位置y += speed;   // ↓
+        if (窗口.按键.按住(0x25)) 窗口.相机.位置x -= speed;   // ←
+        if (窗口.按键.按住(0x27)) 窗口.相机.位置x += speed;   // →
+        if (窗口.按键.按住(0x6B)) 窗口.相机.缩放 *= 1.01f;   // 小键盘+
+        if (窗口.按键.按住(0x6D)) 窗口.相机.缩放 *= 0.99f;   // 小键盘-
     }
     线程.包清理();
 }

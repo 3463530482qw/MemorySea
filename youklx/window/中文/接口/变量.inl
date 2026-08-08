@@ -7,6 +7,7 @@ bool& 是否运行{isrun};
 Time& 时间{time};
 Keyboa& 按键{key};
 Mouse& 鼠标{mouse};
+Camera& 相机{camera};
 Wvulkan& 窗口火山{wvulkan};
 Draw& 绘制{draw};
 Font& 字体{font};

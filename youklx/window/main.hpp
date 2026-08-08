@@ -3,6 +3,7 @@
 #include "en/parameters/time/main.hpp"
 #include "en/parameters/key/main.hpp"
 #include "en/parameters/mouse/main.hpp"
+#include "en/parameters/camera/main.hpp"
 #include "en/parameters/draw/main.hpp"
 #include "en/parameters/wvulkan/main.hpp"
 namespace youklx {
