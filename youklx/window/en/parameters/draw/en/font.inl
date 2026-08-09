@@ -2,7 +2,6 @@ namespace youklx {
     Draw& Draw::font(Fontcmd cmd) {
         if (!cmd.fot) return *this;
         std::lock_guard lock(vertMtx);   // 并发 push 保护
-        Font* f = cmd.fot;
 
         // 逐字符生成带图集 uv 的四边形顶点(两个三角形)
         float penX = cmd.x, penY = cmd.y;
@@ -26,15 +25,18 @@ namespace youklx {
                     | ((static_cast<char32_t>(b2) & 0x3F) << 6) | (b3 & 0x3F);
             }
 
-            Glyph g = f->query(ch);   // 副本(锁内返回,避免引用失效)
+            Glyph g = cmd.fot->query(ch);   // 副本(锁内返回,避免引用失效)
 
-            // 字形在屏幕上的大小 = 位图像素尺寸(烘焙时已按 size 缩放)
-            float gw = (g.u1 - g.u0) * f->atlasW;
-            float gh = (g.v1 - g.v0) * f->atlasH;
-            if (gw <= 0 || gh <= 0) { penX += g.advance; continue; }   // 空白字符
+            // 缩放比例 = 目标字号 / 烘焙字号(位图按烘焙字号烤制,绘制时按比例缩放)
+            float scale = cmd.fontSize / cmd.fot->size;
 
-            // 字形位图左上角(基线 yoff 偏移)
-            float x0 = penX + g.xoff, y0 = penY + g.yoff;
+            // 字形在屏幕上的大小 = 位图像素尺寸 × 字号缩放
+            float gw = (g.u1 - g.u0) * cmd.fot->atlasW * scale;
+            float gh = (g.v1 - g.v0) * cmd.fot->atlasH * scale;
+            if (gw <= 0 || gh <= 0) { penX += g.advance * scale; continue; }   // 空白字符
+
+            // 字形位图左上角(基线 yoff 偏移,同样按字号缩放)
+            float x0 = penX + g.xoff * scale, y0 = penY + g.yoff * scale;
             float x1 = x0 + gw,     y1 = y0 + gh;
 
             // 旋转(绕 rox/roy)
@@ -60,7 +62,7 @@ namespace youklx {
             vertices.push_back(quad[2]);
             vertices.push_back(quad[3]);
 
-            penX += g.advance;
+            penX += g.advance * scale;
         }
         return *this;
     }
