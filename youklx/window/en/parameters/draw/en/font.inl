@@ -30,6 +30,10 @@ namespace youklx {
             // 缩放比例 = 目标字号 / 烘焙字号(位图按烘焙字号烤制,绘制时按比例缩放)
             float scale = cmd.fontSize / cmd.fot->size;
 
+            // UV 内缩半纹素:图集打包时字形间有 1px 空隙,不内缩会采样到相邻字形/空隙,边缘不全
+            float u0 = g.u0 + 0.5f / cmd.fot->atlasW, v0 = g.v0 + 0.5f / cmd.fot->atlasH;
+            float u1 = g.u1 - 0.5f / cmd.fot->atlasW, v1 = g.v1 - 0.5f / cmd.fot->atlasH;
+
             // 字形在屏幕上的大小 = 位图像素尺寸 × 字号缩放
             float gw = (g.u1 - g.u0) * cmd.fot->atlasW * scale;
             float gh = (g.v1 - g.v0) * cmd.fot->atlasH * scale;
@@ -47,10 +51,10 @@ namespace youklx {
                 y = cmd.roy + dx * sinr + dy * cosr;
             };
             Vertex quad[4] = {
-                {x0, y0, g.u0, g.v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-                {x1, y0, g.u1, g.v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-                {x1, y1, g.u1, g.v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
-                {x0, y1, g.u0, g.v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x0, y0, u0, v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x1, y0, u1, v0, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x1, y1, u1, v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
+                {x0, y1, u0, v1, cmd.rgba[0], cmd.rgba[1], cmd.rgba[2], cmd.rgba[3]},
             };
             if (cmd.rotate != 0.0f) {
                 for (auto& v : quad) rot(v.x, v.y);
