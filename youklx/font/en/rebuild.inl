@@ -6,8 +6,7 @@ namespace youklx {
         std::fill(atlas.begin(), atlas.end(), 0);
         cursorX = 0; cursorY = 0; rowH = 0;
         for (const auto& [ch, _] : old) {
-            int w, h, xo, yo;
-            bake(ch, scale, w, h, xo, yo);
+            bake(ch, scale);
         }
         atlasVersion++;
     }

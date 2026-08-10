@@ -8,8 +8,7 @@ namespace youklx {
         // 首次遇到:按当前 size 烘焙
         if (atlas.empty()) atlas.assign(static_cast<size_t>(atlasW) * atlasH, 0);
         float scale = stbtt_ScaleForPixelHeight(&fontInfo, size);
-        int w, h, xo, yo;
-        if (!bake(ch, scale, w, h, xo, yo))
+        if (!bake(ch, scale))
             throw std::runtime_error(std::string("字形烘焙失败"));
         return glyphs.at(ch);
     }

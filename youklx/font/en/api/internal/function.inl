@@ -1,2 +1,2 @@
-bool bake(char32_t ch, float scale, int& out_w, int& out_h, int& out_xoff, int& out_yoff);
+bool bake(char32_t ch, float scale);
 void rebuildAll(float scale);
