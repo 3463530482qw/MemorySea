@@ -1,3 +1,3 @@
 void load(const char* ttfpath);
-void px(float size);
+void px(float ssize);
 Glyph query(char32_t ch);
