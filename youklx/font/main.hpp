@@ -7,6 +7,8 @@ namespace youklx {
             #include "en/api/function.inl"
             #include "中文/接口/函数.inl"
         private:
+            #include "en/api/internal/var.inl"
+        private:
             #include "en/api/internal/function.inl"
     };
     using 字体 = Font;
@@ -16,3 +18,6 @@ namespace youklx {
 #include "en/bake.inl"
 #include "en/rebuild.inl"
 #include "en/query.inl"
+#include "en/bindrenderer.inl"
+#include "en/recreatetexture.inl"
+#include "en/uploadatlas.inl"

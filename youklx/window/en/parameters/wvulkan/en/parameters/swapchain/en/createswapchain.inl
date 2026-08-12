@@ -33,6 +33,12 @@ namespace youklx {
         }
 
         // 4. 选择交换范围（限定在硬件能力范围内）
+        // surface 未就绪时(最小化恢复瞬间)能力可能为 0,此时重建会得到 0 尺寸交换链,
+        // 后续渲染区域越界直接 DEVICE_LOST。抛 OutOfDate 交由上层保持标记下帧重试
+        if (capabilities.minImageExtent.width == 0 || capabilities.minImageExtent.height == 0 ||
+            capabilities.maxImageExtent.width == 0 || capabilities.maxImageExtent.height == 0) {
+            throw vk::OutOfDateKHRError("surface 未就绪");
+        }
         extent.width = std::clamp(static_cast<uint32_t>(w),
             capabilities.minImageExtent.width,
             capabilities.maxImageExtent.width);

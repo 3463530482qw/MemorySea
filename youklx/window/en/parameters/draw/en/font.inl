@@ -2,6 +2,7 @@ namespace youklx {
     Draw& Draw::font(Fontcmd cmd) {
         if (!cmd.fot) return *this;
         std::lock_guard lock(vertMtx);   // 并发 push 保护
+        size_t start = vertices.size();  // 本段起始(用于登记批次)
 
         // 逐字符生成带图集 uv 的四边形顶点(两个三角形)
         float penX = cmd.x, penY = cmd.y;
@@ -67,6 +68,16 @@ namespace youklx {
             vertices.push_back(quad[3]);
 
             penX += g.advance * scale;
+        }
+
+        // 登记批次:连续同字体合并,不同字体另起一段(渲染端按段切换图集)
+        size_t added = vertices.size() - start;
+        if (added > 0) {
+            if (!batches.empty() && batches.back().font == cmd.fot) {
+                batches.back().count += added;
+            } else {
+                batches.push_back({cmd.fot, start, added});
+            }
         }
         return *this;
     }

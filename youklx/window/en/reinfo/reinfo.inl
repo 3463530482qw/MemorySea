@@ -11,10 +11,15 @@ namespace youklx {
         #include "wh.inl"
         name = wininfo.name;
         icon = wininfo.icon;
+        // 一次性绑定绘图数据源(用户随后自行调 wvulkan.init,这里只绑引用,不依赖 init 时机)
         wvulkan.logicW = &mlx;
         wvulkan.logicH = &mly;
-         wvulkan.camera = &camera;
-        
+        wvulkan.camera = &camera;
+        wvulkan.fontrender.camera = &camera;
+        wvulkan.drawVertices = &draw.vertices;
+        wvulkan.drawBatches = &draw.batches;
+        wvulkan.defaultFont = &font;
+
         return *this;
     }
     Window& Window::reinfo() {

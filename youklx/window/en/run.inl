@@ -1,10 +1,7 @@
 namespace youklx {
     Window& Window::run() {
-        // 一次性绑定:字体渲染的字体对象(init 时可能还没加载,首次 run 时绑定)
-        if (!wvulkan.fontrender.font) wvulkan.fontrender.font = &font;
-        wvulkan.drawVertices = &draw.vertices;
         wvulkan.drawFrame();
-        draw.vertices.clear();
+        draw.clear();   // 清空本帧顶点与批次(绑定在 reinfo 一次性完成)
         time.update();
         key.update();
         while (SDL_PollEvent(&pept)) {

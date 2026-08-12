@@ -1,4 +1,5 @@
 #include "en/parameters/vertex.inl"
+#include "en/parameters/batch.inl"
 #include "en/parameters/font/main.hpp"
 namespace youklx {
     class Draw {
@@ -12,3 +13,4 @@ namespace youklx {
     using 绘制 = Draw;
 }
 #include "en/font.inl"
+#include "en/clear.inl"

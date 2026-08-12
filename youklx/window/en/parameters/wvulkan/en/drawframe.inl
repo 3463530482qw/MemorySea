@@ -31,8 +31,9 @@ namespace youklx {
         }
         device->resetFences({*syncObjects.inFlightFence});
 
-        // 图集变化 → 先上传纹理(必须在命令缓冲录制之外,避免录制中途提交+等待)
-        fontrender.uploadAtlas();
+        // 录制前准备:构建渲染段、上传图集与顶点(内含提交+等待,必须在录制外)
+        if (drawVertices) fontrender.prepare(*drawBatches, *drawVertices, *defaultFont,
+            static_cast<float>(*logicW), static_cast<float>(*logicH));
 
         // 顶点每帧变化,重新记录命令缓冲(清屏 + 字体绘制)
         commandBuffer.recordCommandBuffers();

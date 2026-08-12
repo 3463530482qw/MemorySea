@@ -17,5 +17,8 @@ namespace youklx {
         if (stbtt_InitFont(&fontInfo, ttfData.data(), 0) == 0) {
             throw std::runtime_error(std::string("字体解析失败(不是有效的TTF/OTF文件): ") + ttfpath);
         }
+        // ④ 图集尺寸按当前字号同步(与 px 的公式一致)
+        atlasW = static_cast<int>(size) * 32;
+        atlasH = static_cast<int>(size) * 32;
     }
 }

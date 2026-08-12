@@ -12,8 +12,8 @@ namespace youklx {
         syncObjects.createSyncObjects();
         commandBuffer.createCommandBuffers();
         commandBuffer.recordCommandBuffers();
-        // init 时字体可能还没加载(null),首次 run() 时由窗口绑定
-        fontrender.init(vulkan.physicalDevice, vulkan.device, renderpass.renderPass, swapchain.format, swapchain.extent, nullptr, graphicsFamilyIndex);
+        // 字体贴图在 Font 类内,首次绘制时惰性初始化,此处只建管线
+        fontrender.init(vulkan.physicalDevice, vulkan.device, renderpass.renderPass, swapchain.format, swapchain.extent, graphicsFamilyIndex);
         framebufferResized = false; // 初始化完毕，清除窗口创建时可能残留的标记
     }
 }

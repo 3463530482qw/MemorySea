@@ -15,4 +15,5 @@ namespace youklx {
 #include "en/instance.inl"
 #include "en/pickPhysicalDevice.inl"
 #include "en/createLogicalDevice.inl"
+#include "en/findmemorytype.inl"
 #include "en/init.inl"
