@@ -3,7 +3,7 @@
 extern "C" EXPORT void mainMenu() {
     // 加载字体(渲染管线从此字体取图集)
     窗口.字体.加载("font/LXGWWenKaiLite-Light.ttf");
-
+    窗口.字体.px(200);
     // 线程测试
     int a{0},b{0};
     线程.更新包([&a](){

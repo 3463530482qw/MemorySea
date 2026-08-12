@@ -2,10 +2,7 @@ namespace youklx {
     Window& Window::run() {
         // 一次性绑定:字体渲染的字体对象(init 时可能还没加载,首次 run 时绑定)
         if (!wvulkan.fontrender.font) wvulkan.fontrender.font = &font;
-        wvulkan.drawVertices = &draw.vertices; // 顶点注入
-        wvulkan.logicW = mlx;                 // 逻辑画布尺寸注入(投影用)
-        wvulkan.logicH = mly;
-        wvulkan.camera = &camera;             // 相机注入(投影变换用)
+        wvulkan.drawVertices = &draw.vertices;
         wvulkan.drawFrame();
         draw.vertices.clear();
         time.update();

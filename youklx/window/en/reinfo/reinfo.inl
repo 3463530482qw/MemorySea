@@ -11,6 +11,10 @@ namespace youklx {
         #include "wh.inl"
         name = wininfo.name;
         icon = wininfo.icon;
+        wvulkan.logicW = &mlx;
+        wvulkan.logicH = &mly;
+         wvulkan.camera = &camera;
+        
         return *this;
     }
     Window& Window::reinfo() {
