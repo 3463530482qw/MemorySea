@@ -1,5 +1,5 @@
 namespace youklx {
-    class Fontcmd {   // 字体绘制命令子模块:只负责字体的参数与生成命令
+    class Fontcmd {   // 字体绘制命令子模块:参数 + 顶点缓冲(设置函数标脏,绘制时脏才重算)
         public:
             #include "en/api/var.inl"
             #include "中文/接口/变量.inl"

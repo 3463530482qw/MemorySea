@@ -1,6 +1,6 @@
-Fontcmd& sf(Font* fot) { this->fot=fot;return *this; }
-Fontcmd& sc(std::string tex) { text=tex;return *this; }
-Fontcmd& sp(float sx, float sy) { x=sx;y=sy;return *this; }
-Fontcmd& ss(float fsize) { fontSize=fsize;return *this; }
-Fontcmd& srot(float ro,float rx,float ry) { rotate=ro;rox=rx;roy=ry;return *this; }
-Fontcmd& srgba(std::array<float, 4> srgba) { rgba=srgba;return *this;}
+Fontcmd& sf(Font* fot) { this->fot=fot; dirty=true; return *this; }
+Fontcmd& sc(std::string tex) { text=tex; dirty=true; return *this; }
+Fontcmd& sp(float sx, float sy) { x=sx;y=sy; dirty=true; return *this; }
+Fontcmd& ss(float fsize) { fontSize=fsize; dirty=true; return *this; }
+Fontcmd& srot(float ro,float rx,float ry) { rotate=ro;rox=rx;roy=ry; dirty=true; return *this; }
+Fontcmd& srgba(std::array<float, 4> srgba) { rgba=srgba; dirty=true; return *this; }
