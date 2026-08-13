@@ -4,3 +4,4 @@ Fontcmd& 设位置(float 位置x, float 位置y) { return sp(位置x, 位置y); 
 Fontcmd& 设字号(float 字号) { return ss(字号); }
 Fontcmd& 设旋转(float 角度, float 中心x, float 中心y) { return srot(角度, 中心x, 中心y); }
 Fontcmd& 设颜色(std::array<float, 4> 颜色值) { return srgba(颜色值); }
+Fontcmd& 设顺序(int 顺序) { return so(顺序); }

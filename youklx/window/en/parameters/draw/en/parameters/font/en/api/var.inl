@@ -7,3 +7,4 @@ float rox{0.0f}, roy{0.0f};     // 旋转中心偏移
 std::array<float, 4> rgba{1.0f, 1.0f, 1.0f, 1.0f};
 mutable std::vector<Vertex> vertices;   // 顶点缓冲(设置函数标脏后,由绘制时重新计算填充)
 mutable bool dirty{true};               // 脏标记(参数变化置脏,未调用设置函数则不重算)
+int order;                              // 绘制顺序(构造时领号,顶点流按此顺序写入)

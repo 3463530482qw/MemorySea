@@ -73,16 +73,25 @@ namespace youklx {
         if (cmd.vertices.empty()) return *this;
 
         std::lock_guard lock(vertMtx);   // 并发 push 保护
-        // 提交命令的顶点缓冲到顶点流
-        size_t start = vertices.size();
-        vertices.insert(vertices.end(), cmd.vertices.begin(), cmd.vertices.end());
 
-        // 登记批次:连续同字体合并,不同字体另起一段(渲染端按段切换图集)
+        // 按绘制顺序定位插入点(批次数少,线性扫描):并行计算的结果在此统一按序写入
+        size_t pos = vertices.size();      // 默认尾插
+        size_t bidx = batches.size();
+        for (size_t i = 0; i < batches.size(); i++) {
+            if (batches[i].order > cmd.order) { pos = batches[i].offset; bidx = i; break; }
+        }
         size_t added = cmd.vertices.size();
-        if (!batches.empty() && batches.back().font == cmd.fot) {
-            batches.back().count += added;
+        vertices.insert(vertices.begin() + static_cast<ptrdiff_t>(pos), cmd.vertices.begin(), cmd.vertices.end());
+        // 插入点之后的段偏移整体后移
+        for (size_t i = bidx; i < batches.size(); i++) batches[i].offset += added;
+        // 段合并:仅与相邻的同命令段(同 order 即同一命令)合并
+        if (bidx > 0 && batches[bidx-1].order == cmd.order && batches[bidx-1].font == cmd.fot) {
+            batches[bidx-1].count += added;
+        } else if (bidx < batches.size() && batches[bidx].order == cmd.order && batches[bidx].font == cmd.fot) {
+            batches[bidx].offset -= added;
+            batches[bidx].count += added;
         } else {
-            batches.push_back({cmd.fot, start, added});
+            batches.insert(batches.begin() + static_cast<ptrdiff_t>(bidx), {cmd.fot, pos, added, cmd.order});
         }
         return *this;
     }

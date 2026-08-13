@@ -13,11 +13,11 @@ namespace youklx {
         segments.reserve(batches.size() + 1);
         size_t cursor = 0;
         for (const Batch& b : batches) {
-            if (b.offset > cursor) segments.push_back({&defaultFont, cursor, b.offset - cursor});
+            if (b.offset > cursor) segments.push_back({&defaultFont, cursor, b.offset - cursor, 0});
             segments.push_back(b);
             cursor = b.offset + b.count;
         }
-        if (cursor < vertices.size()) segments.push_back({&defaultFont, cursor, vertices.size() - cursor});
+        if (cursor < vertices.size()) segments.push_back({&defaultFont, cursor, vertices.size() - cursor, 0});
 
         // 段内的字体贴图惰性初始化 + 图集上传(此处仍处于录制外)
         for (const Batch& seg : segments) {
