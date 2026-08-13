@@ -1,7 +1,7 @@
 namespace youklx {
     Window& Window::run() {
         wvulkan.drawFrame();
-        draw.clear();   // 清空本帧顶点与批次(绑定在 reinfo 一次性完成)
+        draw.clear();   
         time.update();
         key.update();
         while (SDL_PollEvent(&pept)) {

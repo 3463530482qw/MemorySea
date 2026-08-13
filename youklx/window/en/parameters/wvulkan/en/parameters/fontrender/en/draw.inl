@@ -1,8 +1,11 @@
 namespace youklx {
     // 录制前准备:构建渲染段、惰性初始化贴图、上传图集与顶点
     // (上传内部会提交命令并等待,必须在命令缓冲录制之外执行)
-    void FontRender::prepare(const std::vector<Batch>& batches, const std::vector<Vertex>& vertices,
-                             Font& defaultFont, float screenW, float screenH) {
+    void FontRender::prepare(
+        const std::vector<Batch>& batches, 
+        const std::vector<Vertex>& vertices,
+        Font& defaultFont, float screenW, float screenH
+    ) {
         segments.clear();
         if (vertices.empty()) return;
 
