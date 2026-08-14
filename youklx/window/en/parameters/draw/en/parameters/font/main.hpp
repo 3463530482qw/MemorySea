@@ -14,3 +14,4 @@ namespace youklx {
     using 字体绘制命令 = Fontcmd;
 }
 #include "main.inl"
+#include "en/load.inl"

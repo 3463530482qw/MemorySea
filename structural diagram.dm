@@ -15,6 +15,7 @@ graph TD
     B --> I
     B --> K
     B --> M[youklx/draw 绘制命令与顶点生成]
+    B --> FONTMAP[youklx/fontmap 字体仓库]
     B --> N[youklx/scene 动态场景 DLL 加载]
     B --> O[youklx/thread 更新与绘制线程调度]
 
@@ -86,5 +87,7 @@ graph TD
     I -->|mouse/keyboard| V
     I -->|viewport映射| E
     M -->|Linecmd / Imagecmd / Fontcmd| E
+    K -->|登记字体指针| FONTMAP
+    FONTMAP -->|Fontcmd 按名取字体| M
     K -->|字体纹理| E
     I -->|窗口大小| E

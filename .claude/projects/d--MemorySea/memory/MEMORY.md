@@ -1,1 +1,2 @@
 - [Vulkan 初始化流程](vulkan-init-flow.md) — createInstance 之后按什么顺序继续
+- 字体绘制命令(Fontcmd)的 ini 加载:`初始化配置(字体仓库, 配置读取器, 标签)` 读 `font/text/x/y/fontSize/rotate/rox/roy/r/g/b/a/order` 键,缺省值=当前值;`font` 键按名字从全局 `字体仓库`(youklx/fontmap,vmain.inl 导出)取字体对象,字体须先 `字体仓库.添加(名字, &字体)` 登记。示例见 `ini/mainMenu/fontcmd.ini` + `sence/mainMenu/mainMenu.cpp`。
