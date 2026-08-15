@@ -10,3 +10,4 @@ namespace youklx {
     using 字体仓库 = Fontmap;
 }
 #include "en/load.inl"
+#include "en/iload.inl"

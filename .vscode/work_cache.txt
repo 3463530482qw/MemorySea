@@ -1,0 +1,11 @@
+坑(重要):DSH 沙箱下 ccache 会无限挂起(最小文件 -c 也卡死,CPU 不涨)。
+  直连 g++ 与 CCACHE_DISABLE=1 均正常。构建请用:
+  $env:CCACHE_DISABLE='1'; python -u build.py
+  缓存目录 D:/mingw64/ccache-cache 在沙箱外,疑似锁/IO 问题,待查。
+
+记录(字体 ini 化改造,已完成):
+  字体仓库(Fontmap)新增 iload + owned/owned_names,字体创建归仓库拥有。
+  ini 格式:[字体.名字] 标签,节内 名字 = ttf路径,px = 烘焙字号(缺省 20)。
+  场景调用:字体仓库.初始化配置(配置文件.取("字体命令"), "字体")。
+  mainMenu 字体配置在 ini/mainMenu/fontcmd.ini 顶部;build/ini 为运行副本,改源后需同步。
+  冒烟验证:build/MemorySea.exe 运行 6s 无 stderr 异常,窗口标题 MemorySea 正常。
