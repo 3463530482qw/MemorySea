@@ -1,9 +1,6 @@
 #include "vmode.inl"
 
 extern "C" EXPORT void mainMenu() {
-    // 窗口默认字体(渲染管线手动顶点段的图集,不属于场景字体配置)
-    窗口.字体.加载("font/LXGWWenKaiLite-Light.ttf");
-    窗口.字体.px(200);
     // 线程测试
     int a{0},b{0};
 

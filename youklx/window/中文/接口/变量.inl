@@ -10,6 +10,5 @@ Mouse& 鼠标{mouse};
 Camera& 相机{camera};
 Wvulkan& 窗口火山{wvulkan};
 Draw& 绘制{draw};
-Font& 字体{font};
 int& 逻辑宽{mlx};
 int& 逻辑高{mly};

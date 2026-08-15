@@ -8,7 +8,6 @@ CommandBuffer commandBuffer;
 FontRender fontrender;
 std::vector<Vertex>* drawVertices{nullptr};  // 绘制顶点(由窗口注入)
 std::vector<Batch>* drawBatches{nullptr};    // 顶点字体批次(由窗口注入)
-Font* defaultFont{nullptr};                  // 默认字体(手动顶点的图集,由窗口注入)
 int *logicW{nullptr}, *logicH{nullptr};          // 逻辑画布尺寸(由窗口注入,投影用)
 Camera* camera{nullptr};                // 相机(由窗口注入,投影变换用)
 bool framebufferResized{false}; // 窗口尺寸变化，需重建交换链

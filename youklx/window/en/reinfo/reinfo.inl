@@ -18,7 +18,6 @@ namespace youklx {
         wvulkan.fontrender.camera = &camera;
         wvulkan.drawVertices = &draw.vertices;
         wvulkan.drawBatches = &draw.batches;
-        wvulkan.defaultFont = &font;
 
         return *this;
     }

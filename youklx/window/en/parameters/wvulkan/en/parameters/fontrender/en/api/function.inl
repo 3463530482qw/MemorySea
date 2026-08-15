@@ -3,7 +3,7 @@ void init(vk::raii::PhysicalDevice& pd, vk::raii::Device& dev, vk::raii::RenderP
 void prepare(
     const std::vector<Batch>& batches, 
     const std::vector<Vertex>& vertices,
-    Font& defaultFont, float screenW, float screenH
+    float screenW, float screenH
 );
 // 纯录制:按 prepare 构建的段绑定图集描述符并绘制
 void draw(vk::raii::CommandBuffer& cmdbuf);

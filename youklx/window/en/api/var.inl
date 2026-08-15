@@ -11,6 +11,5 @@ Mouse mouse;
 Camera camera;
 Wvulkan wvulkan;
 Draw draw;
-Font font;                    // 窗口默认字体(手动顶点的图集,字体绘制可用任意 Font 对象)
 int mlx{1600};
 int mly{900};

@@ -9,3 +9,10 @@
   场景调用:字体仓库.初始化配置(配置文件.取("字体命令"), "字体")。
   mainMenu 字体配置在 ini/mainMenu/fontcmd.ini 顶部;build/ini 为运行副本,改源后需同步。
   冒烟验证:build/MemorySea.exe 运行 6s 无 stderr 异常,窗口标题 MemorySea 正常。
+
+记录(窗口模块去字体,已完成):
+  窗口(Window)原本持有 Font font 成员,仅用于 FontRender::prepare 的 defaultFont 兜底
+  (无批次的裸顶点段)。Draw 模块只有 font(cmd)/clear() 两个入口,裸顶点路径不可达,
+  故移除:window/en/api/var.inl、中文/接口/变量.inl、reinfo.inl、wvulkan/api/var.inl、
+  fontrender prepare 签名与实现、drawframe.inl 调用点均已清理;prepare 现在只认批次段。
+  mainMenu.cpp 同步删掉 窗口.字体 加载两行。重新编译+冒烟通过。

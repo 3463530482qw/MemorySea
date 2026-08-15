@@ -32,7 +32,7 @@ namespace youklx {
         device->resetFences({*syncObjects.inFlightFence});
 
         // 录制前准备:构建渲染段、上传图集与顶点(内含提交+等待,必须在录制外)
-        if (drawVertices) fontrender.prepare(*drawBatches, *drawVertices, *defaultFont,
+        if (drawVertices) fontrender.prepare(*drawBatches, *drawVertices,
             static_cast<float>(*logicW), static_cast<float>(*logicH));
 
         // 顶点每帧变化,重新记录命令缓冲(清屏 + 字体绘制)

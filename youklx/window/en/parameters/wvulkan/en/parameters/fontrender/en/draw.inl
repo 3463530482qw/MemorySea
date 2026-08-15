@@ -4,20 +4,14 @@ namespace youklx {
     void FontRender::prepare(
         const std::vector<Batch>& batches, 
         const std::vector<Vertex>& vertices,
-        Font& defaultFont, float screenW, float screenH
+        float screenW, float screenH
     ) {
         segments.clear();
         if (vertices.empty()) return;
 
-        // 把批次与间隙统一成渲染段列表(手动 push 的顶点没有批次记录,归默认字体)
-        segments.reserve(batches.size() + 1);
-        size_t cursor = 0;
-        for (const Batch& b : batches) {
-            if (b.offset > cursor) segments.push_back({&defaultFont, cursor, b.offset - cursor, 0});
-            segments.push_back(b);
-            cursor = b.offset + b.count;
-        }
-        if (cursor < vertices.size()) segments.push_back({&defaultFont, cursor, vertices.size() - cursor, 0});
+        // 顶点全部来自字体命令(带批次);无批次的裸顶点没有图集可绑,直接跳过不绘制
+        segments.reserve(batches.size());
+        for (const Batch& b : batches) segments.push_back(b);
 
         // 段内的字体贴图惰性初始化 + 图集上传(此处仍处于录制外)
         for (const Batch& seg : segments) {
