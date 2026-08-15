@@ -18,6 +18,14 @@ namespace youklx {
         rgba[3]  = static_cast<float>(reader.GetReal(ivrtp, "a", rgba[3]));
         order    = static_cast<int>(reader.GetInteger(ivrtp, "order", order));
 
+        // 描边:显式开关(缺省保留当前值);outlineW 是 em,须 ≤ 所绑字体的 pad,否则被裁剪
+        outline        = reader.GetBoolean(ivrtp, "outline", outline);
+        outlineW       = static_cast<float>(reader.GetReal(ivrtp, "outlineW", outlineW));
+        outlineColor[0] = static_cast<float>(reader.GetReal(ivrtp, "outlineR", outlineColor[0]));
+        outlineColor[1] = static_cast<float>(reader.GetReal(ivrtp, "outlineG", outlineColor[1]));
+        outlineColor[2] = static_cast<float>(reader.GetReal(ivrtp, "outlineB", outlineColor[2]));
+        outlineColor[3] = static_cast<float>(reader.GetReal(ivrtp, "outlineA", outlineColor[3]));
+
         dirty = true;   // 批量覆盖后下次绘制重算顶点缓冲
         return *this;
     }

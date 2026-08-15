@@ -3,6 +3,8 @@
 layout(location = 0) in vec2 inPosition;
 layout(location = 1) in vec2 inUV;
 layout(location = 2) in vec4 inColor;
+layout(location = 3) in vec4 inEffects;        // x=描边宽,y=抗锯齿带宽(SDF d 值)
+layout(location = 4) in vec4 inOutlineColor;
 
 layout(push_constant) uniform PushConstants {
     mat4 mvp;
@@ -11,6 +13,8 @@ layout(push_constant) uniform PushConstants {
 
 layout(location = 0) out vec2 fragUV;
 layout(location = 1) out vec4 fragColor;
+layout(location = 2) out vec2 fragEffects;
+layout(location = 3) out vec4 fragOutlineColor;
 
 void main() {
     vec4 clip = pc.mvp * vec4(inPosition, 0.0, 1.0);
@@ -24,4 +28,6 @@ void main() {
     gl_Position = clip;
     fragUV = inUV;
     fragColor = inColor;
+    fragEffects = inEffects.xy;
+    fragOutlineColor = inOutlineColor;
 }

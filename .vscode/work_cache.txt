@@ -16,3 +16,63 @@
   故移除:window/en/api/var.inl、中文/接口/变量.inl、reinfo.inl、wvulkan/api/var.inl、
   fontrender prepare 签名与实现、drawframe.inl 调用点均已清理;prepare 现在只认批次段。
   mainMenu.cpp 同步删掉 窗口.字体 加载两行。重新编译+冒烟通过。
+
+记录(字体特效第一层,已完成):
+  Fontcmd 新增特效参数:shadowX/Y+shadowColor、outlineW+outlineColor、
+  glowRadius/glowSteps+glowColor,设阴影/设描边/设发光 setter 与 ini 键
+  (shadowX/Y/R/G/B/A、outlineW/R/G/B/A、glowRadius/glowSteps/glowR/G/B/A)。
+  开关语义:宽度/半径/偏移为 0 即关闭,关闭时 Draw::font 只多几次 bool 比较,
+  不生成副本顶点(参照时间模块 youkft 的思路)。
+  Draw::font 重写:先缓存每字符矩形(效果副本与正文共用,大小统一位置对齐),
+  按 阴影→发光(8方向多圈)→描边(8方向,对角 0.707 等距)→正文 发射,顶点顺序即层叠顺序。
+  演示 ini:三命令 fontSize 统一 96、x 对齐 100、y 100/300/500,分别演示描边/阴影/发光;
+  二号字体 px 改 96 匹配统一字号。编译+冒烟通过。
+
+记录(字体特效第二版:显式开关 + router/tfun 写法,已完成):
+  特效各加显式开关键:shadow/outline/glow(bool,缺省 false);setter 改为
+  设阴影/设描边/设发光(是否开启, ...)。关闭时 Draw::font 不生成任何副本顶点。
+  Draw::font 发射段改为时间模块 router/tfun 同构写法:路由阶段把开启的特效层
+  push 进 layers(std::vector<std::function<void()>>),执行循环只遍历 layers,
+  对特效一无所知、零判断;全关时 layers 只有正文一层。
+  上一版的 has_shadow 三连判断与"宽度>0 即开启"的隐式开关已废除。编译+冒烟通过。
+
+记录(字体特效第三版:SDF 距离场,已完成):
+  问题:8 方向复制法的描边会填满汉字封闭笔画(田/口),描边粗细随方向变化,
+  发光呈八芒星+圈状断层;font.inl 因此堆了 80+ quad 的发射代码。
+  方案:字形烘焙改为 SDF(stbtt_GetCodepointSDF,onedge=128,pds=size/8,即 1em=8 距离单位),
+  描边/发光挪进 font.frag(单次采样),每字符只画 1 个 quad;阴影保留偏移副本层。
+  顶点格式扩到 20 float(80B):+ow/gr+占位+描边色+发光色,管线 6 个属性。
+  Font 新增 padding(em)与 留白/pad,由 [字体.*] 标签 pad 键配置(须 ≥ 描边宽+发光半径)。
+  Fontcmd 的 outlineW/glowRadius 改为 em 单位,glowSteps 废除(SDF 发光连续)。
+  font.inl 重写收敛:blocks 收集 + emit 单 quad + router/tfun 两层(阴影/正文)。
+  演示 ini:px 96(图集 9MB,原来 40MB)+ pad 0.3,outlineW 0.04em,glowRadius 0.23em。
+  着色器已重编译,构建+冒烟通过。视觉质量待阁下确认。
+
+坑(SDF 发光矩形,已修):stb SDF 的灰度值在外侧到 128/pds 像素就饱和为 0,
+  并不是可以无限向 0 以下延伸的距离。旧发光公式在外侧阈值取负(0.5-ow-gr<0),
+  导致留白区(读作 d=0)全被点亮,发光显示成橙色矩形。
+  修法:烘焙 pds = 128/(pad*size),让 128 个灰度值恰好铺满留白,d=0/1 精确落在
+  留白边界、与界外零填充连续;绘制侧 em→d 换算 = 0.5/pad;发光带外缘 max(...,0)
+  截在 d≥0。特此记录:一切超出 SDF 可表示范围的阈值都要在 0/1 处截断。
+
+记录(特效收敛为描边,已完成):
+  按阁下要求删掉阴影/发光,只保留描边(SDF 片元内绘制)。
+  删除:Fontcmd 的 shadow/glow 参数与 setter、iload 键、发光色顶点字段、
+  font.inl 分层路由(现在单层直写)。顶点 80B 缩到 64B,管线属性 6→5。
+  描边质量提升:pad 收紧到 0.1em(pds 更细,量化更精);抗锯齿带宽改为逐顶点
+  自适应(1.5 烘焙像素,aa=1.5*128/(255*pad*size)),不再用固定值。
+  演示 ini:三行对齐,命令1 橙描边 / 命令2 无描边对照 / 命令3 二号字体蓝描边。
+  编译+冒烟通过。
+
+记录(绘制类 font.inl 拆分整理,已完成):
+  按"一函数一文件"把 Draw::font 拆开:font.inl 只留主流程(~60 行),
+  UTF-8 解码 → en/utf8next.inl,单字符矩形收集 → en/fontblocks.inl,
+  quad 发射 → en/fontemit.inl,矩形结构体 → en/parameters/fontblock.inl,
+  私有声明 → en/api/internal/function.inl。draw/main.hpp 增补 private 段与包含。
+  编译+冒烟通过。
+
+记录(字体绘制文件打包进 en/font/ 文件夹,已完成):
+  Draw 的字体绘制实现统一收进 youklx/window/en/parameters/draw/en/font/:
+  fontblock.inl、utf8next.inl、fontblocks.inl、fontemit.inl、font.inl 五个文件;
+  旧位置(en/ 根下与 en/parameters/fontblock.inl)已删除,main.hpp 包含路径已更新。
+  编译+冒烟通过。

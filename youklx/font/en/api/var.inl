@@ -1,4 +1,5 @@
 float size{20.0f};
+float padding{0.0f};             // SDF 边缘留白(em):烘焙时超出字形包围盒的距离场范围
 std::vector<unsigned char> ttfData;
 stbtt_fontinfo fontInfo;
 // 字形图集缓存(动态烘焙)

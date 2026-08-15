@@ -1,8 +1,10 @@
 namespace youklx {
     // 绑定渲染端并创建图集贴图(首次绘制时由字体渲染管线调用一次)
-    void Font::bindRenderer(vk::raii::PhysicalDevice& pd, vk::raii::Device& dev,
-                            vk::raii::DescriptorSetLayout& layout, vk::raii::DescriptorPool& pool,
-                            vk::raii::Sampler& samp, uint32_t queueFamilyIndex) {
+    void Font::bindRenderer(
+        vk::raii::PhysicalDevice& pd, vk::raii::Device& dev,                
+        vk::raii::DescriptorSetLayout& layout, vk::raii::DescriptorPool& pool,     
+        vk::raii::Sampler& samp, uint32_t queueFamilyIndex
+    ) {
         physicalDevice = &pd;
         device = &dev;
         descLayout = *layout;   // raii 单解引用即句柄
