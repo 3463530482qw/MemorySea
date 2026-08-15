@@ -11,6 +11,10 @@ wiall用于#include标准头文件,第三方库,自定义大类,除了wiall其�
 
 单文件推荐长度不超过200到300行,100行内为最佳.
 
+工作记录和报告写在.vscode/work_cache.txt,写完之后记得清理,最好在500行以内.
+
+如果犯错了可以在本文件内进行添加记录保证不会再犯.
+
 # 类标准定义
 include parameters(用到的数据结构体或子类)
 namespace youklx {
