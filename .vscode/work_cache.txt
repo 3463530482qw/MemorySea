@@ -76,3 +76,34 @@
   fontblock.inl、utf8next.inl、fontblocks.inl、fontemit.inl、font.inl 五个文件;
   旧位置(en/ 根下与 en/parameters/fontblock.inl)已删除,main.hpp 包含路径已更新。
   编译+冒烟通过。
+
+记录(液体流动描边 + 移动拖尾,已完成):
+  流动:Fontcmd 新增 flow/flowSpeed/flowColor;顶点 effects vec4 扩展为
+  (ow,aa,相位,流速),新增流动色 vec4(顶点 64B→80B,管线属性 5→6);
+  推常量加 time(76B→80B,SDL_GetTicks 秒)。片元:流速>0 时描边宽 ±30% 起伏、
+  颜色在描边色与流动副色间 sin 循环,相位随字形位置(沿文字流动);流速 0 即静态。
+  拖尾:Fontcmd 新增 trail/trailN/trailA + trailx/traily 历史;Draw::font 标脏块
+  每帧记录位置,旧位置画淡影(越旧越淡);静止时淡影与正文重合自然不可见,
+  移动即沿路径拉出轨迹。关闭时清空历史。
+  演示:命令1 去掉 ini 的 x/y(iload 保留当前值),场景代码设位置绕圆运动,
+  开 flow+trail;命令2/3 静态对照。着色器重编译+构建+冒烟通过。
+
+坑(场景逐帧更新放错位置,已修):mainMenu() 函数体内 while(窗口.是否运行) 循环之前
+  的代码每场只执行一次,只有循环体内/更新包内才是逐帧执行。曾把 命令1.设位置 放在
+  循环外,位置第二帧起冻住、拖尾失效。已移入 命令1 的 线程.更新包 lambda 内
+  (包随 线程.运行() 每帧在工作线程执行)。特此记录:场景逐帧逻辑一律放更新包/循环内。
+
+记录(拖尾带描边,已完成):拖尾淡影原来只画字形本体(ow=0),太单薄。改为淡影也
+  带描边(传 ow),且 fontemit 的 ka 透明度系数同时乘正文与描边 alpha,整体渐隐。
+  编译+冒烟通过。
+
+记录(字体特效全部撤除,回到干净基线,已完成):
+  按阁下要求删除全部字体特效(描边/流动/拖尾)及其专属机制:
+  - Font:SDF 烘焙回位图(stbtt_GetCodepointBitmap),移除 padding/留白/pad.inl
+  - Fontmap iload:去掉 pad 键
+  - Fontcmd:outline/flow/trail 参数、设描边/设流动/设拖尾、ini 键、拖尾历史全删
+  - Vertex 回 8 字段(32B),管线属性 6→3,推常量去 time 回 76B
+  - font.vert/frag 回简单染色;fontemit 去 ox/oy/ow/aa/ka;font.inl 去拖尾块
+  - ini 回三行静态文字,mainMenu.cpp 去逐帧设位置
+  保留:ini 字体装载([字体.名字] 标签)、en/font/ 目录结构、窗口模块无字体成员。
+  着色器重编译+构建+冒烟通过。特效写法待阁下重新设计。

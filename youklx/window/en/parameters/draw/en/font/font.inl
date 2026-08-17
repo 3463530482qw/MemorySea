@@ -8,17 +8,12 @@ namespace youklx {
             // 缩放比例 = 目标字号 / 烘焙字号(位图按烘焙字号烤制,绘制时按比例缩放)
             float scale = cmd.fontSize / cmd.fot->size;
 
-            // 收集单字符矩形,逐个发射(描边在片元内按 SDF 画,每字符只需 1 个 quad)
+            // 收集单字符矩形,逐个发射
             std::vector<fontblock> blocks;
             fontblocks(cmd, scale, blocks);
 
-            // 描边参数(em → SDF d 值):烘焙时 128 灰度铺满留白 pad,故 1em = 0.5/pad;
-            // 抗锯齿带宽取 1.5 个烘焙像素;描边关闭时 ow=0,片元里直接跳过
-            float pad = std::max(cmd.fot->padding, 1e-4f);
-            float ow = cmd.outline ? cmd.outlineW / (2.0f * pad) : 0.0f;
-            float aa = 1.5f * 128.0f / (255.0f * pad * cmd.fot->size);
             float cosr = std::cos(cmd.rotate), sinr = std::sin(cmd.rotate);
-            for (const fontblock& b : blocks) fontemit(cmd, b, ow, aa, cosr, sinr);
+            for (const fontblock& b : blocks) fontemit(cmd, b, cosr, sinr);
 
             cmd.dirty = false;
         }

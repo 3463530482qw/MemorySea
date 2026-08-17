@@ -41,19 +41,16 @@ namespace youklx {
         stages[1].setModule(*fragShader);
         stages[1].setPName("main");
 
-        // 顶点输入:Vertex{x,y,u,v,r,g,b,a, ow,aa,占位, 描边色}
-        // → pos(2)+uv(2)+color(4)+effects(4)+outline(4),共 64 字节
+        // 顶点输入:Vertex{x,y,u,v,r,g,b,a} → pos(2)+uv(2)+color(4)
         vk::VertexInputBindingDescription bindingDesc;
         bindingDesc.setBinding(0);
         bindingDesc.setStride(sizeof(Vertex));
         bindingDesc.setInputRate(vk::VertexInputRate::eVertex);
 
-        std::array<vk::VertexInputAttributeDescription, 5> attrs;
+        std::array<vk::VertexInputAttributeDescription, 3> attrs;
         attrs[0].setLocation(0); attrs[0].setBinding(0); attrs[0].setFormat(vk::Format::eR32G32Sfloat); attrs[0].setOffset(0);
         attrs[1].setLocation(1); attrs[1].setBinding(0); attrs[1].setFormat(vk::Format::eR32G32Sfloat); attrs[1].setOffset(2 * sizeof(float));
         attrs[2].setLocation(2); attrs[2].setBinding(0); attrs[2].setFormat(vk::Format::eR32G32B32A32Sfloat); attrs[2].setOffset(4 * sizeof(float));
-        attrs[3].setLocation(3); attrs[3].setBinding(0); attrs[3].setFormat(vk::Format::eR32G32B32A32Sfloat); attrs[3].setOffset(8 * sizeof(float));
-        attrs[4].setLocation(4); attrs[4].setBinding(0); attrs[4].setFormat(vk::Format::eR32G32B32A32Sfloat); attrs[4].setOffset(12 * sizeof(float));
 
         vk::PipelineVertexInputStateCreateInfo vertexInput;
         vertexInput.setVertexBindingDescriptionCount(1);

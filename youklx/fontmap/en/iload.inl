@@ -23,9 +23,6 @@ namespace youklx {
             font->load(path.c_str());
             float pxv = static_cast<float>(reader.GetReal(prefix + name, "px", 0.0));
             if (pxv > 0.0f) font->px(pxv);
-            // SDF 留白(em):描边宽别超过它,否则描边会被裁剪
-            float padv = static_cast<float>(reader.GetReal(prefix + name, "pad", 0.0));
-            if (padv > 0.0f) font->pad(padv);
             add(name, font.get());
             owned_names.push_back(name);
             owned.push_back(std::move(font));

@@ -1,6 +1,5 @@
 void load(const char* ttfpath);
 void px(float ssize);
-void pad(float em);
 Glyph query(char32_t ch);
 // --- GPU 图集贴图(贴图待在字体类里,由字体渲染管线在首次绘制时惰性初始化) ---
 bool rendererBound() const;   // 贴图是否已绑定渲染端

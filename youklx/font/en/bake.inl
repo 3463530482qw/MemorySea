@@ -1,27 +1,20 @@
 namespace youklx {
-    // 内部:把单个字形烤成 SDF 放进图集,返回 true 表示成功放入
+    // 内部:把单个字形烤进图集,返回 true 表示成功放入
     bool Font::bake(char32_t ch, float scale) {
-        // SDF 约定:0.5 是轮廓,值大于 0.5 在字形内(stb 的 onedge_value=128)。
-        // 距离映射:128 个灰度值恰好铺满整个留白(pad),d=0/1 精确落在留白边界,
-        // 边界外的零填充与边界连续;绘制侧按 1em = 0.5/pad 把 em 换算成 d 值
-        const unsigned char onedge = 128;
-        const float pds = padding > 0.0f ? 128.0f / (padding * size) : size / 8.0f;
-        int padpx = static_cast<int>(std::ceil(padding * size));
-
+        // stb_truetype 返回每像素字节数(1=灰度),失败时 w/h 为 0
         int w = 0, h = 0, xo = 0, yo = 0;
-        unsigned char* sdf = stbtt_GetCodepointSDF(&fontInfo, scale, static_cast<int>(ch),
-                                                   padpx, onedge, pds, &w, &h, &xo, &yo);
-        if (!sdf || w <= 0 || h <= 0) { stbtt_FreeBitmap(sdf, nullptr); return false; }
+        unsigned char* bmp = stbtt_GetCodepointBitmap(&fontInfo, scale, scale, static_cast<int>(ch), &w, &h, &xo, &yo);
+        if (!bmp || w <= 0 || h <= 0) { stbtt_FreeBitmap(bmp, nullptr); return false; }
 
-        // 补成正方形:边长 = max(宽,高),字形居中,四边留白透明
+        // 位图补成正方形:边长 = max(宽,高),字形居中,四边补 0(透明)
         // 正方形位图打包整齐,字形完整不越界,UV/偏移都按正方形算
         int side = std::max(w, h);
         std::vector<unsigned char> square(static_cast<size_t>(side) * side, 0);
         int ox = (side - w) / 2, oy = (side - h) / 2;
         for (int y = 0; y < h; y++) {
-            std::memcpy(square.data() + static_cast<size_t>(oy + y) * side + ox, sdf + y * w, w);
+            std::memcpy(square.data() + static_cast<size_t>(oy + y) * side + ox, bmp + y * w, w);
         }
-        stbtt_FreeBitmap(sdf, nullptr);
+        stbtt_FreeBitmap(bmp, nullptr);
 
         // 行式打包:当前行放不下 → 换行
         if (cursorX + side + 1 > atlasW) { cursorX = 0; cursorY += rowH + 1; rowH = 0; }
