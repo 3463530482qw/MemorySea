@@ -2,7 +2,7 @@
 
 int main() {
     try {
-        luos::initialize();
+        Gnik_luos::initialize();
         {
             配置文件.添加("ini/main.ini", "初始化配置");
             youklx::窗口创建信息 wincinfo;
