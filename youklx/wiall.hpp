@@ -73,7 +73,7 @@ namespace 有棵黎夕的 = youklx;
 #include "image/main.hpp"
 #include "ini/main.hpp"
 #include "window/main.hpp"
-
+#include "luos/main.hpp"
 #include "compiler/main.hpp"
 
 #include "init.hpp"

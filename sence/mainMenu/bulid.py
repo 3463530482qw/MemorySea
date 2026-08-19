@@ -24,6 +24,7 @@ include_args = [
     "-I", "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
     "-I", "D:/mingw64/inih-r62/inih-r62",
     "-I", "D:/mingw64/stb-master/stb-master",
+    "-I", "D:/Luos",
     "-I", "C:/vulkan/Include",
     "-I", str(memorySea),
 ]

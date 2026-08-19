@@ -33,6 +33,7 @@ include_dirs = [
     "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
     "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
     "D:/mingw64/stb-master/stb-master",
+    "D:/Luos",
     str(mopath),
     "C:/vulkan/Include",
 ]
