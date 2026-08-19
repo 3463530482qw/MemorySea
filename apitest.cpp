@@ -4,6 +4,11 @@ int main() {
     try {
         Gnik_luos::initialize();
         {
+            Gnik_luos::Json aad;
+            aad.add("ma.json", "as");          // "as" 是存储名,存入 map 的 key
+            const auto& we = aad.get("as");    // 按存储名取出 Document
+            std::println("{}", we["as"]["asd"].GetString());  // 读 JSON 里 "as" 内层的 "asd"
+
             配置文件.添加("ini/main.ini", "初始化配置");
             youklx::窗口创建信息 wincinfo;
             wincinfo.初始化配置(配置文件.取("初始化配置"),"wincinfo").加载();
