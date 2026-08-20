@@ -4,12 +4,12 @@ int main() {
     try {
         Gnik_luos::initialize();
         {
-            配置文件.add("json/main.json", "初始化配置");
-            场景.batch_load(配置文件.get("初始化配置"),"scene");
-            场景.current_scene = "mainMenu";
+            配置文件.添加("json/main.json", "初始化配置");
+            场景.批量加载(配置文件.获取("初始化配置"),"scene");
+            场景.当前场景 = "mainMenu";
         }
         while(1) {
-            if (auto it = 场景.data.find(场景.current_scene); it != 场景.data.end()) {
+            if (auto it = 场景.数据.find(场景.当前场景); it != 场景.数据.end()) {
                 it->second();
             }
         }

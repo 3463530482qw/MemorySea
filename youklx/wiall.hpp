@@ -28,9 +28,9 @@
 #include <atomic>
 #include <limits>
 
-
-
 #include <windows.h>
+
+#undef GetObject
 
 //媒体库
 #include "SDL_vulkan.h"
@@ -46,8 +46,10 @@
 #include <spine-sdl-cpp.h>
 
 //ini配置读取库
-#include "ini.c"
-#include "cpp/INIReader.cpp"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/istreamwrapper.h"
 
 //图形库
 #ifndef NDEBUG
@@ -64,16 +66,6 @@ namespace youklx {
     constexpr Uint32 SDL_EVENT_SET_WICON = 0x8000;
 }
 namespace 有棵黎夕的 = youklx;
-//自定义封装库
-#include "scene/main.hpp"
-#include "thread/main.hpp"
-#include "vulkan/main.hpp"
-#include "font/main.hpp"
-#include "fontmap/main.hpp"
-#include "image/main.hpp"
-#include "ini/main.hpp"
-#include "window/main.hpp"
 #include "luos/main.hpp"
-#include "compiler/main.hpp"
 
 #include "init.hpp"
