@@ -1,0 +1,5 @@
+{
+    "scene": {
+        "mainMenu": "dll/mainMenu/mainMenu.dll"
+    }
+}

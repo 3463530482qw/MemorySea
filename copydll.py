@@ -42,7 +42,7 @@ def main():
     print("=== 复制 dll ===")
     copy_dll()
     print("=== 复制资源文件夹 ===")
-    copy_folder("ini")
+    copy_folder("json")
     copy_folder("image")
     copy_folder("font")
 

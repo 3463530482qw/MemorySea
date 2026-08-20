@@ -5,10 +5,5 @@
 #endif
 
 #define API __declspec(dllexport)
-API youklx::配置文件 配置文件;
-API youklx::字体仓库 字体仓库;
-API youklx::场景 场景;
-API youklx::线程 线程;
-API youklx::图片 图片;
-API youklx::火山 火山;
-API youklx::窗口 窗口;
+API Gnik_luos::场景 场景;
+API Gnik_luos::配置文件 配置文件;
