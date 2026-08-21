@@ -9,3 +9,4 @@
 API Gnik_luos::场景 场景;
 API Gnik_luos::配置文件 配置文件;
 API Gnik_luos::线程 线程;
+API Gnik_luos::运行 运行;

@@ -7,9 +7,12 @@ int main() {
             配置文件.添加("json/main.json", "初始化配置");
             场景.批量加载(配置文件.获取("初始化配置"),"scene");
             场景.当前场景 = "mainMenu";
+            场景.目标场景 = 场景.当前场景;
+            运行.specify_scene(场景);
+            运行.specify_thread(线程);
         }
         while(1) {
-            if (auto it = 场景.数据.find(场景.当前场景); it != 场景.数据.end()) {
+            if (auto it = 场景.数据.find(场景.目标场景); it != 场景.数据.end()) {
                 it->second();
             }
         }

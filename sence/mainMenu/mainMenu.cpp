@@ -8,7 +8,5 @@ extern "C" EXPORT void mainMenu() {
     线程.draw_pack([&a](){
         std::println("输出a的值是:{}", a);
     });
-    while(1) {
-        线程.run();
-    }
+    运行.start();
 }
