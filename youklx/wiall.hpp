@@ -45,11 +45,7 @@
 //动画库
 #include <spine-sdl-cpp.h>
 
-//ini配置读取库
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/istreamwrapper.h"
+#include <simdjson.h>
 
 //图形库
 #ifndef NDEBUG

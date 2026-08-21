@@ -30,7 +30,7 @@ include_dirs = [
     "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
     "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3",
     "D:/mingw64/inih-r62/inih-r62",
-    "D:/mingw64/rapidjson-master/include",
+    "D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/include",
     "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
     "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
     "D:/mingw64/stb-master/stb-master",
@@ -62,6 +62,25 @@ if not spine_lib.exists():
 else:
     print(f"=== 使用已编译的 spine 静态库(如需重建请删除 {spine_lib.name}) ===")
 
+# simdjson 非 header-only,需编译 simdjson.cpp 一次;第三方代码不变,缓存成静态库
+simdjson_src = Path("D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/src/simdjson.cpp")
+simdjson_lib = mopath / "build" / "libsimdjson.a"
+if not simdjson_lib.exists():
+    print(f"=== 编译 simdjson 静态库(一次性,如需重建请删除 {simdjson_lib.name}) ===")
+    simdjson_obj = mopath / "build" / "simdjson.o"
+    # simdjson.cpp 内部通过 <base.h>、<generic/...> 引用 src 目录,需额外加入 include 路径
+    simdjson_include = include_dirs + ["D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/src"]
+    subprocess.run([
+        *gpp, "-std=c++23", "-O2", "-DNDEBUG",
+        "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
+        "-c", str(simdjson_src), "-o", str(simdjson_obj),
+        *[f"-I{i}" for i in simdjson_include],
+    ], check=True)
+    subprocess.run(["x86_64-w64-mingw32-ar", "rcs", str(simdjson_lib), str(simdjson_obj)], check=True)
+    print(f"simdjson 静态库生成: {simdjson_lib}")
+else:
+    print(f"=== 使用已编译的 simdjson 静态库(如需重建请删除 {simdjson_lib.name}) ===")
+
 # 导出所有符号,生成导入库(场景 DLL 链接用)
 import_lib = mopath / "build" / "libMemorySea.dll.a"
 link_options = [
@@ -92,6 +111,8 @@ gpp_cmd = [
     str(main_obj),
     # --whole-archive: 让 spine 全部符号进 DLL,场景模块才能通过导入库链接到任意 spine 类
     "-Wl,--whole-archive", str(spine_lib), "-Wl,--no-whole-archive",
+    # simdjson 同理:场景模块也要用到其符号,必须全量导出
+    "-Wl,--whole-archive", str(simdjson_lib), "-Wl,--no-whole-archive",
     *link_options,
 ]
 
