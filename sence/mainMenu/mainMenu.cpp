@@ -2,11 +2,11 @@
 
 extern "C" EXPORT void mainMenu() {
     int a{0};
-    线程.update_pack([&a](){
+    线程.更新包([&a](){
         a++;
     });
-    线程.draw_pack([&a](){
+    线程.绘制包([&a](){
         std::println("输出a的值是:{}", a);
     });
-    运行.start();
+    运行.开始();
 }
