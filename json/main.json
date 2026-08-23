@@ -1,5 +1,15 @@
 {
     "scene": {
         "mainMenu": "dll/mainMenu/mainMenu.dll"
+    },
+
+    "window_info": {
+        "name": "MemorySea",
+        "width": "0",
+        "height": "0",
+        "logic_width": "1920",
+        "logic_height": "1080",
+        "icon": "image/icon/icon.png",
+        "display_index": "0"
     }
 }
