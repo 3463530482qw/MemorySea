@@ -5,11 +5,11 @@
 
     "window_info": {
         "name": "MemorySea",
-        "width": "0",
-        "height": "0",
-        "logic_width": "1920",
-        "logic_height": "1080",
+        "width": 0,
+        "height": 0,
+        "logic_width": 1920,
+        "logic_height": 1080,
         "icon": "image/icon/icon.png",
-        "display_index": "0"
+        "display_index": 0
     }
 }
