@@ -29,6 +29,7 @@
 #include <limits>
 
 #include <windows.h>
+#include <string_view>
 
 #undef GetObject
 
