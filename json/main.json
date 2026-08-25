@@ -11,5 +11,11 @@
         "logic_height": 1080,
         "icon": "image/icon/icon.png",
         "display_index": 0
+    },
+
+    "window_create_info": {
+        "resizable": true,
+        "high_pixel_density": true,
+        "vulkan": true
     }
 }
