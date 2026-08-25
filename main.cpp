@@ -15,10 +15,11 @@ int main() {
             窗口.设置(窗口配置信息);
             Gnik_luos::窗口创建信息 窗口创建信息;
             窗口创建信息.批量加载(配置文件.获取("初始化配置"),"window_create_info");
-            窗口.create(窗口创建信息);
+            窗口.创建(窗口创建信息);
+            运行.specify_window(窗口);
             std::println("输出a的值是:{}", 窗口.logic_width);
         }
-        while(1) {
+        while(窗口.isrun) {
             if (auto it = 场景.数据.find(场景.目标场景); it != 场景.数据.end()) {
                 it->second();
             }
