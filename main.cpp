@@ -16,6 +16,7 @@ int main() {
             Gnik_luos::窗口创建信息 窗口创建信息;
             窗口创建信息.批量加载(配置文件.获取("初始化配置"),"window_create_info");
             窗口.创建(窗口创建信息);
+            窗口.time.batch_load(配置文件.获取("初始化配置"),"window_time");
             运行.specify_window(窗口);
             std::println("输出a的值是:{}", 窗口.logic_width);
         }

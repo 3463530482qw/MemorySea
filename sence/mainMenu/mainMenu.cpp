@@ -6,7 +6,7 @@ extern "C" EXPORT void mainMenu() {
         a++;
     });
     线程.绘制包([&a](){
-        //std::println("输出a的值是:{}", a);
+        std::println("输出a的值是:{}", 窗口.time.current);
     });
     运行.开始();
 }
