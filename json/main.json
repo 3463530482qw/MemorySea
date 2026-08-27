@@ -17,5 +17,10 @@
         "resizable": true,
         "high_pixel_density": true,
         "vulkan": true
+    },
+
+    "window_time": {
+        "fps": 1.0,
+        "youk_smooth": true
     }
 }
