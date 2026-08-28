@@ -20,6 +20,7 @@ int main() {
 
             Gnik_luos::图片 临时图片;
             临时图片.load(窗口.icon.c_str());
+            窗口.set_icon(临时图片.pack[0][0]);
 
             运行.指定场景(场景);
             运行.指定线程(线程);
