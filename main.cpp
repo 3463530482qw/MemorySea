@@ -26,14 +26,7 @@ int main() {
             Gnik_luos::火山初始化信息 火山初始化信息;
             火山初始化信息.window_name = 窗口.name;
             火山.init(火山初始化信息);
-            窗口.window_vulkan.initialize(
-                火山,
-                窗口.id,
-                窗口.width,
-                窗口.height,
-                窗口.aspectratio,
-                窗口.logic_width
-            );
+            窗口.window_vulkan.initialize(火山);
 
             运行.指定场景(场景);
             运行.指定线程(线程);
@@ -44,8 +37,7 @@ int main() {
                 it->second();
             }
         }
-        窗口.window_vulkan.destroy();
-        窗口.close();
+        // 收尾由 ~Window 负责:先销毁窗口火山持有的表面/交换链,再关窗口
     } catch (const std::exception& e) {
         std::cerr << "异常: " << e.what() << std::endl;
         std::cin.get();

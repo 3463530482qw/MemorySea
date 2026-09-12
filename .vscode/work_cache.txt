@@ -263,6 +263,137 @@
   (语义分开,当前传同一矩形),窗口内接口径不会再把裁剪带偏。
   验证:探针最大化 → 视口 2371x1334(左右各 94 灰边);冒烟与 MemorySea.exe 运行通过。
 
+记录(类定义整改:成员变量一律走 inl,已完成):
+  阁下指出"谁让你这么定义类型成员变量的" —— 洛莳此前把私有成员直接写在类体里,违反
+  AGENTS.md 的类标准定义。本次把两处主类与全部参数子类都改回模板写法:
+  - Vulkan:私有 context/layers/validation_features/debug_create_info/debug_messenger
+    进 english/available/internal/variable.inl;vulkan_info 与 instance/physical_device/
+    device/graphics_queue 进 english/available/variable.inl;类里只留 #include 与
+    中文别名 `调试信息`(引用别名须在成员之后,故仍写在类体,与既有中文别名写法一致)。
+  - Window_vulkan:8 个子对象进 available/variable.inl,initialized/rebuild_flag/pending_*/
+    graphics_queue_family/vulkan* 进 internal/variable.inl。
+  - 8 个参数子类(视口/表面/交换链/渲染通道/帧缓冲/命令池/命令缓冲/同步)全部恢复
+    main.hpp + english/available/{variable,function}.inl (+internal/variable.inl) 结构,
+    实现文件逐一落回各自 english/*.inl(此前被删)。
+  验证:复查脚本确认所有 main.hpp 中已无裸写成员;冒烟、最大化探针、MemorySea.exe
+    (重链+场景重建+运行 8s)全部通过。
+
+记录(中文引用别名与鼠标类成员也收进 inl,已完成):
+  阁下指出 `Vulkan_debug_info& 调试信息{vulkan_info.debug_info};` 也不该写在类体:
+  - 该别名移入 luos/vulkan/中文/可用/变量.inl,类里改为 #include "中文/可用/变量.inl",
+    位置仍在 available/variable.inl 之后(别名必须排在 vulkan_info 之后才能绑定)。
+  - 顺手统一:window/english/parameters/mouse 的 x/y 也进 english/available/variable.inl,
+    类体同样只留 #include。
+  复查:扫描全部 main.hpp,类体内除 #include / 访问标号外只剩 7 处构造函数与析构函数声明
+    (Json/Scene/Run/Thread/Window_time/Window_vulkan),符合类标准定义。
+  验证:main.cpp 编译 + MemorySea.exe 重链 + mainMenu.dll 重建 + 运行 8s 无异常。
+
+记录(调试构建设置校验层报错抛出 + 两个真 bug,已完成):
+  阁下的要求:debug_message_callback.inl 里用 throw std::runtime_error。落地后调试构建
+  (不定义 NDEBUG,校验层开启)暴露出三处问题,全部修掉:
+  1) 编译不过的两处:
+     - debug_message_callback 在 create_debug_messenger 之后才被引入 → main.hpp 里把
+       debug_message_callback.inl 调到 create_debug_messenger.inl 之前。
+     - setEnabledValidationFeatures 收 ArrayProxyNoTemporaries,吃不下临时 vector → 先落
+       到具名 lvalue(enabled_features 成员)。
+     - collect_validation_features 原本被声明在类作用域(声明写在类内 include 里)→ 改为
+       命名空间作用域自由函数,声明独立成 english/available/function.inl(类内成员声明改名
+       class.inl),加 inline。
+  2) 真 bug:validation_features.pEnabledValidationFeatures 指向函数内局部 vector,出函数即
+     悬垂 —— 校验层立刻报 "pEnabledValidationFeatures[0] (49) 越界"。改为成员
+     enabled_features,与 validation_features 同寿命。
+  3) 真 bug:render_finished 信号量跨交换链图像复用,校验层报
+     VUID-vkQueueSubmit-pSignalSemaphores-00067。改为:取像信号每在途帧一个
+     (image_available_per_frame,取像前不知图像索引),渲染完成信号每图像一个
+     (render_finished_per_image,按 image_index 取),交换链重建时按新图像数重建。
+  回调行为:先打印,再对 eError 抛 std::runtime_error,异常经创建点(如 vkCreateInstance)
+    带回应用;Warning 等只打印。Note:校验层报错时错误文字会同时出现在 stderr 与异常消息里。
+  验证:调试构建(校验层)运行 —— 初始化/改尺寸/最小化/恢复全通过且零校验告警;
+    发布构建(NDEBUG)同样通过;main.cpp 编译 + MemorySea.exe 重链 + 场景重建 + 运行 8s 通过。
+
+记录(available 目录恢复标准文件集,已完成):
+  阁下指出 luos/vulkan/english/available/class.inl 不该存在。起因:洛莳为了让
+  collect_validation_features 这个自由函数有地方声明,另造了 class.inl 和一个自由函数声明文件。
+  改法(辅助函数收进类内,不再另立文件):
+  - collect_validation_features 改为 Vulkan 私有成员函数(实现仍独占
+    english/collect_validation_features.inl 一支),声明并入 internal/function.inl。
+  - class.inl 改名回标准名 function.inl(公开成员声明),另建的 function.inl 删除。
+  available 目录回归标准四件:function.inl / variable.inl / internal/function.inl /
+    internal/variable.inl。
+  验证:调试构建(校验层)与发布构建均通过;MemorySea.exe 重链 + 场景重建 + 运行 8s 无异常。
+
+记录(火山 + 窗口火山 全面复查,已完成):
+  阁下要求复查两个模块。逐文件通读 + 校验层实机验证,查出 6 处问题,全部修掉:
+  1) 【实质缺陷】debug_messenger 只声明未创建:回调根本没接上。实证 —— 把旧的信号量
+     bug 临时放回,校验层报错走的是"层自己的默认输出",没有我们的 "[vulkan]" 前缀,
+     说明消息没进回调。修法:create_debug_messenger 改为返回 bool(层与扩展都可用才 true),
+     实例建成后用**局部量** vk::raii::DebugUtilsMessengerEXT 建 messenger,让创建期以后
+     的消息都走回调。
+  2) 【修 1 时暴露】messenger 做成成员会晚于实例销毁,校验层报
+     "VkInstance has 1 leaked objects"(VUID-vkDestroyInstance-instance-00629)。改用局部量,
+     生命周期自然落在实例存活期内。
+  3) 【洛莳自己引入】上一轮"优化"删掉了 draw_frame 里的每帧录制,单次提交标记
+     (eOneTimeSubmit)的命令缓冲被重复提交,校验层报
+     UNASSIGNED-DrawState-CommandBufferSingleSubmitViolation。修法:恢复每帧重录(与移植前
+     一致),并在 begin.inl 注明"若改为跨帧复用需换 eSimultaneousUse"。
+  4) 实例扩展无条件启用:VK_EXT_DEBUG_UTILS_EXTENSION_NAME 直接 push,扩展不存在时
+     vkCreateInstance 会失败。修法:先 enumerateInstanceExtensionProperties 确认可用,
+     不可用则不加扩展并返回 false。
+  5) 设备扩展无条件启用:VK_KHR_SWAPCHAIN_EXTENSION_NAME 直接启用。修法:先
+     enumerateDeviceExtensionProperties 确认,缺失时抛明确异常。
+  6) 头文件内回调非静态:debug_message_callback 具外部链接,多编译单元会重复定义。修法:static。
+  另清理:Vulkan_debug_info::pnext 死字段(从未被读取)删除。
+  已知无害项(记录备查):
+  - Luos 是头文件库,实现写在 inl 里,多编译单元必然重复定义(Json/Scene 等既有模块同样如此);
+    MemorySea 主程序单编译单元、场景 DLL 各自成库,当前无冲突。
+  - find_memory_type 库内暂无调用方,留给后续贴图/字体模块用。
+  验证:调试构建(校验层全开)—— 冒烟与最大化探针零校验告警、退出 0;发布构建通过;
+    main.cpp 编译 + MemorySea.exe 重链 + mainMenu.dll 重建 + 运行 8s 无异常。
+
+记录(窗口构造/析构落地 + 窗口火山接口简化,已完成):
+  阁下两点要求:在 luos/window/main.inl 实现 Window 构造与析构(此前是空文件);
+  简化 窗口.window_vulkan.initialize,参数改为从子类指针变量取、指针在 Window 构造函数回指。
+  落地:
+  - Window_vulkan 新增宿主指针 `Window* host{nullptr};`(放 available/variable.inl,Window
+    构造函数需赋值)。火山仍是借用:`Vulkan* vulkan`。
+  - Window::Window() { window_vulkan.host = this; } —— 尺寸/画布比例/逻辑宽全部由宿主提供。
+  - Window::~Window() { window_vulkan.destroy(); close(); } —— 窗口火山持有的表面/交换链随窗口
+    回收;火山本体归应用(见 vmain),不在此销毁。main.cpp 原先收尾的 destroy + close 两行删除。
+  - initialize 收敛为 `void initialize(Vulkan& vulkan);`,内部 pending_* 取自
+    host->{width,height,aspectratio,logic_width}。
+  - 循环依赖:initialize 实现要读 Window 成员,必须在 Window 完整定义之后引入,故
+    window_vulkan/main.hpp 不再包含 initialize.inl,改由 window/main.hpp 在 `using 窗口 = Window;`
+    之后引入(已附注释)。
+  - Window_vulkan 补回析构实现 english/destructor.inl(清句柄与借用指针)。
+  调用点统一为 `窗口.window_vulkan.initialize(火山);`(main.cpp / 冒烟 / 探针)。
+  验证:调试构建(校验层)冒烟与探针零告警;main.cpp 编译 + MemorySea.exe 重链 + 场景重建 +
+    运行 8s 后手动关窗,进程正常退出、stderr 干净。
+
+坑(重复定义:头文件无保护 + 同级 include,已修):
+  现象:阁下构建时报 12 处 redefinition(Vulkan_debug_info/Vulkan_info/Vulkan/各实现函数)。
+  根因两处叠加:
+  1) 洛莳之前用脚本重写 main.hpp 时把 #pragma once 全弄丢了,而全库本来就没有保护 ——
+     一旦某个头被引两次就必然重定义。
+  2) window_vulkan/main.hpp 里引了 luos/vulkan/main.hpp(window 下的模块去引同级模块)。
+  修法(按阁下要求:不写 #pragma once / #ifndef 保护,靠包含关系保证只引一次):
+  - 删除全库 25 个 main.hpp 上的保护(含洛莳先前加的 #pragma once 与 #ifndef LUOS_*)。
+  - window_vulkan/main.hpp:去掉 luos/vulkan/main.hpp,改为 `class Vulkan;` 前置声明
+    (窗口火山只持有 Vulkan* 借用指针,不需要完整定义)。
+  - window/main.hpp:去掉 #include "luos/vulkan/main.hpp"(同级模块互相 include 是错的方向);
+    initialize 的实现需要完整定义,由顶层 luos/main.hpp 在窗口之前引入火山保证顺序。
+  - 结论口径:依赖能用前置声明就用前置声明;确需完整定义时,由 luos/main.hpp 按
+    火山 → 窗口 的顺序引入,模块内部不再互相 include。
+  验证:MemorySea main.cpp 编译通过;调试构建(校验层)冒烟与探针零告警;
+    MemorySea.exe 重链 + 场景重建 + 运行 8s 后关窗正常、stderr 干净;
+    扫描确认全库已无 #pragma once / #ifndef LUOS_ 保护。
+
+
+
+
+
+
+
+
 
 
 
