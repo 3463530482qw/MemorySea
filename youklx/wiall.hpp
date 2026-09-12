@@ -40,7 +40,9 @@
 #include "stb_image.h"
 
 //字体加载库
+#ifndef STB_TRUETYPE_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION
+#endif
 #include "stb_truetype.h"
 
 //动画库

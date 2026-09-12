@@ -121,3 +121,154 @@
   - hold/release 补齐并在 main.hpp 启用,越界键返回 false。
   契约:按键函数需每帧轮询(与旧版一致,mainMenu 已满足)。
   验证:CCACHE_DISABLE=1 构建通过,冒烟约 7s 无 stderr。库在工作区外,提交走阁下 push.py。
+
+记录(Luos 火山 + 窗口火山初始化移植,已完成):
+  目标:把 MemorySea 的 youklx::火山 / wvulkan 初始化按 Luos 风格重做,到命令缓冲录制为止。
+  最终文件数 35(已按阁下意见把上百个碎片合并):
+  - luos/vulkan:main.hpp(类内联声明)、create_instance.inl、create_debug_messenger.inl
+    (validation 层探测/回调/内存类型查询)、pick_physical_device.inl(含评分)、
+    create_logical_device.inl(含队列族查找/init/中文接口)。
+  - luos/window/.../window_vulkan:main.hpp(类 + 参数子类包含)、english/initialize.inl
+    (初始化流程/队列族/命令录制/析构)、create_swapchain.inl(视口/表面/交换链/图像视图)、
+    create_objects.inl(渲染通道/帧缓冲/命令池/命令缓冲/同步)、draw_frame.inl(取像/提交/呈现)、
+    rebuild.inl(改尺寸重建)、destroy.inl、parameters/*/main.hpp(参数子类各一支)。
+  设计要点:
+  - 去掉旧版裸指针注入(physicalDevice/device/surface/framebuffer...),改为初始化时按值传参。
+  - 火山以"窗口.火山"为唯一实例:旧 Window 有 vulkan 成员、示例程序另建全局火山,运行期混用
+    会让 run() 读到未初始化成员(表现为设备句柄为 0)。已删 Window 内部 vulkan 成员,火山放公开成员。
+  - 窗口尺寸变化只置 rebuild_flag + pending 尺寸,实际重建放 draw_frame 开头(最小化时跳过);
+    取像/呈现的 OutOfDate 不当异常抛出,只置重建标记。
+  - 视口状态(尺寸/偏移/缩放)从 command_buffer 挪到独立的 Vulkan_viewport,修掉旧 window_resize
+    里 cut_offset 写错字段、viewport_height 被清零两处毛病;mouse_update 同步改用视口。
+  - Window::resize 三个重载原来不改 width/height(改尺寸后逻辑尺寸不同步),已统一走
+    SDL_SetWindowSize + 视口重建 + 重建请求。
+  - wiall.hpp 的 STB_TRUETYPE_IMPLEMENTATION 改 #ifndef 保护:原写法让每个包含 wiall 的编译
+    单元都落地一份 stbtt 符号,多单元链接必冲突。
+  验证:D:/Luos/.vscode/vulkan_smoke/(smoke_unity.cpp + smoke.cpp + mini.cpp,已 gitignore)
+    编译+运行通过 — images=3、extent 960x540、120 帧呈现成功、改尺寸后 extent=1280x720 且
+    帧缓冲随重建刷新;MemorySea main.cpp 仍可编译(apitest.cpp 用的是旧 API,未动)。
+
+记录(Luos 火山/窗口火山 按一函数一文件拆开 + main.cpp 初始化,已完成):
+  文件拆分(阁下要求细粒度,共 56 支):
+  - luos/vulkan(19):main.hpp(类+内联声明)、english/ 下 create_instance、create_debug_messenger、
+    debug_message_callback、collect_validation_features、pick_physical_device、rate_physical_device、
+    find_graphics_queue_family、create_logical_device、find_memory_type、init,
+    available/variable+function、available/internal/function、parameters/vulkan_debug_info、vulkan_info,
+    中文/可用/函数。
+  - window_vulkan(37):main.hpp、english/ 下 initialize、find_graphics_queue_family、viewport_rect、
+    record_command_buffers、draw_frame、rebuild、destroy,available 三件套,
+    parameters/<视口|表面|交换链|渲染通道|帧缓冲|命令池|命令缓冲|同步>/main.hpp + english/*.inl
+    (rebuild; create/destroy; reset/create/create_image_views; create; create; create;
+    allocate/begin/begin_render_pass/set_viewport/end; create/wait),中文/可用/变量。
+  main.cpp 初始化(按阁下要求):
+  - 顺序:initialize → 配置文件.添加 → 场景.批量加载 → 窗口配置信息 → 窗口创建信息 → time.batch_load
+    → 图片.load+set_icon → 火山初始化信息(window_name=窗口.name) → 窗口.火山.init →
+    窗口.window_vulkan.initialize(窗口.火山, 窗口.id, 宽, 高, aspectratio, logic_width)
+    → 运行.指定场景/指定线程/specify_window → 主循环 → destroy + close。
+  - vmain.inl 去掉独立 vulkan 全局:火山以"窗口.火山"为唯一实例(旧的会与窗口成员两个实例并存,
+    运行期混用读到未初始化成员)。窗口新增 中文/可用/变量.inl:`Vulkan& 火山{vulkan};`。
+  端到端验证(真实构建路径,非仅头文件):
+  - 编译 main.cpp → 链接 D:\MemorySea\build\MemorySea.exe(--export-all-symbols + out-implib)
+    → 重新构建 sence/mainMenu/mainMenu.dll → 在 build 下运行 8s:进程存活、stdout/stderr 均无异常。
+
+记录(修正:火山归应用持有,窗口只借用,已完成):
+  阁下指出火山是通用模块、不该被窗口拥有。原设计把 Vulkan 放进 Window 成员,已改回:
+  - Window 彻底去掉 Vulkan 成员(不再有 vulkan/火山 别名)。
+  - Window_vulkan 内部改为借用指针 `Vulkan* vulkan{nullptr}`(非拥有):initialize 时绑定,
+    destroy 时解绑并把 initialized 置假;draw_frame/rebuild/destroy/destroy_resources/
+    find_graphics_queue_family 一律不吃参数,内部走借用指针。
+  - 由此一份火山可服务多个窗口:实例与设备只有一份,窗口各自持有表面/交换链/命令缓冲,
+    destroy 只回收窗口自己的资源。
+
+记录(火山放进 vmain 全局,已完成):
+  阁下指出火山既是通用模块,就该和其它服务一样放 vmain;vmode 里那条旧
+  `API Gnik_luos::Vulkan vulkan;` 也一并换掉。现状:
+  - vmain.inl:`API Gnik_luos::火山 火山;`(与场景/配置文件/线程/运行/窗口/图片并列)。
+  - vmode.inl:`API Gnik_luos::火山 火山;`(dllimport 镜像,场景模块可直接引用火山)。
+  - main.cpp 不再有局部火山,直接用全局 火山.init / 窗口.window_vulkan.initialize(火山, ...)。
+  - Window 无 Vulkan 成员;Window_vulkan 只有 `Vulkan* vulkan` 借用指针,initialize 绑定、
+    destroy 解绑,窗口不参与火山生命周期。
+  验证:窗口火山冒烟(960x540 → 120 帧 → 1280x720 重建)=通过;
+    main.cpp 编译 + MemorySea.exe 重链(导出表含 `火山`)+ mainMenu.dll 重建 + 运行 8s 无异常。
+
+坑(最小化后开窗口抛 "surface is not ready: ErrorOutOfDateKHR",已修):
+  根因两处:
+  1) initialize 直接建交换链,窗口若处于最小化(尺寸 0)或表面尚未就绪,交换链创建抛
+     OutOfDate,而这条路径没有任何兜底 —— 异常一路冒到应用。
+  2) draw_frame 里重建只判断 pending 尺寸非 0,重建过程自身抛的 OutOfDate 也会冒出去。
+  修法:
+  - initialize 拆两段:先建表面/逻辑设备/命令池/同步对象,并置 initialized=true;尺寸为 0 时
+    只置 rebuild_flag 返回,交换链留到尺寸恢复后由 rebuild 建立。
+  - 抽出 create_swapchain(宽, 高, aspectratio, logic_width):交换链→图像视图→渲染通道→
+    帧缓冲→命令缓冲分配→录制,initialize 与 rebuild 共用(不再在 initialize 里写两遍)。
+  - 新增 pending_aspectratio / pending_logic_width 随重建传递;draw_frame 里重建包
+    try/catch OutOfDate 与 SurfaceLost,捕获后保持标记下帧重试(最小化恢复瞬间表面常未就绪)。
+  - draw_frame 尾部拆出 submit_frame(取像/提交/呈现),两个文件都短了。
+  验证:冒烟加"最小化/恢复"一段 —— 初始化 960x540(images=3)→ 改尺寸 1280x720 →
+    request_rebuild(0,0) 跑 5 帧不抛异常 → 恢复 1280x720 后下一帧重建成功(images=3、
+    framebuffers=3)=通过;MemorySea.exe 重链 + 场景重建 + 运行 8s 无异常 =通过。
+
+坑(最大化后整窗黑屏:视口宽高为 0、缩放为 nan,已修):
+  现象:最大化成功但画面全黑(连清屏灰都看不到)。探针(zoom 复现)读出
+  "窗口=2560x1334 交换链=2560x1334 视口=0x1334 缩放=nan"。
+  根因:Vulkan_viewport::rebuild 里 scale = 视口宽 / logic_width,而重建路径的
+  logic_width 传的是 0(initialize 只在首次创建时拿到 logic_width,rebuild 没拿到),
+  scale 变成 0/0=nan;同时调用方在窗口尺寸为 0 时先做 aspectratio = 0/0,把 nan 当比例
+  传进来,内接矩形算出宽 0 —— 视口 0 宽即整帧不可见。
+  修法:
+  - 新增 pending_aspectratio / pending_logic_width,initialize 与 request_rebuild 都写入,
+    rebuild 用 pending 值建交换链(此前只存了宽高,比例与逻辑宽丢失)。
+  - request_rebuild 多一个带默认值的 aspectratio 参数,窗口侧把当前比例一并传下去。
+  - Vulkan_viewport::rebuild 不再信外部比例:比例以本次宽高现算为准,传入值仅在无效时兜底;
+    尺寸为 0 时 scale 取 1(绝不 0/0),logic_width 为 0 时 scale 取 1。
+  - Window::window_resize 只在宽高均大于 0 时才更新 aspectratio(避免 0/0 写进 nan)。
+  验证:探针最大化 → 视口=2560x1334 缩放=1.6(期望 1.6);还原 → 视口=960x540 缩放=0.6;
+    最小化 → 图像=0 帧缓冲=0;再还原 → 图像=3 帧缓冲=3。冒烟与 MemorySea.exe 运行通过。
+
+坑(裁剪矩形跟着视口走,已修):
+  现象:阁下指出"视图的裁剪出问题了"。set_viewport 里把同一个矩形既当视口又当裁剪:
+  setViewport(视口矩形) + setScissor(视口矩形)。视口是投影落点、允许小于帧缓冲
+  (保持画布比例的居中内接矩形),裁剪却必须覆盖整张帧缓冲——否则视口外的区域(含清屏)
+  会被裁掉,画面只剩一块。
+  修法(Vulkan_command_buffer::set_viewport 收两个矩形):
+  - viewport_area:内接矩形(视口=投影落点)
+  - scissor_area:整张帧缓冲(Offset2D{0,0} + swapchain.extent)
+  record_command_buffers 里 renderArea 也改用整张帧缓冲,清屏覆盖整窗;
+  录制发生在交换链重建之后,故 swapchain.extent 与帧缓冲尺寸总是一致,不会越界。
+  验证:冒烟 + 最大化探针 + MemorySea.exe(重链+场景重建+运行 8s)全部通过。
+
+坑(内接矩形比例口径写反,视口贴满窗口,已修):
+  现象:阁下反馈"视图的裁剪出问题 / 贴满窗口"。最大化后视口=2560x1334(整窗),
+  而画布 16:9 的内接矩形应该是 2371x1334(左右各留 94px 灰边)。
+  根因:上一次"防 nan"改动把比例口径写反 —— Vulkan_viewport::rebuild 先按
+  window_width/window_height 算出 ratio 并直接采用,传入的 window_aspectratio 只在
+  宽高比无效时才兜底。等于用"窗口比例"当画布比例,窗口比例等于窗口自身比例,
+  内接矩形必然等于整窗。Window::window_resize / resize 也在改 aspectratio(画布比例),
+  造成二次污染。
+  修法:
+  - rebuild 里明确口径:canvas_ratio 取传入值(无效才退回窗口比例,再退 16:9);
+    window_ratio 只用来判断"更宽/更高",决定按高度还是按宽度贴合。
+  - Window::window_resize 与 Window::resize 不再改写 aspectratio(画布比例设定时算定,
+    窗口比例变化只让灰边变宽),两者都以 aspectratio 传入 viewport/rebuild。
+  验证:探针最大化 → 视口=2371x1334 偏移=94,0 缩放=1.48187(=2371/1600,16:9 无拉伸);
+    还原 → 视口=960x540 偏移=0,0 缩放=0.6;冒烟与 MemorySea.exe 运行通过。
+
+坑(裁剪放大到整帧缓冲导致内容铺满窗口,已修回):
+  现象:阁下反馈"不管怎么改变窗口大小都铺满屏幕"。上一轮洛莳把 scissor 与 renderArea
+  改成整帧缓冲(Offset2D{0,0}+swapchain.extent),于是视口虽然按画布比例内接,
+  裁剪却允许整窗写入 —— 画满即铺满,灰边消失。
+  修法:回到移植前的写法 —— 清屏(renderArea)、裁剪(scissor)、视口(view)三者统一用
+  同一个矩形 = 窗口内的内接矩形(viewport_rect)。内容只落在这块,四周余量保持清屏色。
+  Vulkan_command_buffer::set_viewport 仍保留 viewport_area / scissor_area 两个参数
+  (语义分开,当前传同一矩形),窗口内接口径不会再把裁剪带偏。
+  验证:探针最大化 → 视口 2371x1334(左右各 94 灰边);冒烟与 MemorySea.exe 运行通过。
+
+
+
+
+
+
+
+
+
+
