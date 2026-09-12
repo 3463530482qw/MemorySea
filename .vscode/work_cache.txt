@@ -107,3 +107,17 @@
   - ini 回三行静态文字,mainMenu.cpp 去逐帧设位置
   保留:ini 字体装载([字体.名字] 标签)、en/font/ 目录结构、窗口模块无字体成员。
   着色器重编译+构建+冒烟通过。特效写法待阁下重新设计。
+
+记录(Luos 键盘双缓冲修复,已完成):
+  症状:窗口.key.press(yk_a) 按住期间反复返回真。根因:press 由线程池(更新/绘制包)调用
+  并直接写 save_key/索引,主线程 key.update() 同时交换缓冲,数据竞争导致帧信息丢失;
+  另原实现仅 6 槽位易溢出,松开时也误记录会吞掉后续按键。
+  修复(D:\Luos\luos\window\english\parameters\key_board\):
+  - 内部变量:save_key 改 bool[2][256] 双缓冲,新增 save_press/save_release 报告位
+    与 save_key_mutex,移除计数索引。
+  - update():锁内只交换 current/before、清空新 current 与报告位,不再采样。
+  - press():锁内 按下先记入 current;before 有→false;save_press 有→false;
+    否则置报告位返回真。按住恒 false,一次物理按下只真一次。
+  - hold/release 补齐并在 main.hpp 启用,越界键返回 false。
+  契约:按键函数需每帧轮询(与旧版一致,mainMenu 已满足)。
+  验证:CCACHE_DISABLE=1 构建通过,冒烟约 7s 无 stderr。库在工作区外,提交走阁下 push.py。
