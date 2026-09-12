@@ -22,6 +22,9 @@ int main() {
             临时图片.load(窗口.icon.c_str());
             窗口.set_icon(临时图片.pack[0][0]);
 
+            Gnik_luos::Vulkan_info vulkan_info;
+            vulkan_info.window_name = 窗口.name;
+
             运行.指定场景(场景);
             运行.指定线程(线程);
             运行.specify_window(窗口);
