@@ -20,7 +20,7 @@
     },
 
     "window_time": {
-        "fps": 1.0,
+        "fps": 24.0,
         "youk_smooth": true
     }
 }
