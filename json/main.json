@@ -10,7 +10,10 @@
         "logic_width": 1920,
         "logic_height": 1080,
         "icon": "image/icon/icon.png",
-        "display_index": 0
+        "display_index": 0,
+        "time": true,
+        "key": true,
+        "vulkan": true
     },
 
     "window_create_info": {
