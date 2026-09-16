@@ -26,7 +26,7 @@ int main() {
             Gnik_luos::火山初始化信息 火山初始化信息;
             火山初始化信息.window_name = 窗口.name;
             火山.init(火山初始化信息);
-            //窗口.window_vulkan.initialize(火山);
+            窗口.window_vulkan.init(火山);
 
             运行.指定场景(场景);
             运行.指定线程(线程);
