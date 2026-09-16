@@ -1,0 +1,50 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "MemorySea-Win-clang-x64",
+            "compilerPath": "D:/mingw64/bin/g++.exe",
+            "compilerArgs": [
+                "-std=c++23",
+                "-finput-charset=UTF-8",
+                "-fexec-charset=UTF-8"
+            ],
+            "intelliSenseMode": "windows-clang-x64",
+            "cStandard": "c17",
+            "cppStandard": "c++23",
+            "defines": [
+                "NDEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/Luos",
+                "D:/mingw64/include",
+                "D:/mingw64/include/c++/v1",
+                "D:/mingw64/glm",
+                "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
+                "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3",
+                "D:/mingw64/inih-r62/inih-r62",
+                "D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/include",
+                "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
+                "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
+                "D:/mingw64/stb-master/stb-master",
+                "C:/vulkan/Include"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/**",
+                    "D:/Luos",
+                    "D:/mingw64/include",
+                    "D:/mingw64/glm",
+                    "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
+                    "D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/include",
+                    "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
+                    "C:/vulkan/Include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        }
+    ]
+}

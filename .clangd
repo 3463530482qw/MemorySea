@@ -1,0 +1,36 @@
+# clangd 配置:D:\MemorySea 工作区
+# 本工程的 .cpp / .inl 自己就 include 了聚合头 youklx/wiall.hpp,
+# 所以这里不再强制包含(强制包含会让聚合头进两次,凭空多出重复定义报错)。
+# 参数按 build.py 与 sence/*/bulid.py 的真实构建口径写。
+
+CompileFlags:
+  Add:
+    - -std=c++23
+    - -DNDEBUG
+    - -DEXPORT=__declspec(dllexport)
+    - -finput-charset=UTF-8
+    - -fexec-charset=UTF-8
+    - -ferror-limit=0
+    - -ID:/Luos
+    - -ID:/MemorySea
+    - -ID:/mingw64/include
+    - -ID:/mingw64/include/c++/v1
+    - -ID:/mingw64/glm
+    - -ID:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include
+    - -ID:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3
+    - -ID:/mingw64/inih-r62/inih-r62
+    - -ID:/mingw64/simdjson-4.6.7/simdjson-4.6.7/include
+    - -ID:/mingw64/simdjson-4.6.7/simdjson-4.6.7/src
+    - -ID:/mingw64/spine-runtimes-4.3/spine-cpp/include
+    - -ID:/mingw64/spine-runtimes-4.3/spine-sdl/src
+    - -ID:/mingw64/stb-master/stb-master
+    - -IC:/vulkan/Include
+
+Diagnostics:
+  Suppress:
+    - redefinition
+    - redefinition_different_kind
+    - redefinition_different_typedef
+    # 类体内声明片段(youklx/*/en/api/*.inl 等)脱离类作用域后成员类型要加限定名才认,
+    # 这些报错没有信息量,统一静音
+    - unknown_typename_suggest
