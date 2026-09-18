@@ -1,3 +1,48 @@
+坑(重要,补充):workspace-write 沙箱只许写 D:\Luos,所以 build.py 在 D:\MemorySea\build
+  写 .o 会被拒(报 Permission denied)。要验证改动可把输出指到工作区内:
+  g++ -std=c++23 -DNDEBUG -c D:\MemorySea\main.cpp -o D:\Luos\.vscode\buildcheck\main.o + 项目 include,
+  再用 build\libspine.a、libsimdjson.a 链接(命令见下方线程修复记录),exe 放回 D:\MemorySea\build 运行。
+
+记录(luos/thread 线程池竞态修复,已完成):
+  症状:运行期偶发"异常: std::bad_function_call",位置不定。
+  根因三处,全在 luos/thread:
+  1) 任务池无锁共享:worker 在锁外读 update_tasks/draw_tasks 取任务执行,主线程 pack(原无锁
+     push_back,会 reallocate)/clear(原无锁 clear(),会析构 function)并发改。任务对象被搬走
+     或被析构,worker 拿到的就是坏 function → bad_function_call。
+  2) clear 前的 wait() 是空等:原判据只看 outstanding==0,而 outstanding 在最后一个任务完成时
+     就被置 0,worker 可能仍停留在任务函数体内;clear 随即清空任务池,worker 手里的捕获对象已释放。
+  3) 任务靠 notify_one 逐个点醒,存在丢失唤醒(N 个 worker 只点 N 次,谁被唤醒不定)。
+  修法(已落地):
+  - 新增 private_update_snapshot / private_draw_snapshot:run() 在锁内把任务池拷进快照
+    (std::function 拷贝构造),worker 在锁内从快照 move 出到局部变量、解锁执行函数体、再回锁记完成。
+    worker 不再直接触碰任务池。
+  - pack/clear 全部纳入 mutex;run 的"取快照 + dispatch"在同一锁区间完成。
+  - 新增 update_quantity/draw_quantity/active_workers。wait() 判据改为 active_workers==0 且
+    (phase==IDLE 或 两阶段 claimed==quantity 且 completed==quantity)。
+  - 代际统一 uint64_t(原 current_gen/update_done_gen 是 uint64_t 而 wait_update 形参 uint32_t,
+    回绕时 >= 会失效);dispatch 收敛为私有 dispatch_locked,锁内自增并返回代际,由 run() 把返回值
+    交给 wait_update/wait_draw,不再锁外读 current_gen。
+  - 唤醒统一 notify_all,删掉 notify_one 分支。
+  验证:
+  - 探针 D:\Luos\.vscode\probe_thread.cpp:200 轮 清空→压 8 更新/6 绘制→运行,计数 update=1600
+    draw=1200,退出码 0。
+  - 并发压测:另一线程不停 pack+run+clear 的同时主线程跑 40 轮;普通构建 10/10 通过,ASan 构建
+    5/5 通过(既覆盖"边跑边改任务池",也覆盖 clear 的屏障)。
+  - main.cpp 用项目原参数编译通过;工作区内链接出 MemorySea.exe,放 build 目录跑 10s,stderr 干净、
+    帧循环正常(手动结束)。
+  - 旧代码的崩溃未能动态复现:竞态窗口只有几条指令宽,可用载荷下打不中;以代码路径论证 + 修复后
+    压测/实跑通过为准。
+  直接编译库的 include(复现探针用):
+    -ID:\MemorySea -ID:\Luos -ID:\mingw64\include
+    -ID:\mingw64\SDL3-3.4.8\x86_64-w64-mingw32\include -ID:\mingw64\SDL3-3.4.8\x86_64-w64-mingw32\include\SDL3
+    -ID:\mingw64\simdjson-4.6.7\simdjson-4.6.7\singleheader -ID:\mingw64\stb-master\stb-master
+    -ID:\mingw64\spine-runtimes-4.3\spine-sdl\src -ID:\mingw64\spine-runtimes-4.3\spine-cpp\include -IC:\vulkan\Include
+    链接:-LD:\mingw64\SDL3-3.4.8\x86_64-w64-mingw32\lib -LC:\vulkan\Lib -lSDL3 -lvulkan-1 -lwinmm
+    注意:单头 simdjson 在本项目里不带实现宏,探针须另编一份 simdjson 实现再链接(wiall.hpp 不定义
+    SIMDJSON_IMPLEMENTATION,单 TU 内自己定义会与头内定义冲突)。
+  待办(未改):D:\MemorySea\youklx\thread 是同名旧副本,不参与构建(vmode.inl 的 线程 来自 luos),
+    内含同源竞态;删除或同步请阁下定。
+
 坑(重要):DSH 沙箱下 ccache 会无限挂起(最小文件 -c 也卡死,CPU 不涨)。
   直连 g++ 与 CCACHE_DISABLE=1 均正常。构建请用:
   $env:CCACHE_DISABLE='1'; python -u build.py
