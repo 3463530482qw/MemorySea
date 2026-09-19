@@ -1,6 +1,6 @@
 #version 450
 
-layout(location = 0) in vec2 inPosition;
+layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec2 inUV;
 layout(location = 2) in vec4 inColor;
 
@@ -13,7 +13,7 @@ layout(location = 0) out vec2 fragUV;
 layout(location = 1) out vec4 fragColor;
 
 void main() {
-    vec4 clip = pc.mvp * vec4(inPosition, 0.0, 1.0);
+    vec4 clip = pc.mvp * vec4(inPosition, 1.0);
     if (pc.snapPixel > 0.5) {
         vec2 ndc = clip.xy / clip.w;
         vec2 px = (ndc * 0.5 + 0.5) * vec2(pc.screenW, pc.screenH);

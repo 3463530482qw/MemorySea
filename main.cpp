@@ -24,7 +24,8 @@ int main() {
 
             // 火山是通用服务(见 vmain),窗口只借用:实例/设备归火山,窗口管自己的表面与交换链
             Gnik_luos::火山初始化信息 火山初始化信息;
-            火山初始化信息.window_name = 窗口.name;
+            火山初始化信息.batch_load(配置文件.获取("初始化配置"), "vulkan_info");
+            火山初始化信息.window_name = 窗口.name;   // 窗口名以窗口配置为准
             火山.init(火山初始化信息);
             窗口.window_vulkan.init(火山);
 

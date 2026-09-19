@@ -35,6 +35,10 @@ def main():
     success &= compile_shader(SHADER_DIR/"line.vert", OUTPUT_DIR/"line.vert.spv", "line顶点")
     success &= compile_shader(SHADER_DIR/"line.frag", OUTPUT_DIR/"line.frag.spv", "line片段")
 
+    # ground.vert + ground.frag
+    success &= compile_shader(SHADER_DIR/"ground.vert", OUTPUT_DIR/"ground.vert.spv", "ground顶点")
+    success &= compile_shader(SHADER_DIR/"ground.frag", OUTPUT_DIR/"ground.frag.spv", "ground片段")
+
     # image.vert + image.frag
     success &= compile_shader(SHADER_DIR/"image.vert", OUTPUT_DIR/"image.vert.spv", "image顶点")
     success &= compile_shader(SHADER_DIR/"image.frag", OUTPUT_DIR/"image.frag.spv", "image片段")

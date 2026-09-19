@@ -18,6 +18,20 @@
         "vulkan_clear_value": { "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1.0 }
     },
 
+    "vulkan_info": {
+        "window_name": "MemorySea",
+        "ground": {
+            "enabled": true,
+            "grid_size": 100.0,
+            "major_every": 10.0,
+            "fade_distance": 8000.0,
+            "minor": { "red": 0.42, "green": 0.44, "blue": 0.5, "alpha": 0.5 },
+            "major": { "red": 0.72, "green": 0.74, "blue": 0.8, "alpha": 0.85 },
+            "vert": "ground.vert.spv",
+            "frag": "ground.frag.spv"
+        }
+    },
+
     "window_create_info": {
         "resizable": true,
         "high_pixel_density": true,
