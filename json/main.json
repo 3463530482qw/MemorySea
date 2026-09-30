@@ -15,7 +15,14 @@
         "key": true,
         "vulkan": true,
         "line_render": { "vert": "line.vert.spv", "frag": "line.frag.spv" },
-        "vulkan_clear_value": { "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1.0 }
+        "vulkan_clear_value": { "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1.0 },
+        "camera": {
+            "perspective": true,
+            "x": 960.0, "y": -600.0, "z": 1200.0,
+            "rotation_x": 20.0, "rotation_y": 0.0, "rotation_z": 0.0,
+            "fov": 60.0, "near": 1.0, "far": 20000.0,
+            "zoom": 1.0
+        }
     },
 
     "vulkan_info": {
