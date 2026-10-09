@@ -1,14 +1,15 @@
-{
+﻿{
     "scene": {
-        "mainMenu": "dll/mainMenu/mainMenu.dll"
+        "mainMenu": "dll/mainMenu/mainMenu.dll",
+        "pixelDungeon": "dll/pixelDungeon/pixelDungeon.dll"
     },
 
     "window_info": {
         "name": "MemorySea",
         "width": 0,
         "height": 0,
-        "logic_width": 1920,
-        "logic_height": 1080,
+        "logic_width": 1600,
+        "logic_height": 900,
         "icon": "image/icon/icon.png",
         "display_index": 0,
         "time": true,
@@ -18,8 +19,8 @@
         "vulkan_clear_value": { "red": 0.1, "green": 0.1, "blue": 0.1, "alpha": 1.0 },
         "camera": {
             "perspective": true,
-            "x": 960.0, "y": -600.0, "z": 1200.0,
-            "rotation_x": 20.0, "rotation_y": 0.0, "rotation_z": 0.0,
+            "x": 800.0, "y": 450.0, "z": 0.0,
+            "rotation_x": 0.0, "rotation_y": 0.0, "rotation_z": 0.0,
             "fov": 60.0, "near": 1.0, "far": 20000.0,
             "zoom": 1.0
         }
