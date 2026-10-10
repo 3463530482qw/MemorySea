@@ -39,6 +39,12 @@
 //图片加载库
 #include "stb_image.h"
 
+//图片写出库
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
+#include "stb_image_write.h"
+
 //字体加载库
 #ifndef STB_TRUETYPE_IMPLEMENTATION
 #define STB_TRUETYPE_IMPLEMENTATION

@@ -7,7 +7,8 @@
         "to": { "x": 4.0, "y": 4.0, "z": 0.0 },
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 255, "green": 64, "blue": 64, "alpha": 1.0 },
-        "texture": false
+        "texture": true,
+        "texture_path": "image/mainMenu/1.png"
     },
 
     "line2": {
@@ -15,7 +16,8 @@
         "to": { "x": 1600.0, "y": 450.0, "z": 0.0 },
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 64, "green": 255, "blue": 64, "alpha": 1.0 },
-        "texture": false
+        "texture": true,
+        "texture_path": "image/mainMenu/1.png"
     },
 
     "line3": {
@@ -23,6 +25,7 @@
         "to": { "x": 800.0, "y": 900.0, "z": 0.0 },
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 64, "green": 255, "blue": 64, "alpha": 1.0 },
-        "texture": false
+        "texture": true,
+        "texture_path": "image/mainMenu/1.png"
     }
 }

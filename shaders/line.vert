@@ -8,6 +8,7 @@ layout(location = 3) in float inTexture;
 layout(push_constant) uniform PushConstants {
     mat4 mvp;
     float screenW, screenH, snapPixel;
+    float textureScaleX, textureScaleY;
 } pc;
 
 layout(location = 0) out vec2 fragUV;
@@ -24,7 +25,7 @@ void main() {
         clip.xy = ndc * clip.w;
     }
     gl_Position = clip;
-    fragUV = inUV;
+    fragUV = inUV * vec2(pc.textureScaleX, pc.textureScaleY);   // 顶点里的 uv 是世界单位,这里归一到展开图
     fragColor = inColor;
     fragTexture = inTexture;
 }
