@@ -8,7 +8,7 @@
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 255, "green": 64, "blue": 64, "alpha": 1.0 },
         "texture": true,
-        "texture_path": "image/mainMenu/1.png"
+        "texture_path": "image/mainMenu/line1"
     },
 
     "line2": {
@@ -17,7 +17,7 @@
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 64, "green": 255, "blue": 64, "alpha": 1.0 },
         "texture": true,
-        "texture_path": "image/mainMenu/1.png"
+        "texture_path": "image/mainMenu/line2"
     },
 
     "line3": {
@@ -26,6 +26,6 @@
         "size": { "width": 8.0, "height": 8.0 },
         "rgba": { "red": 64, "green": 255, "blue": 64, "alpha": 1.0 },
         "texture": true,
-        "texture_path": "image/mainMenu/1.png"
+        "texture_path": "image/mainMenu/line3"
     }
 }

@@ -17,6 +17,7 @@
 #include <queue>
 #include <memory>
 #include <fstream>
+#include <filesystem>
 #include <cstring>
 #include <cctype>
 #include <cwchar>
