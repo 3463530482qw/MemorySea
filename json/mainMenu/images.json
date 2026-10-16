@@ -1,0 +1,10 @@
+{
+    "background": {
+        "data": [
+            { "x": 0.0, "y": 0.0, "z": -7.0 },
+            { "x": 1600.0, "y": 900.0, "z": -7.0 }
+        ],
+        "texture": true,
+        "texture_path": "image/mainMenu/1.png"
+    }
+}

@@ -7,6 +7,7 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
 #include <stdexcept>
 #include <functional>
 #include <chrono>
@@ -23,6 +24,7 @@
 #include <cwchar>
 #include <array>
 #include <cmath>
+#include <numbers>
 #include <mutex>
 #include <condition_variable>
 #include <future>

@@ -32,6 +32,7 @@ int main() {
             运行.指定场景(场景);
             运行.指定线程(线程);
             运行.specify_window(窗口);
+
         }
         while (窗口.isrun) {
             if (auto it = 场景.数据.find(场景.目标场景); it != 场景.数据.end()) {
