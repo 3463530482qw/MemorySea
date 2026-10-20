@@ -1,4 +1,4 @@
-﻿{
+{
 
     "scene": {
         "mainMenu": "dll/mainMenu/mainMenu.dll",
@@ -21,9 +21,9 @@
             "frag": "line.frag.spv"
         },
         "vulkan_clear_value": {
-            "red": 0.1,
-            "green": 0.1,
-            "blue": 0.1,
+            "red": 0.0,
+            "green": 0.0,
+            "blue": 0.0,
             "alpha": 1.0
         },
         "camera": {
