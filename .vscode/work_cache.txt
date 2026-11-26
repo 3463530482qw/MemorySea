@@ -382,3 +382,25 @@
     说明装载期校验生效。注:异常走到 main.cpp 的 catch 后,主循环前窗口火山未初始化,会再冒出
     一条 "Window::router => Vulkan not initialized",属既有错误路径,不在槽位模块内。
   - 验证后 build 侧配置已还原为空 path 骨架。
+记录(WitchSpring3 Re:Fine 「afterBetray」CG 网页壁纸,进行中):
+  目标: 把 event_118 的 afterBetray 这一幕做成 WE 网页动态壁纸。
+  事实: 游戏无这一幕视频; 唯一 VideoClip 是 G_Motion_3sec(G'CHOICE logo); 动态为运行时粒子;
+    afterBetray 2048x1152; afterBetray2 压暗版; UIeffect_lampDust = 6 lampDust + 3 lampShadow + moonLight + eye;
+    UiParticles.UiParticles 已从 Assembly-CSharp 反编译: Billboard/StretchedBillboard, OnPopulateMesh, GetParticles.
+  数据: 粒子生命 2/5s, 初速 2/4, 尺寸 6/55/95(min 2/16/36), 颜色粉→白/alpha 0.691/0.053/0.209/0.016, prewarm, world.
+  成品: ...\myprojects\witchspring3_after_betray; assets/{afterBetray,darkShadow,redYellow_light,shine_light}.png + index/style/main.
+  当前: canvas 暗影(source-over) + 灯尘/月光(screen) 按原模块跑; 屏幕位置/尺寸仍按预制体+录屏对照校准.
+  坑: 录屏只是兜底,不是成品; 预制体运行时相机/缩放未完全还原; WE 视口 2560x1440 dpr=1; WE 最大化时暂停; 聊天 GIF 首帧.
+  验证: Edge 2560 出图; 预览窗口; WE 重载.
+  源文件留 D:\Luos\work\ws3_cg\wallpaper, 临时文件已清理。
+
+记录(构建脚本统一入口,已完成):
+  - 新增 build_config.py:ROOT/BUILD、第三方与工具路径、CXX_FLAGS、INCLUDE_DIRS、
+    RUNTIME_DLLS/RUNTIME_DIRS,以及场景共用的 build_scene。
+  - build.py 重写:按 __file__ 定位,串 spine→simdjson→主程序(MemorySea.o)→着色器→
+    sence/*/build.py→运行库与 json/image/font 同步;不再依赖 cwd,不再扫 bulid.py。
+  - shaders/compile.py:输出 build/shaders,glob 全部 vert/frag,mtime 增量跳过。
+  - sence/mainMenu/bulid.py → build.py(薄壳调 build_scene);.gitignore 加 __pycache__/、*.pyc。
+  验证:从 D:\Luos 实跑全绿;删 libspine/libsimdjson 后一次性编译分支也跑通;单场景与单着色器
+  强制重编通过;MemorySea.exe 运行 6s 存活、stderr 空。
+  注:copydll.exe 功能已并入 build.py,文件未删;build 里旧 apitest/probe/旧 spv 未清(本轮不含清理)。

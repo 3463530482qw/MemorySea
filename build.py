@@ -1,132 +1,125 @@
-from pathlib import Path
+import shutil
 import subprocess
-import glob
+import sys
+from pathlib import Path
 
-## 默认路径
-mopath = Path.cwd()
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
 
-## c++文件路径
-main = Path("main.cpp")
-
-# 生成的可执行文件路径
-run = Path("build/MemorySea.exe")
-
-#创建构建文件夹
-Path("./build").mkdir(exist_ok=True)
-
-# 编译主程序
-print("=== 编译主程序 ===")
-
-# 编译器命令(经过 ccache 缓存,没改过的文件秒过)
-gpp = ["ccache", "g++"]
-
-# spine 运行时源码(spine-cpp 递归 + spine-sdl 顶层)
-spine_sources = (
-    glob.glob("D:/mingw64/spine-runtimes-4.3/spine-cpp/src/**/*.cpp", recursive=True) +
-    glob.glob("D:/mingw64/spine-runtimes-4.3/spine-sdl/src/*.cpp")
+from build_config import (
+    BUILD,
+    COMPILER,
+    CXX_FLAGS,
+    RUNTIME_DIRS,
+    RUNTIME_DLLS,
+    SDL,
+    SIMDJSON,
+    SPINE,
+    VULKAN,
+    include_args,
+    run,
 )
 
-include_dirs = [
-    "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include",
-    "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/include/SDL3",
-    "D:/mingw64/inih-r62/inih-r62",
-    "D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/include",
-    "D:/mingw64/spine-runtimes-4.3/spine-cpp/include",
-    "D:/mingw64/spine-runtimes-4.3/spine-sdl/src",
-    "D:/mingw64/stb-master/stb-master",
-    "D:/Luos",
-    str(mopath),
-    "C:/vulkan/Include",
-]
+def build_spine() -> Path:
+    lib = BUILD / "libspine.a"
+    if lib.is_file():
+        print("=== 使用已编译的 spine 静态库 ===")
+        return lib
 
-# spine 预编译静态库:第三方代码不会变,只编一次,之后只链接
-# 如需强制重建(比如升级 spine),删掉 build/libspine.a 即可
-spine_lib = mopath / "build" / "libspine.a"
-spine_obj_dir = mopath / "build" / "spine_obj"
-if not spine_lib.exists():
-    print(f"=== 编译 spine 静态库(一次性,如需重建请删除 {spine_lib.name}) ===")
-    spine_obj_dir.mkdir(parents=True, exist_ok=True)
-    objs = []
-    for f in spine_sources:
-        p = Path(f)
-        obj = spine_obj_dir / f"{p.parent.name}_{p.stem}.o"
-        subprocess.run([
-            *gpp, "-std=c++23", "-O2", "-DNDEBUG",
-            "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
-            "-c", str(f), "-o", str(obj),
-            *[f"-I{i}" for i in include_dirs],
-        ], check=True)
-        objs.append(obj)
-    subprocess.run(["x86_64-w64-mingw32-ar", "rcs", str(spine_lib), *[str(o) for o in objs]], check=True)
-    print(f"spine 静态库生成: {spine_lib}")
-else:
-    print(f"=== 使用已编译的 spine 静态库(如需重建请删除 {spine_lib.name}) ===")
+    print("=== 编译 spine 静态库(一次性) ===")
+    sources = sorted((SPINE / "spine-cpp/src").rglob("*.cpp")) + sorted((SPINE / "spine-sdl/src").glob("*.cpp"))
+    obj_dir = BUILD / "spine_obj"
+    obj_dir.mkdir(parents=True, exist_ok=True)
+    objects = []
+    for source in sources:
+        obj = obj_dir / f"{source.parent.name}_{source.stem}.o"
+        run([
+            *COMPILER, *CXX_FLAGS, "-O2",
+            "-c", source.as_posix(), "-o", obj.as_posix(),
+            *include_args(),
+        ])
+        objects.append(obj.as_posix())
+    run(["x86_64-w64-mingw32-ar", "rcs", lib.as_posix(), *objects])
+    print(f"spine 静态库: {lib}")
+    return lib
 
-# simdjson 非 header-only,需编译 simdjson.cpp 一次;第三方代码不变,缓存成静态库
-simdjson_src = Path("D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/src/simdjson.cpp")
-simdjson_lib = mopath / "build" / "libsimdjson.a"
-if not simdjson_lib.exists():
-    print(f"=== 编译 simdjson 静态库(一次性,如需重建请删除 {simdjson_lib.name}) ===")
-    simdjson_obj = mopath / "build" / "simdjson.o"
-    # simdjson.cpp 内部通过 <base.h>、<generic/...> 引用 src 目录,需额外加入 include 路径
-    simdjson_include = include_dirs + ["D:/mingw64/simdjson-4.6.7/simdjson-4.6.7/src"]
-    subprocess.run([
-        *gpp, "-std=c++23", "-O2", "-DNDEBUG",
-        "-finput-charset=UTF-8", "-fexec-charset=UTF-8",
-        "-c", str(simdjson_src), "-o", str(simdjson_obj),
-        *[f"-I{i}" for i in simdjson_include],
-    ], check=True)
-    subprocess.run(["x86_64-w64-mingw32-ar", "rcs", str(simdjson_lib), str(simdjson_obj)], check=True)
-    print(f"simdjson 静态库生成: {simdjson_lib}")
-else:
-    print(f"=== 使用已编译的 simdjson 静态库(如需重建请删除 {simdjson_lib.name}) ===")
+def build_simdjson() -> Path:
+    lib = BUILD / "libsimdjson.a"
+    if lib.is_file():
+        print("=== 使用已编译的 simdjson 静态库 ===")
+        return lib
 
-# 导出所有符号,生成导入库(场景 DLL 链接用)
-import_lib = mopath / "build" / "libMemorySea.dll.a"
-link_options = [
-    f"-Wl,--export-all-symbols,--out-implib,{import_lib.as_posix()}",
-    "-L", "D:/mingw64/SDL3-3.4.8/x86_64-w64-mingw32/lib",
-    "C:/vulkan/Lib/vulkan-1.lib",
-    "-lSDL3",
-    "-lwinmm",
-]
+    print("=== 编译 simdjson 静态库(一次性) ===")
+    obj = BUILD / "simdjson.o"
+    run([
+        *COMPILER, *CXX_FLAGS, "-O2",
+        "-c", (SIMDJSON / "src/simdjson.cpp").as_posix(), "-o", obj.as_posix(),
+        *include_args(SIMDJSON / "src"),
+    ])
+    run(["x86_64-w64-mingw32-ar", "rcs", lib.as_posix(), obj.as_posix()])
+    print(f"simdjson 静态库: {lib}")
+    return lib
 
-# 主程序拆成两步:先 ccache 编译 .o(命中缓存则秒过),再纯链接(0.3s)
-main_obj = mopath / "build" / "apitest.o"
-subprocess.run([
-    *gpp,
-    "-std=c++23",
-    "-finput-charset=UTF-8",
-    "-fexec-charset=UTF-8",
-    "-DNDEBUG",
-    "-c", str(main), "-o", str(main_obj),
-    *[f"-I{i}" for i in include_dirs],
-], check=True)
+def build_main(spine_lib: Path, simdjson_lib: Path) -> Path:
+    print("=== 编译主程序 ===")
+    main_obj = BUILD / "MemorySea.o"
+    exe = BUILD / "MemorySea.exe"
+    run([
+        *COMPILER, *CXX_FLAGS,
+        "-c", (ROOT / "main.cpp").as_posix(), "-o", main_obj.as_posix(),
+        *include_args(),
+    ])
+    run([
+        "g++", "-std=c++23", "-DNDEBUG",
+        "-o", exe.as_posix(), main_obj.as_posix(),
+        # --whole-archive:spine 与 simdjson 的符号全量进 exe,场景 DLL 才能经导入库链到
+        "-Wl,--whole-archive", spine_lib.as_posix(), "-Wl,--no-whole-archive",
+        "-Wl,--whole-archive", simdjson_lib.as_posix(), "-Wl,--no-whole-archive",
+        f"-Wl,--export-all-symbols,--out-implib,{(BUILD / 'libMemorySea.dll.a').as_posix()}",
+        "-L", (SDL / "lib").as_posix(),
+        (VULKAN / "Lib/vulkan-1.lib").as_posix(),
+        "-lSDL3", "-lwinmm",
+    ])
+    print(f"主程序: {exe}")
+    return exe
 
-gpp_cmd = [
-    "g++",
-    "-std=c++23",
-    "-DNDEBUG",
-    "-o", str(run),
-    str(main_obj),
-    # --whole-archive: 让 spine 全部符号进 DLL,场景模块才能通过导入库链接到任意 spine 类
-    "-Wl,--whole-archive", str(spine_lib), "-Wl,--no-whole-archive",
-    # simdjson 同理:场景模块也要用到其符号,必须全量导出
-    "-Wl,--whole-archive", str(simdjson_lib), "-Wl,--no-whole-archive",
-    *link_options,
-]
+def build_shaders() -> None:
+    print("=== 编译着色器 ===")
+    subprocess.run([sys.executable, (ROOT / "shaders/compile.py").as_posix()], check=True)
 
-subprocess.run(gpp_cmd, check=True)
-print(f"主程序编译完成: {run}")
+def build_scenes() -> None:
+    scripts = sorted((ROOT / "sence").glob("*/build.py"))
+    if not scripts:
+        print("=== 没有场景脚本 ===")
+        return
+    for script in scripts:
+        subprocess.run([sys.executable, script.as_posix()], check=True)
 
-# 编译所有场景模块
-print("=== 编译场景模块 ===")
-sence_dir = Path("sence")
-for bulid_py in sence_dir.glob("*/bulid.py"):
-    scene_name = bulid_py.parent.name
-    print(f"编译场景: {scene_name}")
-    subprocess.run([
-        "python", str(bulid_py)
-    ], check=True)
+def sync_runtime() -> None:
+    print("=== 同步运行库与资源 ===")
+    for dll in RUNTIME_DLLS:
+        if dll.is_file():
+            shutil.copy2(dll, BUILD / dll.name)
+            print(f"dll: {dll.name}")
+        else:
+            print(f"警告: 缺少 {dll}")
+    for name in RUNTIME_DIRS:
+        source = ROOT / name
+        if not source.is_dir():
+            print(f"警告: 缺少资源目录 {name}/")
+            continue
+        shutil.copytree(source, BUILD / name, dirs_exist_ok=True)
+        print(f"资源: {name}/")
 
-print(f"构建完成: {run}")
+def main() -> None:
+    BUILD.mkdir(exist_ok=True)
+    spine_lib = build_spine()
+    simdjson_lib = build_simdjson()
+    build_main(spine_lib, simdjson_lib)
+    build_shaders()
+    build_scenes()
+    sync_runtime()
+    print("构建完成: build/MemorySea.exe")
+
+if __name__ == "__main__":
+    main()

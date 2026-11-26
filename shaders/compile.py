@@ -1,58 +1,34 @@
-"""
-着色器编译脚本
-使用 glslc 将 GLSL 着色器编译为 SPIR-V 字节码 (.spv)
-输出到 build/shaders/ 目录
-"""
 import subprocess
+import sys
 from pathlib import Path
 
-GLSLC = Path("C:/Vulkan/Bin/glslc.exe")
-SHADER_DIR = Path(__file__).parent
-OUTPUT_DIR = Path.cwd() / "build" / "shaders"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-def compile_shader(src: Path, dst: Path, stage: str) -> bool:
-    print(f"编译 {stage} 着色器: {src.name} -> {dst.name}")
-    try:
-        subprocess.run([str(GLSLC), str(src), "-o", str(dst)], check=True)
-        print(f"  ✓ {stage} 着色器编译成功")
+from build_config import GLSLC, SHADER_DIR, SHADER_OUT
+
+def compile_shader(source: Path, output: Path) -> bool:
+    if output.is_file() and output.stat().st_mtime >= source.stat().st_mtime:
+        print(f"跳过(已最新): {output.name}")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"  ✗ {stage} 着色器编译失败: {e}")
+    print(f"着色器: {source.name} -> {output.name}")
+    result = subprocess.run([GLSLC.as_posix(), source.as_posix(), "-o", output.as_posix()])
+    if result.returncode != 0:
+        print(f"失败: {source.name}")
         return False
-    except FileNotFoundError:
-        print(f"  ✗ 找不到 glslc 编译器: {GLSLC}")
-        return False
+    return True
 
-def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"=== 着色器编译 ===")
-    print(f"源目录: {SHADER_DIR}")
-    print(f"输出目录: {OUTPUT_DIR}")
-    print()
-    success = True
-
-    # line.vert + line.frag
-    success &= compile_shader(SHADER_DIR/"line.vert", OUTPUT_DIR/"line.vert.spv", "line顶点")
-    success &= compile_shader(SHADER_DIR/"line.frag", OUTPUT_DIR/"line.frag.spv", "line片段")
-
-    # ground.vert + ground.frag
-    success &= compile_shader(SHADER_DIR/"ground.vert", OUTPUT_DIR/"ground.vert.spv", "ground顶点")
-    success &= compile_shader(SHADER_DIR/"ground.frag", OUTPUT_DIR/"ground.frag.spv", "ground片段")
-
-    # image.vert + image.frag
-    success &= compile_shader(SHADER_DIR/"image.vert", OUTPUT_DIR/"image.vert.spv", "image顶点")
-    success &= compile_shader(SHADER_DIR/"image.frag", OUTPUT_DIR/"image.frag.spv", "image片段")
-
-    # font.vert + font.frag
-    success &= compile_shader(SHADER_DIR/"font.vert", OUTPUT_DIR/"font.vert.spv", "font顶点")
-    success &= compile_shader(SHADER_DIR/"font.frag", OUTPUT_DIR/"font.frag.spv", "font片段")
-
-    print()
-    if success:
-        print("=== 所有着色器编译完成 ===")
-    else:
-        print("=== 着色器编译失败 ===")
-        exit(1)
+def main() -> int:
+    if not GLSLC.is_file():
+        print(f"找不到 glslc: {GLSLC}")
+        return 1
+    SHADER_OUT.mkdir(parents=True, exist_ok=True)
+    sources = sorted(SHADER_DIR.glob("*.vert")) + sorted(SHADER_DIR.glob("*.frag"))
+    failed = [source.name for source in sources if not compile_shader(source, SHADER_OUT / f"{source.name}.spv")]
+    if failed:
+        print("着色器失败: " + ", ".join(failed))
+        return 1
+    print(f"着色器完成: {len(sources)} 个")
+    return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
